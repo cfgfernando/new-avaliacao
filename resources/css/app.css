@@ -3,103 +3,119 @@
 @tailwind utilities;
 
 :root {
-    /* === PREMIUM VIBRANT LIGHT THEME === */
-    --primary-color: #ffffff;
-    --primary-bg: #f8fafc;
-    --text-main: #334155;
-    --text-title: #0f172a;
-    --card-bg: #ffffff;
-    --border-color: #e2e8f0;
+    /* === NEO-ARCHITECTURAL EMERALD THEME === */
+    --primary-color: #0A0A0A;
+    --primary-bg: #050505;
+    --text-main: #A3A3A3;
+    --text-title: #FFFFFF;
+    --card-bg: #111111;
+    --border-color: #1F1F1F;
     
-    --sidebar-bg: #ffffff;
-    --sidebar-text: #64748b;
-    --sidebar-active-bg: linear-gradient(135deg, #f59e0b, #d97706);
-    --sidebar-active-text: #ffffff;
+    --accent: #10B981;
+    --accent-glow: rgba(16, 185, 129, 0.4);
     
-    --accent: #eab308;
+    --sidebar-bg: #0A0A0A;
+    --sidebar-text: #737373;
 }
 
 .dark {
-    /* === ELITE V8 DARK THEME === */
-    --primary-color: #1a2332;
-    --primary-bg: #0f151f;
-    --text-main: #94a3b8;
-    --text-title: #ffffff;
-    --card-bg: #1a2332;
-    --border-color: rgba(255, 255, 255, 0.05);
-    
-    --sidebar-bg: #0f151f;
-    --sidebar-text: #94a3b8;
-    --sidebar-active-bg: linear-gradient(135deg, #f59e0b, #d97706);
-    --sidebar-active-text: #ffffff;
+    /* Same as root for now as we are going Dark-First */
+    --primary-color: #0A0A0A;
+    --primary-bg: #050505;
+    --card-bg: #111111;
+    --border-color: #1F1F1F;
 }
 
 @layer base {
     body {
         background-color: var(--primary-bg);
         color: var(--text-main);
-        @apply transition-colors duration-300 font-sans antialiased;
+        @apply transition-colors duration-500 font-sans antialiased;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        @apply font-display font-black tracking-tighter text-title;
     }
 }
 
 @layer components {
-    /* Floating Glassmorphism Header */
-    .glassmorphism {
-        @apply transition-all duration-300;
-        background-color: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-
-    .dark .glassmorphism {
-        background-color: rgba(26, 35, 50, 0.7);
-        border-color: rgba(255, 255, 255, 0.05);
-    }
-
-    .card-elite {
+    /* Sharp Architecture Cards */
+    .card-neo {
         background-color: var(--card-bg);
-        @apply rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100 transition-all duration-300 overflow-hidden;
+        border: 1px solid var(--border-color);
+        @apply rounded-none transition-all duration-500 relative overflow-hidden;
     }
     
-    .card-elite:hover {
-        @apply shadow-[0_30px_60px_rgba(0,0,0,0.08)] -translate-y-1;
+    .card-neo::before {
+        content: '';
+        @apply absolute top-0 left-0 w-full h-[2px] bg-accent opacity-0 transition-opacity duration-500;
     }
 
-    .sidebar-gradient {
+    .card-neo:hover::before {
+        @apply opacity-100;
+    }
+
+    .card-neo:hover {
+        @apply border-accent/30 shadow-contact -translate-y-1;
+    }
+
+    .btn-neo {
+        @apply bg-accent text-primary-dark font-black py-4 px-10 rounded-none transition-all duration-300 relative overflow-hidden flex items-center justify-center gap-3 uppercase tracking-[0.2em] text-[10px];
+    }
+
+    .btn-neo:hover {
+        @apply bg-white shadow-emerald-glow -translate-y-1;
+    }
+
+    .btn-neo:active {
+        @apply scale-95;
+    }
+
+    .input-neo {
+        @apply w-full bg-primary-light border border-border-color rounded-none px-6 py-4 text-white font-bold text-sm transition-all focus:ring-0 focus:border-accent placeholder:text-neutral-700;
+    }
+
+    /* Asymmetric Sidebar */
+    .sidebar-neo {
         background-color: var(--sidebar-bg);
         border-right: 1px solid var(--border-color);
-        @apply transition-all duration-300;
+        @apply transition-all duration-500;
     }
 
-    .btn-primary {
-        background: linear-gradient(135deg, #f59e0b, #d97706);
-        @apply text-white font-black py-4 px-8 rounded-2xl shadow-xl shadow-orange-500/20 transition-all active:scale-95 flex items-center justify-center gap-3 uppercase tracking-widest text-[10px];
+    .nav-link-neo {
+        @apply flex items-center gap-4 px-8 py-4 text-sidebar-text font-black text-[10px] uppercase tracking-[0.2em] transition-all duration-300 relative;
     }
 
-    /* Sidebar Dynamic Classes */
-    .nav-link-active {
-        background: var(--sidebar-active-bg);
-        color: var(--sidebar-active-text) !important;
-        @apply shadow-xl shadow-orange-500/30 font-black scale-[1.02];
+    .nav-link-neo.active {
+        @apply text-white bg-white/5;
     }
 
-    .nav-link-inactive {
-        @apply text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5 font-semibold;
+    .nav-link-neo.active::after {
+        content: '';
+        @apply absolute left-0 top-1/4 h-1/2 w-[3px] bg-accent;
     }
 
-    /* Logo Box */
-    .gold-gradient {
-        background: linear-gradient(135deg, #f59e0b, #d97706);
-        @apply shadow-lg shadow-orange-500/20;
+    .nav-link-neo:hover:not(.active) {
+        @apply text-accent translate-x-2;
     }
 }
 
-/* Vibrant Icon Boxes */
-.icon-box-blue { @apply bg-blue-600 text-white shadow-[0_10px_20px_rgba(37,99,235,0.2)]; }
-.icon-box-green { @apply bg-emerald-600 text-white shadow-[0_10px_20px_rgba(5,150,105,0.2)]; }
-.icon-box-orange { @apply bg-amber-600 text-white shadow-[0_10px_20px_rgba(217,119,6,0.2)]; }
-.icon-box-purple { @apply bg-indigo-600 text-white shadow-[0_10px_20px_rgba(79,70,229,0.2)]; }
+/* Utilities */
+.text-emerald-glow {
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
 
-.text-title { color: var(--text-title); @apply font-black tracking-tight; }
-.text-body { color: var(--text-main); }
-.bg-main { background-color: var(--primary-bg); }
+.bg-mesh-dark {
+    background-image: radial-gradient(circle at 2px 2px, #1F1F1F 1px, transparent 0);
+    background-size: 40px 40px;
+}
+
+.reveal-stagger > * {
+    @apply opacity-0;
+}
+
+.reveal-stagger > *:nth-child(1) { @apply animate-reveal-up; animation-delay: 100ms; }
+.reveal-stagger > *:nth-child(2) { @apply animate-reveal-up; animation-delay: 200ms; }
+.reveal-stagger > *:nth-child(3) { @apply animate-reveal-up; animation-delay: 300ms; }
+.reveal-stagger > *:nth-child(4) { @apply animate-reveal-up; animation-delay: 400ms; }
+

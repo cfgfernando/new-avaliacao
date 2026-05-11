@@ -5,53 +5,50 @@
 @section('content')
 <div class="space-y-8">
     <!-- Action Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
         <div>
-            <h1 class="text-3xl font-black text-title tracking-tight">Membros & Discípulos</h1>
-            <p class="text-slate-500 font-medium mt-1">Gerencie a base de membros e acompanhe o crescimento espiritual.</p>
+            <h1 class="text-4xl font-black text-white leading-none tracking-tighter">MEMBROS <br><span class="text-accent">& DISCÍPULOS.</span></h1>
+            <p class="text-neutral-500 font-medium mt-4">Gestão estratégica de crescimento espiritual.</p>
         </div>
-        <a href="{{ route('members.create') }}" class="btn-primary">
+        <a href="{{ route('members.create') }}" class="btn-neo">
             <i class="fas fa-user-plus"></i>
-            <span>Novo Membro</span>
+            <span>Novo Registro</span>
         </a>
     </div>
 
     <!-- Filters Card -->
-    <div class="card-elite p-8 bg-white/50 backdrop-blur-sm">
-        <form action="{{ route('members.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="space-y-2">
-                <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Buscar</label>
-                <div class="relative">
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" name="search" value="{{ request('search') }}" 
-                           placeholder="Nome ou email..."
-                           class="w-full pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-accent/20 text-sm font-bold text-slate-700">
-                </div>
+    <div class="card-neo p-12 bg-primary-card mb-8">
+        <form action="{{ route('members.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="space-y-3">
+                <label class="text-[9px] font-black uppercase tracking-[0.3em] text-accent">Busca Nominal</label>
+                <input type="text" name="search" value="{{ request('search') }}" 
+                       placeholder="NOME OU EMAIL..."
+                       class="input-neo">
             </div>
 
-            <div class="space-y-2">
-                <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Status</label>
-                <select name="status" class="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-accent/20 text-sm font-bold text-slate-700">
-                    <option value="">Todos</option>
-                    <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Ativo</option>
-                    <option value="Inactive" {{ request('status') == 'Inactive' ? 'selected' : '' }}>Inativo</option>
-                    <option value="Visitor" {{ request('status') == 'Visitor' ? 'selected' : '' }}>Visitante</option>
-                    <option value="Converted" {{ request('status') == 'Converted' ? 'selected' : '' }}>Convertido</option>
+            <div class="space-y-3">
+                <label class="text-[9px] font-black uppercase tracking-[0.3em] text-neutral-600">Status</label>
+                <select name="status" class="input-neo">
+                    <option value="">TODOS</option>
+                    <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>ATIVO</option>
+                    <option value="Inactive" {{ request('status') == 'Inactive' ? 'selected' : '' }}>INATIVO</option>
+                    <option value="Visitor" {{ request('status') == 'Visitor' ? 'selected' : '' }}>VISITANTE</option>
+                    <option value="Converted" {{ request('status') == 'Converted' ? 'selected' : '' }}>CONVERTIDO</option>
                 </select>
             </div>
 
-            <div class="space-y-2">
-                <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Célula</label>
-                <select name="cell_id" class="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-accent/20 text-sm font-bold text-slate-700">
-                    <option value="">Todas</option>
+            <div class="space-y-3">
+                <label class="text-[9px] font-black uppercase tracking-[0.3em] text-neutral-600">Unidade/Célula</label>
+                <select name="cell_id" class="input-neo">
+                    <option value="">TODAS</option>
                     @foreach($accessibleCells as $id => $name)
                         <option value="{{ $id }}" {{ request('cell_id') == $id ? 'selected' : '' }}>{{ $name }}</option>
                     @endforeach
                 </select>
             </div>
 
-            <div class="flex items-end pb-1">
-                <button type="submit" class="w-full py-3 bg-slate-900 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-black transition-all shadow-lg shadow-black/10">
+            <div class="flex items-end">
+                <button type="submit" class="btn-neo w-full">
                     Filtrar Resultados
                 </button>
             </div>
@@ -72,48 +69,39 @@
                 </thead>
                 <tbody class="divide-y divide-slate-50">
                     @forelse($members as $member)
-                    <tr class="hover:bg-slate-50/30 transition-colors group">
-                        <td class="px-8 py-6">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 font-black text-lg group-hover:scale-110 transition-transform">
+                    <tr class="hover:bg-white/[0.02] transition-colors group">
+                        <td class="px-12 py-8">
+                            <div class="flex items-center gap-6">
+                                <div class="w-12 h-12 bg-neutral-900 flex items-center justify-center text-accent font-black border border-white/5">
                                     {{ substr($member->user->name, 0, 1) }}
                                 </div>
                                 <div>
-                                    <div class="text-sm font-black text-title">{{ $member->user->name }}</div>
-                                    <div class="text-[11px] font-bold text-slate-400">{{ $member->user->email }}</div>
+                                    <div class="text-sm font-black text-white uppercase tracking-widest">{{ $member->user->name }}</div>
+                                    <div class="text-[10px] font-bold text-neutral-600 tracking-widest">{{ $member->user->email }}</div>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-8 py-6">
-                            <div class="text-xs font-bold text-slate-600">
-                                <i class="fas fa-church text-accent mr-2 opacity-50"></i>
-                                {{ $member->user->cell->name ?? 'Sem Célula' }}
+                        <td class="px-12 py-8">
+                            <div class="text-[10px] font-black text-white uppercase tracking-widest">
+                                <i class="fas fa-church text-accent mr-3"></i>
+                                {{ $member->user->cell->name ?? 'SEM CÉLULA' }}
                             </div>
-                            <div class="text-[10px] font-medium text-slate-400 mt-1">
-                                Líder: {{ $member->user->cell->leader->name ?? '-' }}
+                            <div class="text-[9px] font-bold text-neutral-600 mt-2 uppercase">
+                                LÍDER: {{ $member->user->cell->leader->name ?? '-' }}
                             </div>
                         </td>
-                        <td class="px-8 py-6">
-                            @php
-                                $statusClasses = [
-                                    'Active' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
-                                    'Inactive' => 'bg-slate-50 text-slate-600 border-slate-100',
-                                    'Visitor' => 'bg-amber-50 text-amber-700 border-amber-100',
-                                    'Converted' => 'bg-blue-50 text-blue-700 border-blue-100',
-                                ];
-                                $statusClass = $statusClasses[$member->status] ?? 'bg-slate-50 text-slate-600 border-slate-100';
-                            @endphp
-                            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border {{ $statusClass }}">
+                        <td class="px-12 py-8">
+                            <span class="px-4 py-2 border text-[9px] font-black uppercase tracking-[0.2em] {{ $member->status == 'Active' ? 'border-accent text-accent' : 'border-neutral-700 text-neutral-500' }}">
                                 {{ $member->status }}
                             </span>
                         </td>
-                        <td class="px-8 py-6 text-right">
-                            <div class="flex items-center justify-end gap-2">
-                                <a href="{{ route('members.show', $member) }}" class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-accent hover:text-white transition-all">
-                                    <i class="fas fa-eye text-xs"></i>
+                        <td class="px-12 py-8 text-right">
+                            <div class="flex items-center justify-end gap-6 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                                <a href="{{ route('members.show', $member) }}" class="text-neutral-500 hover:text-white transition-all">
+                                    <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{{ route('members.edit', $member) }}" class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-900 hover:text-white transition-all">
-                                    <i class="fas fa-pen text-xs"></i>
+                                <a href="{{ route('members.edit', $member) }}" class="text-neutral-500 hover:text-accent transition-all">
+                                    <i class="fas fa-pen"></i>
                                 </a>
                             </div>
                         </td>

@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'MDA CHURCH') }} - Elite V8 ERP</title>
+    <title>{{ config('app.name', 'MDA CHURCH') }} - Neo-Architectural ERP</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -18,28 +18,27 @@
     
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
 </head>
-<body class="bg-main text-body antialiased selection:bg-accent selection:text-white">
+<body class="bg-primary-dark text-neutral-400 antialiased selection:bg-accent selection:text-black bg-mesh-dark">
 
-    <div class="flex min-h-screen">
-        <!-- SIDEBAR (280px Width as per specification) -->
-        <aside class="w-[280px] sidebar-gradient hidden lg:flex flex-col sticky top-0 h-screen z-40">
-            <div class="p-10">
-                <div class="flex items-center gap-3 group">
-                    <div class="w-10 h-10 gold-gradient rounded-lg flex items-center justify-center shadow-lg shadow-accent/20 transition-transform group-hover:rotate-6">
-                        <i class="fas fa-church text-white text-xl"></i>
+    <div class="flex min-h-screen relative overflow-hidden">
+        <!-- ASYMMETRIC SIDEBAR -->
+        <aside class="w-[320px] sidebar-neo hidden lg:flex flex-col sticky top-0 h-screen z-40 bg-black/50 backdrop-blur-md">
+            <div class="p-12">
+                <div class="flex flex-col gap-2 group">
+                    <div class="w-12 h-12 bg-white flex items-center justify-center transition-all group-hover:bg-accent group-hover:-translate-y-1">
+                        <i class="fas fa-church text-black text-2xl"></i>
                     </div>
-                    <div class="flex flex-col">
-                        <span class="text-xl font-display font-black text-title tracking-tighter uppercase leading-none">MDA <span class="text-accent">CHURCH</span></span>
-                        <span class="text-[9px] text-gray-400 font-bold uppercase tracking-[0.2em] mt-1">Enterprise Solution</span>
+                    <div class="flex flex-col mt-4">
+                        <span class="text-3xl font-display font-black text-white tracking-[0.1em] uppercase leading-none">MDA</span>
+                        <span class="text-xs text-accent font-black uppercase tracking-[0.4em] mt-1">CHURCH</span>
                     </div>
                 </div>
             </div>
 
-            <nav class="flex-1 px-6 space-y-1 py-4">
-                <div class="pb-3 pt-2">
-                    <span class="text-[10px] font-black text-slate-500 dark:text-slate-600 uppercase tracking-[0.2em] px-4">Menu Principal</span>
+            <nav class="flex-1 space-y-1 py-8">
+                <div class="px-12 mb-8">
+                    <div class="h-[1px] w-8 bg-accent/30"></div>
                 </div>
                 
                 <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')" icon="fas fa-grid-2">Dashboard</x-nav-link>
@@ -48,105 +47,72 @@
                 <x-nav-link href="{{ route('reports.index') }}" :active="request()->routeIs('reports.*')" icon="fas fa-file-invoice-dollar">Relatórios Semanais</x-nav-link>
 
                 @if(auth()->user()->role === 'Admin' || auth()->user()->role === 'Treasurer')
-                <div class="pt-8 pb-3">
-                    <span class="text-[10px] font-black text-slate-500 dark:text-slate-600 uppercase tracking-[0.2em] px-4">Controladoria</span>
+                <div class="px-12 py-8">
+                    <div class="h-[1px] w-8 bg-neutral-800"></div>
                 </div>
-                <x-nav-link href="{{ route('finance.reports.dre') }}" :active="request()->routeIs('finance.*')" icon="fas fa-vault">Contabilidade (DRE)</x-nav-link>
-                <x-nav-link href="{{ route('admin.audits.index') }}" :active="request()->routeIs('admin.audits.*')" icon="fas fa-fingerprint">Auditoria Forense</x-nav-link>
+                <x-nav-link href="{{ route('finance.reports.dre') }}" :active="request()->routeIs('finance.*')" icon="fas fa-vault">Contabilidade</x-nav-link>
+                <x-nav-link href="{{ route('admin.audits.index') }}" :active="request()->routeIs('admin.audits.*')" icon="fas fa-fingerprint">Auditoria</x-nav-link>
                 @endif
             </nav>
 
-            <div class="p-8 border-t border-slate-200 dark:border-white/5 bg-slate-100/50 dark:bg-black/10">
+            <div class="p-12 border-t border-white/5">
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="flex items-center gap-4 w-full px-6 py-4 text-red-700 dark:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-2xl transition-all font-black text-xs uppercase tracking-widest">
-                        <i class="fas fa-power-off text-lg"></i>
-                        <span>Encerrar Sessão</span>
+                    <button type="submit" class="flex items-center gap-4 text-neutral-600 hover:text-white transition-all font-black text-[10px] uppercase tracking-[0.2em]">
+                        <i class="fas fa-power-off"></i>
+                        <span>Logout</span>
                     </button>
                 </form>
             </div>
         </aside>
 
-        <!-- MAIN CONTENT AREA -->
+        <!-- MAIN CONTENT -->
         <div class="flex-1 flex flex-col min-w-0">
-            <!-- FLOATING HEADER -->
-            <div class="px-8 pt-8">
-                <header class="glassmorphism rounded-3xl h-20 flex items-center justify-between px-10 shadow-lg shadow-black/5">
-                    <div class="flex items-center gap-6">
-                        <!-- Mobile Menu Trigger -->
-                        <button class="lg:hidden text-title text-2xl">
-                            <i class="fas fa-bars"></i>
-                        </button>
-                        <h2 class="text-xl font-display font-black text-title tracking-tighter">
-                            @yield('header_title', 'Visão Geral')
-                        </h2>
+            <!-- ASYMMETRIC HEADER -->
+            <header class="h-32 flex items-center justify-between px-16 z-30">
+                <div class="flex flex-col">
+                    <span class="text-[10px] font-black text-accent uppercase tracking-[0.5em] mb-2">Workspace</span>
+                    <h2 class="text-4xl font-display font-black text-white tracking-tighter uppercase">
+                        @yield('header_title', 'Visão Geral')
+                    </h2>
+                </div>
+
+                <div class="flex items-center gap-12">
+                    <!-- Search -->
+                    <div class="hidden md:flex items-center gap-4 text-neutral-500 border-b border-white/5 pb-2 transition-all focus-within:border-accent">
+                        <i class="fas fa-search text-xs"></i>
+                        <input type="text" placeholder="BUSCAR..." class="bg-transparent border-none focus:ring-0 p-0 text-[10px] font-black tracking-widest placeholder:text-neutral-700 w-40">
                     </div>
 
-                    <div class="flex items-center gap-8">
-                        <!-- Theme Toggle -->
-                        <button id="theme-toggle" class="w-10 h-10 rounded-xl bg-gray-500/5 dark:bg-white/5 border border-black/5 dark:border-white/10 flex items-center justify-center text-gray-500 hover:text-accent transition-all">
-                            <i class="fas fa-sun hidden dark:block"></i>
-                            <i class="fas fa-moon block dark:hidden"></i>
-                        </button>
-
-                        <!-- Notifications/Search -->
-                        <div class="hidden md:flex items-center gap-6 text-slate-400">
-                            <div class="relative group cursor-pointer">
-                                <i class="fas fa-search group-hover:text-accent transition-colors"></i>
-                            </div>
-                            <div class="relative group cursor-pointer">
-                                <i class="fas fa-bell group-hover:text-accent transition-colors"></i>
-                                <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-primary-dark"></span>
-                            </div>
+                    <!-- User -->
+                    <div class="flex items-center gap-6 group cursor-pointer">
+                        <div class="flex flex-col text-right">
+                            <span class="text-[10px] font-black text-white uppercase tracking-widest">{{ Auth::user()->name }}</span>
+                            <span class="text-[8px] font-black text-accent uppercase tracking-[0.3em]">Authorized</span>
                         </div>
-
-                        <!-- User Profile -->
-                        <div class="flex items-center gap-4 pl-8 border-l border-slate-200 dark:border-white/10">
-                            <div class="flex flex-col text-right hidden sm:block">
-                                <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Administrador do Sistema</span>
-                                <span class="text-xs font-black text-accent uppercase tracking-widest">ADMIN</span>
-                            </div>
-                            <div class="w-11 h-11 rounded-full gold-gradient p-[2px] shadow-lg shadow-orange-500/20">
-                                <div class="w-full h-full bg-main rounded-full flex items-center justify-center text-white font-black text-sm">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                            </div>
+                        <div class="w-12 h-12 bg-white flex items-center justify-center transition-all group-hover:bg-accent group-hover:-rotate-12">
+                            <i class="fas fa-user text-black"></i>
                         </div>
                     </div>
-                </header>
-            </div>
+                </div>
+            </header>
 
-            <!-- VIEWPORT CONTENT -->
-            <main class="p-10 animate-fade-up">
-                {{ $slot ?? '' }}
-                @yield('content')
+            <!-- VIEWPORT -->
+            <main class="px-16 pb-16">
+                <div class="reveal-stagger">
+                    {{ $slot ?? '' }}
+                    @yield('content')
+                </div>
             </main>
         </div>
+
+        <!-- DECORATIVE ELEMENTS (Z-Axis Depth) -->
+        <div class="absolute -top-20 -right-20 w-96 h-96 bg-accent/5 blur-[120px] rounded-full pointer-events-none"></div>
+        <div class="absolute top-1/2 -left-20 w-64 h-64 bg-accent/5 blur-[100px] rounded-full pointer-events-none"></div>
     </div>
 
     @stack('scripts')
-
-    <script>
-        // Lógica de Troca de Tema (Claro/Escuro)
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const htmlElement = document.documentElement;
-
-        // Verifica preferência salva
-        if (localStorage.getItem('theme') === 'light') {
-            htmlElement.classList.remove('dark');
-        } else {
-            htmlElement.classList.add('dark');
-        }
-
-        themeToggleBtn.addEventListener('click', () => {
-            if (htmlElement.classList.contains('dark')) {
-                htmlElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            } else {
-                htmlElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            }
-        });
-    </script>
 </body>
+</html>
+
 </html>

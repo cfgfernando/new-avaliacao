@@ -5,19 +5,19 @@
 @section('content')
 <div class="space-y-8">
     <!-- Action Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
         <div>
-            <h1 class="text-3xl font-black text-title tracking-tight">Relatórios de Célula</h1>
-            <p class="text-slate-500 font-medium mt-1">Acompanhe a frequência, ofertas e o crescimento das células.</p>
+            <h1 class="text-4xl font-black text-white leading-none tracking-tighter">RELATÓRIOS <br><span class="text-accent">DE CÉLULA.</span></h1>
+            <p class="text-neutral-500 font-medium mt-4">Gestão e acompanhamento de mordomia financeira.</p>
         </div>
-        <a href="{{ route('reports.create') }}" class="btn-primary">
+        <a href="{{ route('reports.create') }}" class="btn-neo">
             <i class="fas fa-file-circle-plus"></i>
-            <span>Novo Relatório</span>
+            <span>Gerar Malote</span>
         </a>
     </div>
 
     <!-- Reports Grid/Table -->
-    <div class="card-elite">
+    <div class="card-neo bg-primary-card">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
@@ -31,51 +31,43 @@
                 </thead>
                 <tbody class="divide-y divide-slate-50">
                     @forelse($reports as $report)
-                    <tr class="hover:bg-slate-50/30 transition-colors group">
-                        <td class="px-8 py-6">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-orange-50 text-accent flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+                    <tr class="hover:bg-white/[0.02] transition-colors group">
+                        <td class="px-12 py-8">
+                            <div class="flex items-center gap-6">
+                                <div class="w-12 h-12 bg-neutral-900 flex items-center justify-center text-accent font-black border border-white/5">
                                     <i class="fas fa-calendar-day"></i>
                                 </div>
                                 <div>
-                                    <div class="text-sm font-black text-title">{{ $report->cell->name }}</div>
-                                    <div class="text-[11px] font-bold text-slate-400">{{ \Carbon\Carbon::parse($report->report_date)->format('d/m/Y') }}</div>
+                                    <div class="text-sm font-black text-white uppercase tracking-widest">{{ $report->cell->name }}</div>
+                                    <div class="text-[10px] font-bold text-neutral-600 tracking-widest">{{ \Carbon\Carbon::parse($report->report_date)->format('D, d M Y') }}</div>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-8 py-6 text-center">
+                        <td class="px-12 py-8 text-center">
                             <div class="flex flex-col items-center">
-                                <span class="text-sm font-black text-title">{{ $report->member_count + $report->visitor_count }}</span>
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pessoas</span>
+                                <span class="text-lg font-black text-white leading-none">{{ $report->member_count + $report->visitor_count }}</span>
+                                <span class="text-[8px] font-black text-accent uppercase tracking-[0.3em] mt-2">Pessoas</span>
                             </div>
                         </td>
-                        <td class="px-8 py-6 text-right">
-                            <div class="text-sm font-black text-emerald-600">
-                                R$ {{ number_format($report->offering_amount, 2, ',', '.') }}
+                        <td class="px-12 py-8 text-right">
+                            <div class="text-2xl font-black text-emerald-500 leading-none">
+                                {{ number_format($report->offering_amount, 2, ',', '.') }}
                             </div>
-                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Oferta Cell</div>
+                            <div class="text-[8px] font-black text-neutral-600 uppercase tracking-widest mt-2">BRL CONSUR</div>
                         </td>
-                        <td class="px-8 py-6">
-                            @php
-                                $statusClasses = [
-                                    'Draft' => 'bg-slate-100 text-slate-600 border-slate-200',
-                                    'Submitted' => 'bg-blue-50 text-blue-700 border-blue-100',
-                                    'Conciliated' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
-                                ];
-                                $statusClass = $statusClasses[$report->status] ?? 'bg-slate-50 text-slate-600 border-slate-100';
-                            @endphp
-                            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border {{ $statusClass }}">
+                        <td class="px-12 py-8">
+                            <span class="px-4 py-2 border text-[9px] font-black uppercase tracking-[0.2em] {{ $report->status == 'Conciliated' ? 'border-accent text-accent' : 'border-neutral-700 text-neutral-500' }}">
                                 {{ $report->status }}
                             </span>
                         </td>
-                        <td class="px-8 py-6 text-right">
-                            <div class="flex items-center justify-end gap-2">
-                                <a href="{{ route('reports.show', $report) }}" class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-accent hover:text-white transition-all shadow-sm">
-                                    <i class="fas fa-eye text-xs"></i>
+                        <td class="px-12 py-8 text-right">
+                            <div class="flex items-center justify-end gap-6 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                                <a href="{{ route('reports.show', $report) }}" class="text-neutral-500 hover:text-white transition-all">
+                                    <i class="fas fa-eye"></i>
                                 </a>
                                 @if($report->status === 'Draft')
-                                <a href="{{ route('reports.edit', $report) }}" class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-900 hover:text-white transition-all shadow-sm">
-                                    <i class="fas fa-pen text-xs"></i>
+                                <a href="{{ route('reports.edit', $report) }}" class="text-neutral-500 hover:text-accent transition-all">
+                                    <i class="fas fa-pen"></i>
                                 </a>
                                 @endif
                             </div>

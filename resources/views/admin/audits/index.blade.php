@@ -5,69 +5,67 @@
 @section('content')
 <div class="space-y-8">
     <!-- Action Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
         <div>
-            <h1 class="text-3xl font-black text-title tracking-tight">Logs de Auditoria</h1>
-            <p class="text-slate-500 font-medium mt-1">Rastreabilidade completa de todas as alterações realizadas no sistema.</p>
+            <h1 class="text-4xl font-black text-white leading-none tracking-tighter">AUDITORIA <br><span class="text-red-500">FORENSE.</span></h1>
+            <p class="text-neutral-500 font-medium mt-4">Rastreabilidade completa e integridade de dados.</p>
         </div>
-        <div class="px-4 py-2 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-red-100 text-red-600 flex items-center justify-center">
-                <i class="fas fa-shield-halved"></i>
-            </div>
-            <span class="text-[10px] font-black text-red-700 uppercase tracking-widest">Nível de Segurança: Máximo</span>
+        <div class="px-6 py-4 border border-red-500/20 bg-red-500/5 flex items-center gap-4">
+            <i class="fas fa-shield-halved text-red-500"></i>
+            <span class="text-[10px] font-black text-red-500 uppercase tracking-[0.3em]">Protocolo de Segurança: Nível 5</span>
         </div>
     </div>
 
     <!-- Audit List -->
-    <div class="card-elite">
+    <div class="card-neo bg-primary-card">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-slate-50/50 border-b border-slate-100">
-                        <th class="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Evento / Usuário</th>
-                        <th class="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Módulo (Auditable)</th>
-                        <th class="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Endereço IP</th>
-                        <th class="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Data/Hora</th>
-                        <th class="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Ações</th>
+                <thead class="bg-black/20 text-neutral-600 text-[9px] uppercase font-black tracking-widest">
+                    <tr>
+                        <th class="px-12 py-6">Evento / Operador</th>
+                        <th class="px-12 py-6">Objeto Afetado</th>
+                        <th class="px-12 py-6">Endereço IP</th>
+                        <th class="px-12 py-6">Timestamp</th>
+                        <th class="px-12 py-6 text-right">Ações</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-50">
+                <tbody class="divide-y divide-white/5">
                     @forelse($audits as $audit)
-                    <tr class="hover:bg-slate-50/30 transition-colors group">
-                        <td class="px-8 py-6">
-                            <div class="flex items-center gap-4">
+                    <tr class="hover:bg-white/[0.02] transition-colors group font-mono">
+                        <td class="px-12 py-8">
+                            <div class="flex items-center gap-6">
                                 @php
                                     $eventColors = [
-                                        'created' => 'bg-emerald-50 text-emerald-600',
-                                        'updated' => 'bg-blue-50 text-blue-600',
-                                        'deleted' => 'bg-red-50 text-red-600',
+                                        'created' => 'border-accent text-accent',
+                                        'updated' => 'border-white text-white',
+                                        'deleted' => 'border-red-500 text-red-500',
                                     ];
-                                    $eventColor = $eventColors[$audit->event] ?? 'bg-slate-50 text-slate-600';
+                                    $eventColor = $eventColors[$audit->event] ?? 'border-neutral-700 text-neutral-500';
                                 @endphp
-                                <div class="w-10 h-10 rounded-xl {{ $eventColor }} flex items-center justify-center text-[10px] font-black uppercase group-hover:rotate-6 transition-transform">
+                                <div class="w-12 h-12 border {{ $eventColor }} flex items-center justify-center text-[9px] font-black uppercase group-hover:bg-current group-hover:text-black transition-all">
                                     {{ substr($audit->event, 0, 3) }}
                                 </div>
                                 <div>
-                                    <div class="text-sm font-black text-title">{{ $audit->user->name ?? 'Sistema' }}</div>
-                                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ $audit->event }}</div>
+                                    <div class="text-xs font-black text-white uppercase tracking-widest">{{ $audit->user->name ?? 'SYSTEM' }}</div>
+                                    <div class="text-[9px] font-bold text-neutral-600 uppercase tracking-widest">{{ $audit->event }}</div>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-8 py-6">
-                            <span class="text-xs font-bold text-slate-600">
+                        <td class="px-12 py-8">
+                            <span class="text-[10px] font-black text-white uppercase tracking-widest">
                                 {{ class_basename($audit->auditable_type) }}
                             </span>
-                            <span class="text-[10px] font-medium text-slate-400 ml-1">#{{ $audit->auditable_id }}</span>
+                            <span class="text-[9px] font-bold text-accent ml-2">#{{ $audit->auditable_id }}</span>
                         </td>
-                        <td class="px-8 py-6">
-                            <code class="text-[10px] font-black text-slate-500 bg-slate-100 px-2 py-1 rounded-md">{{ $audit->ip_address }}</code>
+                        <td class="px-12 py-8">
+                            <code class="text-[10px] font-black text-neutral-500 bg-neutral-900 border border-white/5 px-3 py-1">{{ $audit->ip_address }}</code>
                         </td>
-                        <td class="px-8 py-6 text-xs font-bold text-slate-500">
-                            {{ $audit->created_at->format('d/m/Y H:i:s') }}
+                        <td class="px-12 py-8 text-[10px] font-black text-neutral-600 uppercase tracking-widest">
+                            {{ $audit->created_at->format('Y.m.d | H:i:s') }}
                         </td>
-                        <td class="px-8 py-6 text-right">
-                            <a href="{{ route('admin.audits.show', $audit) }}" class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-900 hover:text-white transition-all shadow-sm">
-                                <i class="fas fa-search-plus text-xs"></i>
+                        <td class="px-12 py-8 text-right">
+                            <a href="{{ route('admin.audits.show', $audit) }}" class="text-neutral-500 hover:text-white transition-all">
+                                <i class="fas fa-terminal"></i>
                             </a>
                         </td>
                     </tr>
