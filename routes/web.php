@@ -53,10 +53,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('reports/{report}/submit', [WeeklyReportController::class, 'submit'])->name('reports.submit');
     Route::post('reports/{report}/conciliate', [WeeklyReportController::class, 'conciliate'])->name('reports.conciliate');
 
-    // ----------------------------------------------------------
-    // AUDITORIA FORENSE (Admin)
-    // ----------------------------------------------------------
-    Route::middleware('role:Admin')->group(function () {
+    Route::middleware('role:Admin')->prefix('admin')->group(function () {
+        // Categorias de Menu
+        Route::post('menus/categories', [\App\Http\Controllers\Admin\MenuController::class, 'storeCategory'])->name('admin.menus.categories.store');
+        Route::put('menus/categories/{category}', [\App\Http\Controllers\Admin\MenuController::class, 'updateCategory'])->name('admin.menus.categories.update');
+
+        // Menus
+        Route::get('menus', [\App\Http\Controllers\Admin\MenuController::class, 'index'])->name('admin.menus.index');
+        Route::post('menus/store', [\App\Http\Controllers\Admin\MenuController::class, 'store'])->name('admin.menus.store');
+        Route::put('menus/{menu}', [\App\Http\Controllers\Admin\MenuController::class, 'update'])->name('admin.menus.update');
+        Route::patch('menus/{menu}/toggle', [\App\Http\Controllers\Admin\MenuController::class, 'toggleStatus'])->name('admin.menus.toggle');
+        Route::post('menus/reorder', [\App\Http\Controllers\Admin\MenuController::class, 'reorder'])->name('admin.menus.reorder');
+        Route::delete('menus/{menu}', [\App\Http\Controllers\Admin\MenuController::class, 'destroy'])->name('admin.menus.destroy');
+
+        // Auditoria Customizada
+        Route::get('logs', function() {
+            $logs = \App\Models\AuditLog::with('user')->orderBy('created_at', 'desc')->paginate(30);
+            return view('admin.audits.custom_index', compact('logs'));
+        })->name('admin.logs.index');
+
+        // Auditoria Forense (Existente)
         Route::get('audits', [AuditController::class, 'index'])->name('admin.audits.index');
         Route::get('audits/{audit}', [AuditController::class, 'show'])->name('admin.audits.show');
     });

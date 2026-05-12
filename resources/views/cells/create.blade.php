@@ -8,7 +8,7 @@
             <!-- SECTION: INFORMAÇÕES BÁSICAS -->
             <div class="card-elite">
                 <div class="p-8 border-b border-black/5 dark:border-white/5 bg-gray-500/5 flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-lg gold-gradient flex items-center justify-center text-white shadow-accent">
+                    <div class="w-10 h-10 rounded-lg gold-gradient flex items-center justify-center text-title shadow-accent">
                         <i class="fas fa-info-circle"></i>
                     </div>
                     <div>
@@ -56,7 +56,7 @@
             <!-- SECTION: LOCALIZAÇÃO -->
             <div class="card-elite">
                 <div class="p-8 border-b border-black/5 dark:border-white/5 bg-gray-500/5 flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-lg gold-gradient flex items-center justify-center text-white shadow-accent">
+                    <div class="w-10 h-10 rounded-lg gold-gradient flex items-center justify-center text-title shadow-accent">
                         <i class="fas fa-map-marker-alt"></i>
                     </div>
                     <div>

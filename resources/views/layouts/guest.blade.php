@@ -1,41 +1,53 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'MDA CHURCH') }}</title>
+        <title>{{ config('app.name', 'MDA Church ERP') }}</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Scripts & Styles -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="font-sans antialiased bg-primary-dark text-gray-100">
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-[#0f151f] selection:bg-accent selection:text-white">
-        <div class="animate-fade-up">
-            <a href="/" class="flex flex-col items-center gap-4 group">
-                <div class="w-16 h-16 gold-gradient rounded-2xl flex items-center justify-center shadow-accent transition-transform group-hover:scale-110">
-                    <i class="fas fa-church text-white text-3xl"></i>
+        <!-- Scripts -->
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    </head>
+    <body class="font-sans text-primary-dark antialiased bg-background">
+        <div class="min-h-screen flex flex-col sm:justify-center items-center relative overflow-hidden">
+            <!-- BACKGROUND IMAGE WITH OVERLAY -->
+            <div class="absolute inset-0 z-0 bg-primary">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Interior_of_the_Cathedral_of_Bras%C3%ADlia.jpg/1920px-Interior_of_the_Cathedral_of_Bras%C3%ADlia.jpg" alt="Background" class="w-full h-full object-cover opacity-60 mix-blend-overlay">
+                <div class="absolute inset-0 bg-gradient-to-br from-primary/80 via-transparent to-accent/20"></div>
+            </div>
+
+            <div class="relative z-10 w-full flex flex-col items-center py-12">
+                <div class="mb-8 sm:mb-10 text-center animate-reveal-up px-4">
+                    <a href="/" class="flex flex-col items-center gap-4 group">
+                        <div class="w-16 h-16 sm:w-20 sm:h-20 bg-accent rounded-2xl flex items-center justify-center text-white text-3xl sm:text-4xl shadow-2xl shadow-accent/40 transition-transform group-hover:scale-105 group-hover:rotate-3 duration-500">
+                            <i class="fas fa-church"></i>
+                        </div>
+                        <h1 class="text-3xl sm:text-4xl font-black text-white uppercase tracking-tighter mt-2 sm:mt-4">
+                            MDA <span class="text-accent">Church</span>
+                        </h1>
+                        <p class="text-accent/80 font-bold text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.4em] mt-1 sm:mt-2">Enterprise Resource Planning</p>
+                    </a>
                 </div>
-                <h1 class="text-3xl font-display font-extrabold text-white tracking-tighter uppercase">MDA <span class="text-accent">CHURCH</span></h1>
-            </a>
-        </div>
 
-        <div class="w-full sm:max-w-md mt-8 px-8 py-10 bg-primary border border-white/5 shadow-2xl rounded-2xl animate-fade-up" style="animation-delay: 0.1s">
-            {{ $slot }}
-        </div>
+                <div class="w-[calc(100%-2rem)] sm:w-full sm:max-w-md mx-4 sm:mx-0 px-6 sm:px-10 py-8 sm:py-12 bg-white/90 backdrop-blur-2xl shadow-[0_0_60px_-15px_rgba(0,0,0,0.5)] shadow-accent/10 rounded-3xl sm:rounded-[2rem] border border-white/40 overflow-hidden relative animate-reveal-up delay-100 hover:shadow-accent/20 transition-all duration-500 sm:hover:-translate-y-1">
+                    <!-- Decorative Element -->
+                    <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-accent to-accent-hover shadow-lg shadow-accent/50"></div>
+                    
+                    {{ $slot }}
+                </div>
 
-        <div class="mt-8 text-gray-600 text-[10px] font-bold uppercase tracking-[0.2em] animate-fade-up" style="animation-delay: 0.2s">
-            Elite V8 Security & Facilities Pattern
+                <div class="mt-12 text-center text-white/50 text-xs font-medium animate-reveal-up delay-200">
+                    &copy; {{ date('Y') }} MDA Church ERP. <span class="text-accent/60">Tecnologia para o Reino.</span>
+                </div>
+            </div>
         </div>
-    </div>
-</body>
+    </body>
 </html>

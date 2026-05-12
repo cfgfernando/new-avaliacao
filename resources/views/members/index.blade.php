@@ -1,132 +1,134 @@
-@extends('layouts.app')
+<x-app-layout>
+    @section('title', 'Gestão de Membros')
 
-@section('header_title', 'Gestão de Membros')
-
-@section('content')
-<div class="space-y-8">
-    <!-- Action Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
-        <div>
-            <h1 class="text-4xl font-black text-white leading-none tracking-tighter">MEMBROS <br><span class="text-accent">& DISCÍPULOS.</span></h1>
-            <p class="text-neutral-500 font-medium mt-4">Gestão estratégica de crescimento espiritual.</p>
-        </div>
-        <a href="{{ route('members.create') }}" class="btn-neo">
-            <i class="fas fa-user-plus"></i>
-            <span>Novo Registro</span>
-        </a>
-    </div>
-
-    <!-- Filters Card -->
-    <div class="card-neo p-12 bg-primary-card mb-8">
-        <form action="{{ route('members.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div class="space-y-3">
-                <label class="text-[9px] font-black uppercase tracking-[0.3em] text-accent">Busca Nominal</label>
-                <input type="text" name="search" value="{{ request('search') }}" 
-                       placeholder="NOME OU EMAIL..."
-                       class="input-neo">
+    <div class="space-y-8">
+        <!-- Action Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
+            <div>
+                <h1 class="text-3xl font-bold text-primary-dark">Lista de Membros</h1>
+                <p class="text-primary-light text-sm mt-1">Gerencie todos os membros e discípulos da igreja.</p>
             </div>
-
-            <div class="space-y-3">
-                <label class="text-[9px] font-black uppercase tracking-[0.3em] text-neutral-600">Status</label>
-                <select name="status" class="input-neo">
-                    <option value="">TODOS</option>
-                    <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>ATIVO</option>
-                    <option value="Inactive" {{ request('status') == 'Inactive' ? 'selected' : '' }}>INATIVO</option>
-                    <option value="Visitor" {{ request('status') == 'Visitor' ? 'selected' : '' }}>VISITANTE</option>
-                    <option value="Converted" {{ request('status') == 'Converted' ? 'selected' : '' }}>CONVERTIDO</option>
-                </select>
-            </div>
-
-            <div class="space-y-3">
-                <label class="text-[9px] font-black uppercase tracking-[0.3em] text-neutral-600">Unidade/Célula</label>
-                <select name="cell_id" class="input-neo">
-                    <option value="">TODAS</option>
-                    @foreach($accessibleCells as $id => $name)
-                        <option value="{{ $id }}" {{ request('cell_id') == $id ? 'selected' : '' }}>{{ $name }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="flex items-end">
-                <button type="submit" class="btn-neo w-full">
-                    Filtrar Resultados
-                </button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Members Table -->
-    <div class="card-elite">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-slate-50/50 border-b border-slate-100">
-                        <th class="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Membro</th>
-                        <th class="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Vínculo</th>
-                        <th class="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Status</th>
-                        <th class="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Ações</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-50">
-                    @forelse($members as $member)
-                    <tr class="hover:bg-white/[0.02] transition-colors group">
-                        <td class="px-12 py-8">
-                            <div class="flex items-center gap-6">
-                                <div class="w-12 h-12 bg-neutral-900 flex items-center justify-center text-accent font-black border border-white/5">
-                                    {{ substr($member->user->name, 0, 1) }}
-                                </div>
-                                <div>
-                                    <div class="text-sm font-black text-white uppercase tracking-widest">{{ $member->user->name }}</div>
-                                    <div class="text-[10px] font-bold text-neutral-600 tracking-widest">{{ $member->user->email }}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-12 py-8">
-                            <div class="text-[10px] font-black text-white uppercase tracking-widest">
-                                <i class="fas fa-church text-accent mr-3"></i>
-                                {{ $member->user->cell->name ?? 'SEM CÉLULA' }}
-                            </div>
-                            <div class="text-[9px] font-bold text-neutral-600 mt-2 uppercase">
-                                LÍDER: {{ $member->user->cell->leader->name ?? '-' }}
-                            </div>
-                        </td>
-                        <td class="px-12 py-8">
-                            <span class="px-4 py-2 border text-[9px] font-black uppercase tracking-[0.2em] {{ $member->status == 'Active' ? 'border-accent text-accent' : 'border-neutral-700 text-neutral-500' }}">
-                                {{ $member->status }}
-                            </span>
-                        </td>
-                        <td class="px-12 py-8 text-right">
-                            <div class="flex items-center justify-end gap-6 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                                <a href="{{ route('members.show', $member) }}" class="text-neutral-500 hover:text-white transition-all">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('members.edit', $member) }}" class="text-neutral-500 hover:text-accent transition-all">
-                                    <i class="fas fa-pen"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="4" class="px-8 py-20 text-center">
-                            <div class="flex flex-col items-center gap-4">
-                                <div class="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center text-slate-200">
-                                    <i class="fas fa-user-slash text-4xl"></i>
-                                </div>
-                                <p class="text-slate-400 font-bold">Nenhum membro encontrado com os filtros aplicados.</p>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+            <a href="{{ route('members.create') }}" class="btn-neo btn-primary">
+                <i class="fas fa-user-plus"></i>
+                <span>Novo Membro</span>
+            </a>
         </div>
 
-        @if($members->hasPages())
-        <div class="px-8 py-6 bg-slate-50/30 border-t border-slate-100">
-            {{ $members->links() }}
+        <!-- Filters Card -->
+        <div class="card-neo">
+            <form action="{{ route('members.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="space-y-2">
+                    <label class="text-[11px] font-bold uppercase tracking-wider text-primary-light">Busca Nominal</label>
+                    <input type="text" name="search" value="{{ request('search') }}" 
+                           placeholder="Nome ou email..."
+                           class="input-neo">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[11px] font-bold uppercase tracking-wider text-primary-light">Status</label>
+                    <select name="status" class="input-neo">
+                        <option value="">Todos</option>
+                        <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Ativo</option>
+                        <option value="Inactive" {{ request('status') == 'Inactive' ? 'selected' : '' }}>Inativo</option>
+                        <option value="Visitor" {{ request('status') == 'Visitor' ? 'selected' : '' }}>Visitante</option>
+                    </select>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[11px] font-bold uppercase tracking-wider text-primary-light">Célula</label>
+                    <select name="cell_id" class="input-neo">
+                        <option value="">Todas</option>
+                        @foreach($accessibleCells as $id => $name)
+                            <option value="{{ $id }}" {{ request('cell_id') == $id ? 'selected' : '' }}>{{ $name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="flex items-end">
+                    <button type="submit" class="btn-neo btn-primary w-full bg-primary hover:bg-primary-dark">
+                        <i class="fas fa-filter text-xs"></i>
+                        Filtrar
+                    </button>
+                </div>
+            </form>
         </div>
-        @endif
+
+        <!-- Members Table -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-gray-50/50">
+                        <tr>
+                            <th class="px-6 py-4 text-[10px] font-bold text-primary-light uppercase tracking-widest">Membro</th>
+                            <th class="px-6 py-4 text-[10px] font-bold text-primary-light uppercase tracking-widest">Vínculo</th>
+                            <th class="px-6 py-4 text-[10px] font-bold text-primary-light uppercase tracking-widest">Status</th>
+                            <th class="px-6 py-4 text-[10px] font-bold text-primary-light uppercase tracking-widest text-right">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        @forelse($members as $member)
+                        <tr class="hover:bg-gray-50/80 transition-colors group">
+                            <td class="px-6 py-5">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-accent/10 flex items-center justify-center text-accent font-bold rounded-lg border border-accent/20">
+                                        {{ substr($member->user->name, 0, 1) }}
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-bold text-primary-dark uppercase tracking-tight">{{ $member->user->name }}</div>
+                                        <div class="text-[10px] text-primary-light">{{ $member->user->email }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5">
+                                <div class="text-[10px] font-bold text-primary-dark uppercase tracking-wider">
+                                    <i class="fas fa-church text-accent mr-2"></i>
+                                    {{ $member->user->cell->name ?? 'Sem Célula' }}
+                                </div>
+                                <div class="text-[9px] text-primary-light mt-1 uppercase">
+                                    Líder: {{ $member->user->cell->leader->name ?? '-' }}
+                                </div>
+                            </td>
+                            <td class="px-6 py-5">
+                                @if($member->status == 'Active')
+                                    <span class="badge-success">Ativo</span>
+                                @else
+                                    <span class="bg-gray-100 text-gray-500 font-medium text-xs px-2.5 py-0.5 rounded-full border border-gray-200">
+                                        {{ $member->status }}
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-5 text-right">
+                                <div class="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <a href="{{ route('members.show', $member) }}" class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-primary-light hover:bg-accent hover:text-white transition-all">
+                                        <i class="fas fa-eye text-xs"></i>
+                                    </a>
+                                    <a href="{{ route('members.edit', $member) }}" class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-primary-light hover:bg-accent hover:text-white transition-all">
+                                        <i class="fas fa-pen text-xs"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="4" class="px-8 py-20 text-center">
+                                <div class="flex flex-col items-center gap-4">
+                                    <div class="w-20 h-20 rounded-full bg-gray-50 flex items-center justify-center text-gray-200">
+                                        <i class="fas fa-user-slash text-4xl"></i>
+                                    </div>
+                                    <p class="text-primary-light font-bold">Nenhum membro encontrado.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            @if($members->hasPages())
+            <div class="px-8 py-6 bg-gray-50/30 border-t border-gray-100">
+                {{ $members->links() }}
+            </div>
+            @endif
+        </div>
     </div>
-</div>
-@endsection
+</x-app-layout>

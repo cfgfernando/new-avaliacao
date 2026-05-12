@@ -1,4 +1,4 @@
-@props(['active', 'icon'])
+@props(['active', 'icon' => null])
 
 @php
 $classes = ($active ?? false)
@@ -7,9 +7,8 @@ $classes = ($active ?? false)
 @endphp
 
 <a {{ $attributes->merge(['class' => $classes]) }}>
-    <div class="w-8 flex justify-center">
-        <i class="{{ $icon }} text-base {{ $active ? 'text-accent' : '' }}"></i>
-    </div>
-    <span class="">{{ $slot }}</span>
+    @if($icon)
+        <i class="{{ $icon }} w-5"></i>
+    @endif
+    <span>{{ $slot }}</span>
 </a>
-

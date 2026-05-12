@@ -1,118 +1,154 @@
 <x-app-layout>
-    @section('header_title', 'Dashboard Administrativo')
+    @section('title', 'Dashboard')
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-        <!-- Card: Membros -->
-        <div class="card-neo p-12 bg-primary-card">
-            <div class="flex items-center justify-between mb-10">
-                <div class="text-neutral-500">
-                    <i class="fas fa-users text-3xl"></i>
+    <div class="space-y-10">
+        <!-- STATS CARDS WITH REVEAL -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Total de Membros -->
+            <div class="stats-card group animate-reveal-up">
+                <div class="stats-icon bg-blue-50 text-blue-600 ring-8 ring-blue-50/50">
+                    <i class="fas fa-users"></i>
                 </div>
-                <div class="h-[1px] w-8 bg-accent"></div>
-            </div>
-            <div>
-                <h3 class="text-neutral-600 text-[9px] font-black uppercase tracking-[0.3em] mb-4">Membros Ativos</h3>
-                <p class="text-6xl font-black text-white tracking-tighter leading-none">1.2k</p>
-                <div class="mt-8 text-[9px] font-black text-accent uppercase tracking-widest">+12.4% Δ</div>
-            </div>
-        </div>
-
-        <!-- Card: Células -->
-        <div class="card-neo p-12 bg-primary-card">
-            <div class="flex items-center justify-between mb-10">
-                <div class="text-neutral-500">
-                    <i class="fas fa-house-chimney text-3xl"></i>
+                <div>
+                    <p class="text-primary-light text-[10px] font-bold uppercase tracking-widest mb-1">Total de Membros</p>
+                    <p class="text-3xl font-black text-primary-dark tracking-tighter">1.248</p>
                 </div>
-                <div class="h-[1px] w-8 bg-accent"></div>
             </div>
-            <div>
-                <h3 class="text-neutral-600 text-[9px] font-black uppercase tracking-[0.3em] mb-4">Unidades Célula</h3>
-                <p class="text-6xl font-black text-white tracking-tighter leading-none">120</p>
-                <div class="mt-8 text-[9px] font-black text-white uppercase tracking-widest">ESTÁVEL</div>
-            </div>
-        </div>
 
-        <!-- Card: Conversões -->
-        <div class="card-neo p-12 bg-primary-card border-t-2 border-accent">
-            <div class="flex items-center justify-between mb-10">
-                <div class="text-accent">
-                    <i class="fas fa-bolt text-3xl"></i>
+            <!-- Células Ativas -->
+            <div class="stats-card group animate-reveal-up delay-100">
+                <div class="stats-icon bg-green-50 text-green-600 ring-8 ring-green-50/50">
+                    <i class="fas fa-home"></i>
                 </div>
-                <div class="h-[1px] w-8 bg-accent"></div>
-            </div>
-            <div>
-                <h3 class="text-neutral-600 text-[9px] font-black uppercase tracking-[0.3em] mb-4">Novas Conversões</h3>
-                <p class="text-6xl font-black text-accent tracking-tighter leading-none">84</p>
-                <div class="mt-8 text-[9px] font-black text-neutral-500 uppercase tracking-widest">YTD 2026</div>
-            </div>
-        </div>
-
-        <!-- Card: Saldo -->
-        <div class="card-neo p-12 bg-white">
-            <div class="flex items-center justify-between mb-10">
-                <div class="text-neutral-900">
-                    <i class="fas fa-sack-dollar text-3xl"></i>
+                <div>
+                    <p class="text-primary-light text-[10px] font-bold uppercase tracking-widest mb-1">Células Ativas</p>
+                    <p class="text-3xl font-black text-primary-dark tracking-tighter">42</p>
                 </div>
-                <div class="h-[1px] w-8 bg-neutral-900"></div>
             </div>
-            <div>
-                <h3 class="text-neutral-400 text-[9px] font-black uppercase tracking-[0.3em] mb-4">Consolidação Caixa</h3>
-                <p class="text-5xl font-black text-neutral-900 tracking-tighter leading-none">42.5k</p>
-                <div class="mt-8 text-[9px] font-black text-neutral-400 uppercase tracking-widest">BRL TOTAL</div>
-            </div>
-        </div>
-    </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Relatórios Recentes -->
-        <div class="lg:col-span-2 card-neo bg-primary-card overflow-hidden">
-            <div class="p-12 border-b border-white/5 flex justify-between items-center">
-                <h3 class="text-[11px] font-black text-white uppercase tracking-[0.3em]">Fluxo de Malotes Recentes</h3>
-                <a href="{{ route('reports.index') }}" class="text-[10px] font-black text-accent uppercase tracking-widest hover:underline">
-                    Ver Todos
-                </a>
+            <!-- Arrecadação Mensal -->
+            <div class="stats-card group animate-reveal-up delay-200">
+                <div class="stats-icon bg-amber-50 text-amber-600 ring-8 ring-amber-50/50">
+                    <i class="fas fa-hand-holding-usd"></i>
+                </div>
+                <div>
+                    <p class="text-primary-light text-[10px] font-bold uppercase tracking-widest mb-1">Arrecadação Mensal</p>
+                    <p class="text-3xl font-black text-primary-dark tracking-tighter">R$ 45.2k</p>
+                </div>
             </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead class="bg-black/20 text-neutral-600 text-[9px] uppercase font-black tracking-widest">
-                        <tr>
-                            <th class="px-12 py-6">Unidade</th>
-                            <th class="px-12 py-6">Liderança</th>
-                            <th class="px-12 py-6 text-center">Status</th>
-                            <th class="px-12 py-6 text-right">Valor</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-white/5">
-                        <tr class="hover:bg-white/[0.02] transition-colors group">
-                            <td class="px-12 py-8 font-black text-white text-xs uppercase tracking-widest">Célula Shalom</td>
-                            <td class="px-12 py-8 text-[10px] text-neutral-500 font-bold uppercase tracking-widest">Ricardo Silva</td>
-                            <td class="px-12 py-8 text-center">
-                                <span class="px-4 py-2 border border-accent text-accent text-[9px] font-black uppercase tracking-widest">CONCILIADO</span>
-                            </td>
-                            <td class="px-12 py-8 text-right font-black text-emerald-500 text-sm">450.00</td>
-                        </tr>
-                    </tbody>
-                </table>
+
+            <!-- Novos este Mês -->
+            <div class="stats-card group animate-reveal-up delay-300">
+                <div class="stats-icon bg-purple-50 text-purple-600 ring-8 ring-purple-50/50">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <div>
+                    <p class="text-primary-light text-[10px] font-bold uppercase tracking-widest mb-1">Novos este Mês</p>
+                    <p class="text-3xl font-black text-primary-dark tracking-tighter">+84</p>
+                </div>
             </div>
         </div>
 
-        <!-- Ações Rápidas -->
-        <div class="space-y-8">
-            <div class="card-neo p-12 bg-primary-card">
-                <h3 class="text-[10px] font-black text-white uppercase tracking-[0.3em] mb-10">Operações</h3>
+        <!-- RECENT ACTIVITY AREA -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 animate-reveal-up delay-300">
+            <!-- DATA TABLE -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="flex items-center justify-between px-2">
+                    <h3 class="text-2xl font-black text-primary-dark tracking-tight">Atividades Recentes</h3>
+                    <a href="{{ route('reports.index') }}" class="btn-neo bg-gray-100 text-primary-dark hover:bg-accent hover:text-white px-4 py-2">
+                        Ver Todos <i class="fas fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+
+                <div class="card-neo !p-0 overflow-hidden border-none shadow-xl">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-gray-50/80 backdrop-blur-md border-b border-gray-100">
+                            <tr>
+                                <th class="px-8 py-5 text-[10px] font-black text-primary-light uppercase tracking-[0.2em]">Célula</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-primary-light uppercase tracking-[0.2em]">Líder</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-primary-light uppercase tracking-[0.2em] text-center">Membros</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-primary-light uppercase tracking-[0.2em]">Status</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-primary-light uppercase tracking-[0.2em] text-right">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50">
+                            @foreach([1,2,3,4,5] as $i)
+                            <tr class="hover:bg-gray-50/80 transition-all duration-300 group/row">
+                                <td class="px-8 py-6">
+                                    <p class="text-sm font-bold text-primary-dark group-hover/row:text-accent transition-colors">Célula Shalom {{ $i }}</p>
+                                    <p class="text-[10px] text-primary-light font-medium uppercase mt-1">Sexta-feira • 20:00</p>
+                                </td>
+                                <td class="px-8 py-6">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-[10px] font-black text-primary-dark border border-gray-200 transition-transform group-hover/row:scale-110">
+                                            FL
+                                        </div>
+                                        <span class="text-sm font-bold text-primary-dark">Fernando Lima</span>
+                                    </div>
+                                </td>
+                                <td class="px-8 py-6 text-center">
+                                    <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-50 rounded-lg border border-gray-100">
+                                        <span class="text-xs font-black text-primary-dark">12</span>
+                                        <span class="text-[10px] text-primary-light font-bold">/ 15</span>
+                                    </div>
+                                </td>
+                                <td class="px-8 py-6">
+                                    <span class="badge-success">Lido</span>
+                                </td>
+                                <td class="px-8 py-6 text-right">
+                                    <button class="w-10 h-10 rounded-xl bg-gray-50 text-primary-light hover:bg-accent hover:text-white transition-all shadow-sm hover:shadow-lg hover:shadow-accent/30">
+                                        <i class="fas fa-arrow-right text-xs"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SIDE ACTION CARDS -->
+            <div class="space-y-8">
+                <h3 class="text-2xl font-black text-primary-dark tracking-tight px-2">Ações Rápidas</h3>
+                
                 <div class="grid grid-cols-1 gap-6">
-                    <a href="{{ route('reports.create') }}" class="btn-neo text-center">
-                        Novo Relatório
+                    <a href="{{ route('members.create') }}" class="card-neo !p-5 flex items-center gap-5 group border-none shadow-lg">
+                        <div class="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all duration-500 shadow-sm group-hover:shadow-accent/40 group-hover:rotate-6">
+                            <i class="fas fa-user-plus text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-black text-primary-dark group-hover:text-accent transition-colors">Novo Membro</p>
+                            <p class="text-[10px] text-primary-light font-bold uppercase tracking-widest mt-1">Cadastro Ministerial</p>
+                        </div>
                     </a>
-                    <a href="{{ route('members.create') }}" class="btn-neo bg-white text-black border-white hover:bg-neutral-200 hover:text-black text-center">
-                        Novo Registro
+
+                    <a href="{{ route('reports.create') }}" class="card-neo !p-5 flex items-center gap-5 group border-none shadow-lg">
+                        <div class="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 shadow-sm group-hover:shadow-blue-600/40 group-hover:-rotate-6">
+                            <i class="fas fa-file-signature text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-black text-primary-dark group-hover:text-blue-600 transition-colors">Lançar Relatório</p>
+                            <p class="text-[10px] text-primary-light font-bold uppercase tracking-widest mt-1">Reunião de Célula</p>
+                        </div>
                     </a>
                 </div>
-            </div>
 
-            <div class="card-neo p-12 bg-neutral-900 border-l-2 border-accent">
-                <p class="text-[10px] font-black text-accent uppercase tracking-widest mb-4">Nota do Sistema</p>
-                <p class="text-neutral-500 text-xs leading-relaxed font-medium">Ambiente configurado para Alta Performance. Todas as transações são auditadas em tempo real.</p>
+                <!-- PREMIUM SUPPORT CARD -->
+                <div class="bg-gradient-to-br from-primary to-[#2d3a54] rounded-[2rem] p-10 text-white relative overflow-hidden group shadow-2xl">
+                    <div class="absolute -right-10 -bottom-10 opacity-10 group-hover:scale-125 group-hover:-rotate-12 transition-transform duration-700 pointer-events-none">
+                        <i class="fas fa-church text-[12rem]"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center mb-6 border border-white/20">
+                            <i class="fas fa-headset text-accent"></i>
+                        </div>
+                        <h4 class="text-2xl font-black mb-3 tracking-tight text-white">Suporte Elite</h4>
+                        <p class="text-sm text-slate-200 font-medium leading-relaxed mb-8">Experiência tecnológica de alta performance para sua gestão ministerial.</p>
+                        <button class="w-full btn-neo btn-primary !py-4 shadow-2xl">
+                            Abrir Chamado <i class="fas fa-external-link-alt text-[10px]"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

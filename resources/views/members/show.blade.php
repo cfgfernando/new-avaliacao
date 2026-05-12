@@ -10,7 +10,7 @@
             Voltar para Lista
         </a>
         <div class="flex gap-3">
-            <a href="{{ route('members.edit', $member) }}" class="px-6 py-3 bg-slate-900 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-black transition-all shadow-lg shadow-black/10">
+            <a href="{{ route('members.edit', $member) }}" class="px-6 py-3 bg-slate-900 text-title rounded-xl font-black text-xs uppercase tracking-widest hover:bg-black transition-all shadow-lg shadow-black/10">
                 Editar Perfil
             </a>
         </div>
@@ -72,7 +72,7 @@
                     <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Discípulos Diretos</p>
                     <p class="text-3xl font-black text-title">{{ $member->disciples->count() }}</p>
                 </div>
-                <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-accent shadow-sm">
+                <div class="w-12 h-12 rounded-xl bg-title flex items-center justify-center text-accent shadow-sm">
                     <i class="fas fa-users-rays text-xl"></i>
                 </div>
             </div>

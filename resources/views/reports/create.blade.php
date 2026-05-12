@@ -20,7 +20,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
             <!-- Form Info -->
             <div class="lg:col-span-4 space-y-6">
-                <h1 class="text-6xl font-black text-white leading-none tracking-tighter">REGISTRO <br><span class="text-accent">MENSAL.</span></h1>
+                <h1 class="text-6xl font-black text-title leading-none tracking-tighter">REGISTRO <br><span class="text-accent">MENSAL.</span></h1>
                 <p class="text-neutral-500 font-medium text-sm leading-relaxed">
                     A precisão no registro de dados reflete a excelência da mordomia na obra do Senhor. Preencha os campos com atenção.
                 </p>

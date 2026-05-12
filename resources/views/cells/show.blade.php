@@ -9,14 +9,14 @@
             <i class="fas fa-arrow-left"></i>
             Voltar para Lista
         </a>
-        <a href="{{ route('cells.edit', $cell) }}" class="px-6 py-3 bg-slate-900 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-black transition-all shadow-lg shadow-black/10">
+        <a href="{{ route('cells.edit', $cell) }}" class="px-6 py-3 bg-slate-900 text-title rounded-xl font-black text-xs uppercase tracking-widest hover:bg-black transition-all shadow-lg shadow-black/10">
             Editar Célula
         </a>
     </div>
 
     <!-- Cell Header Card -->
     <div class="card-elite p-10 flex flex-col md:flex-row items-center gap-10">
-        <div class="w-32 h-32 rounded-3xl gold-gradient flex items-center justify-center text-white text-5xl font-black shadow-lg shadow-orange-500/20">
+        <div class="w-32 h-32 rounded-3xl gold-gradient flex items-center justify-center text-title text-5xl font-black shadow-lg shadow-orange-500/20">
             <i class="fas fa-church"></i>
         </div>
         <div class="flex-1 text-center md:text-left">

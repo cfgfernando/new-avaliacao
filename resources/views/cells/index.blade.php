@@ -21,7 +21,7 @@
         <div class="card-neo p-12 bg-primary-card mb-8">
             <div class="flex items-center gap-4 mb-8">
                 <div class="h-[1px] w-8 bg-accent"></div>
-                <span class="font-black uppercase tracking-[0.3em] text-[10px] text-white">Filtros de Busca</span>
+                <span class="font-black uppercase tracking-[0.3em] text-[10px] text-title">Filtros de Busca</span>
             </div>
             
             <div class="flex flex-col md:flex-row md:items-center gap-6">
@@ -40,7 +40,7 @@
         <div class="card-neo bg-primary-card">
             <div class="p-12 border-b border-white/5 flex items-center justify-between">
                 <div>
-                    <h3 class="text-2xl font-display font-black text-white uppercase tracking-tighter">Listagem de Unidades</h3>
+                    <h3 class="text-2xl font-display font-black text-title uppercase tracking-tighter">Listagem de Unidades</h3>
                     <p class="text-[10px] text-accent font-black uppercase mt-2 tracking-[0.3em]">Base de Dados Consolidada</p>
                 </div>
             </div>
@@ -58,28 +58,28 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-white/5">
                         @forelse($cells as $cell)
-                        <tr class="hover:bg-white/[0.02] transition-colors group">
+                        <tr class="hover:bg-title/[0.02] transition-colors group">
                             <td class="px-12 py-8">
                                 <div class="flex items-center gap-6">
                                     <div class="w-12 h-12 bg-neutral-900 flex items-center justify-center text-accent font-black border border-white/5">
                                         {{ substr($cell->name, 0, 2) }}
                                     </div>
                                     <div class="flex flex-col">
-                                        <span class="text-white font-black uppercase tracking-widest text-sm">{{ $cell->name }}</span>
+                                        <span class="text-title font-black uppercase tracking-widest text-sm">{{ $cell->name }}</span>
                                         <span class="text-[10px] text-neutral-500 font-bold uppercase tracking-widest">{{ $cell->neighborhood ?? 'Sem Bairro' }}</span>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-12 py-8">
                                 <div class="flex flex-col">
-                                    <span class="text-white text-xs font-black uppercase tracking-widest">{{ $cell->leader->name ?? 'Sem Líder' }}</span>
+                                    <span class="text-title text-xs font-black uppercase tracking-widest">{{ $cell->leader->name ?? 'Sem Líder' }}</span>
                                     <span class="text-[9px] text-accent font-black uppercase tracking-widest">{{ $cell->supervisor->name ?? 'Sem Supervisor' }}</span>
                                 </div>
                             </td>
                             <td class="px-12 py-8">
                                 <div class="flex items-center gap-4 text-neutral-500">
                                     <i class="far fa-calendar-alt text-accent"></i>
-                                    <span class="font-black text-white text-[10px] uppercase tracking-widest">{{ $cell->meeting_day }}</span>
+                                    <span class="font-black text-title text-[10px] uppercase tracking-widest">{{ $cell->meeting_day }}</span>
                                     <span class="text-neutral-800">|</span>
                                     <span class="text-[10px] font-black uppercase">{{ $cell->meeting_time }}</span>
                                 </div>

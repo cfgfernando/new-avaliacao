@@ -7,7 +7,7 @@
     <!-- Action Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
         <div>
-            <h1 class="text-4xl font-black text-white leading-none tracking-tighter">AUDITORIA <br><span class="text-red-500">FORENSE.</span></h1>
+            <h1 class="text-4xl font-black text-title leading-none tracking-tighter">AUDITORIA <br><span class="text-red-500">FORENSE.</span></h1>
             <p class="text-neutral-500 font-medium mt-4">Rastreabilidade completa e integridade de dados.</p>
         </div>
         <div class="px-6 py-4 border border-red-500/20 bg-red-500/5 flex items-center gap-4">
@@ -31,13 +31,13 @@
                 </thead>
                 <tbody class="divide-y divide-white/5">
                     @forelse($audits as $audit)
-                    <tr class="hover:bg-white/[0.02] transition-colors group font-mono">
+                    <tr class="hover:bg-title/[0.02] transition-colors group font-mono">
                         <td class="px-12 py-8">
                             <div class="flex items-center gap-6">
                                 @php
                                     $eventColors = [
                                         'created' => 'border-accent text-accent',
-                                        'updated' => 'border-white text-white',
+                                        'updated' => 'border-white text-title',
                                         'deleted' => 'border-red-500 text-red-500',
                                     ];
                                     $eventColor = $eventColors[$audit->event] ?? 'border-neutral-700 text-neutral-500';
@@ -46,13 +46,13 @@
                                     {{ substr($audit->event, 0, 3) }}
                                 </div>
                                 <div>
-                                    <div class="text-xs font-black text-white uppercase tracking-widest">{{ $audit->user->name ?? 'SYSTEM' }}</div>
+                                    <div class="text-xs font-black text-title uppercase tracking-widest">{{ $audit->user->name ?? 'SYSTEM' }}</div>
                                     <div class="text-[9px] font-bold text-neutral-600 uppercase tracking-widest">{{ $audit->event }}</div>
                                 </div>
                             </div>
                         </td>
                         <td class="px-12 py-8">
-                            <span class="text-[10px] font-black text-white uppercase tracking-widest">
+                            <span class="text-[10px] font-black text-title uppercase tracking-widest">
                                 {{ class_basename($audit->auditable_type) }}
                             </span>
                             <span class="text-[9px] font-bold text-accent ml-2">#{{ $audit->auditable_id }}</span>
@@ -64,7 +64,7 @@
                             {{ $audit->created_at->format('Y.m.d | H:i:s') }}
                         </td>
                         <td class="px-12 py-8 text-right">
-                            <a href="{{ route('admin.audits.show', $audit) }}" class="text-neutral-500 hover:text-white transition-all">
+                            <a href="{{ route('admin.audits.show', $audit) }}" class="text-neutral-500 hover:text-title transition-all">
                                 <i class="fas fa-terminal"></i>
                             </a>
                         </td>
