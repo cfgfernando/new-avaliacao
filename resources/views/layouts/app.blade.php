@@ -64,6 +64,21 @@
                         <span>Gerenciar Menus</span>
                     </a>
 
+                    <a href="{{ route('admin.users.index') }}" class="nav-link-neo {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                        <i class="fas fa-users w-5"></i>
+                        <span>Usuários</span>
+                    </a>
+
+                    <a href="{{ route('admin.roles.index') }}" class="nav-link-neo {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}">
+                        <i class="fas fa-shield-alt w-5"></i>
+                        <span>Perfis (Roles)</span>
+                    </a>
+
+                    <a href="{{ route('admin.permissions.index') }}" class="nav-link-neo {{ request()->routeIs('admin.permissions.*') ? 'active' : '' }}">
+                        <i class="fas fa-key w-5"></i>
+                        <span>Permissões</span>
+                    </a>
+
                     <a href="{{ route('admin.logs.index') }}" class="nav-link-neo {{ request()->routeIs('admin.logs.*') ? 'active' : '' }}">
                         <i class="fas fa-fingerprint w-5"></i>
                         <span>Logs de Sistema</span>

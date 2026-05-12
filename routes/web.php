@@ -66,6 +66,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('menus/reorder', [\App\Http\Controllers\Admin\MenuController::class, 'reorder'])->name('admin.menus.reorder');
         Route::delete('menus/{menu}', [\App\Http\Controllers\Admin\MenuController::class, 'destroy'])->name('admin.menus.destroy');
 
+        // Usuários, Perfis e Permissões
+        Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->names('admin.users');
+        Route::post('roles/order', [\App\Http\Controllers\Admin\RoleController::class, 'order'])->name('admin.roles.order');
+        Route::resource('roles', \App\Http\Controllers\Admin\RoleController::class)->names('admin.roles');
+        Route::resource('permissions', \App\Http\Controllers\Admin\PermissionController::class)->names('admin.permissions');
+
         // Auditoria Customizada
         Route::get('logs', function() {
             $logs = \App\Models\AuditLog::with('user')->orderBy('created_at', 'desc')->paginate(30);

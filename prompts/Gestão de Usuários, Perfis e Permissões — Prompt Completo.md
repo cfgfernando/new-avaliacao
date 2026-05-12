@@ -410,10 +410,4 @@ npm install jquery sortablejs toastr sweetalert2
 ---
 
 ## Fim
-Arquivo gerado automaticamente contendo todo o prompt e os códigos solicitados.
 
-Se quiser, eu posso:
-- Criar fisicamente os arquivos `resources/views/layouts/app.blade.php` e `resources/views/dashboard.blade.php` no seu projeto agora.
-- Gerar componentes Blade reutilizáveis (`x-card`, `x-badge`).
-
-Caminho do arquivo criado: `docs/prompt_gestao_usuarios_perfis_permissoes.md`
