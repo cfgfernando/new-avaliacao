@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\DB;
 
 class CostCenterController extends Controller
 {
+    public function index()
+    {
+        return redirect()->route('admin.finance.settings.index', ['tab' => 'centros-custo']);
+    }
+
     public function show(CostCenter $costCenter)
     {
         return response()->json($costCenter);

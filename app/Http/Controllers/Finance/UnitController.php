@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\DB;
 
 class UnitController extends Controller
 {
+    public function index()
+    {
+        return redirect()->route('admin.finance.settings.index', ['tab' => 'unidades']);
+    }
+
     public function show($id)
     {
         $unit = HierarchyNode::findOrFail($id);

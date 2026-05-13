@@ -6,7 +6,7 @@
 <div class="audit-logs space-y-8 animate-reveal-up">
     <div class="flex justify-between items-end mb-6">
         <div>
-            <h2 class="text-3xl font-black text-primary-dark tracking-tight uppercase">Histórico de Ações</h2>
+            <h2 class="text-3xl font-black text-slate-800 tracking-tight uppercase">Histórico de Ações</h2>
             <p class="text-primary-light font-medium mt-1">Rastreamento completo de alterações críticas no sistema.</p>
         </div>
         <div class="bg-slate-100 px-4 py-2 rounded-xl border border-slate-200">
@@ -29,10 +29,10 @@
                     <tr class="hover:bg-slate-50/50 transition-colors group">
                         <td class="px-8 py-5">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-primary-dark font-black text-xs">
+                                <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-800 font-black text-xs">
                                     {{ substr($log->user->name ?? '?', 0, 1) }}
                                 </div>
-                                <span class="text-sm font-bold text-primary-dark">{{ $log->user->name ?? 'Sistema' }}</span>
+                                <span class="text-sm font-bold text-slate-800">{{ $log->user->name ?? 'Sistema' }}</span>
                             </div>
                         </td>
                         <td class="px-8 py-5">
@@ -52,7 +52,7 @@
                             </button>
                         </td>
                         <td class="px-8 py-5 text-right">
-                            <div class="text-sm font-bold text-primary-dark">{{ $log->created_at->format('d/m/Y') }}</div>
+                            <div class="text-sm font-bold text-slate-800">{{ $log->created_at->format('d/m/Y') }}</div>
                             <div class="text-[10px] text-primary-light font-medium">{{ $log->created_at->format('H:i:s') }}</div>
                         </td>
                     </tr>

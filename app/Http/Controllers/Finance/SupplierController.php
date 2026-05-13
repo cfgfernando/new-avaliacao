@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\DB;
 
 class SupplierController extends Controller
 {
+    public function index()
+    {
+        return redirect()->route('admin.finance.settings.index', ['tab' => 'fornecedores']);
+    }
+
     public function show(Supplier $supplier)
     {
         return response()->json($supplier);

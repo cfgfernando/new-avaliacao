@@ -4,7 +4,7 @@
 <div class="max-w-5xl mx-auto space-y-6">
     <div class="flex justify-between items-end mb-8">
         <div>
-            <h1 class="text-2xl font-black text-primary-dark uppercase tracking-tight">Permissões</h1>
+            <h1 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Permissões</h1>
             <p class="text-sm font-bold text-primary-light uppercase tracking-widest mt-1">Gestão de permissões do sistema</p>
         </div>
         <a href="{{ route('admin.permissions.create') }}" class="btn-neo btn-primary text-xs py-2 px-6">
@@ -32,7 +32,7 @@
                     @forelse($permissions as $permission)
                         <tr class="hover:bg-slate-50/50 transition-colors group">
                             <td class="px-6 py-4">
-                                <div class="font-bold text-primary-dark text-sm">{{ $permission->name }}</div>
+                                <div class="font-bold text-slate-800 text-sm">{{ $permission->name }}</div>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="text-xs font-semibold text-slate-500">{{ $permission->created_at->format('d/m/Y H:i') }}</div>

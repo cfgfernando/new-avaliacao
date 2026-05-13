@@ -4,7 +4,7 @@
 <div class="max-w-7xl mx-auto space-y-6">
     <div class="flex justify-between items-end mb-8">
         <div>
-            <h1 class="text-2xl font-black text-primary-dark uppercase tracking-tight">Gestão de Usuários</h1>
+            <h1 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Gestão de Usuários</h1>
             <p class="text-sm font-bold text-primary-light uppercase tracking-widest mt-1">Controle de acessos e perfis</p>
         </div>
         <a href="{{ route('admin.users.create') }}" class="btn-neo btn-primary text-xs py-2 px-6">
@@ -38,7 +38,7 @@
                     @forelse($users as $user)
                         <tr class="hover:bg-slate-50/50 transition-colors group">
                             <td class="px-6 py-4">
-                                <div class="font-bold text-primary-dark text-sm">{{ $user->name }}</div>
+                                <div class="font-bold text-slate-800 text-sm">{{ $user->name }}</div>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="text-xs font-semibold text-slate-500">{{ $user->email }}</div>

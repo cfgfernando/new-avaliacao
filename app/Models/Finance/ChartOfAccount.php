@@ -37,4 +37,9 @@ class ChartOfAccount extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+    public function audits()
+    {
+        return $this->hasMany(AccountingAudit::class, 'chart_of_account_id');
+    }
 }

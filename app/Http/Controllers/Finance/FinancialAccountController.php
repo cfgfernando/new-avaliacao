@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\DB;
 
 class FinancialAccountController extends Controller
 {
+    public function index()
+    {
+        return redirect()->route('admin.finance.settings.index', ['tab' => 'contas']);
+    }
+
     public function show(FinancialAccount $account)
     {
         return response()->json($account);

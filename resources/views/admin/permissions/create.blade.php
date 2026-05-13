@@ -3,11 +3,11 @@
 @section('content')
 <div class="max-w-3xl mx-auto space-y-6">
     <div class="flex items-center gap-4 mb-8">
-        <a href="{{ route('admin.permissions.index') }}" class="w-10 h-10 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary-dark hover:border-slate-300 transition-all shadow-sm">
+        <a href="{{ route('admin.permissions.index') }}" class="w-10 h-10 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 hover:border-slate-300 transition-all shadow-sm">
             <i class="fas fa-arrow-left"></i>
         </a>
         <div>
-            <h1 class="text-2xl font-black text-primary-dark uppercase tracking-tight">Nova Permissão</h1>
+            <h1 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Nova Permissão</h1>
             <p class="text-sm font-bold text-primary-light uppercase tracking-widest mt-1">Configure o nível de restrição</p>
         </div>
     </div>

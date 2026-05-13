@@ -10,6 +10,13 @@ class Transaction extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected static function booted()
+    {
+        static::created(function ($transaction) {
+            app(\App\Services\Finance\AccountingService::class)->journalize($transaction);
+        });
+    }
+
     protected $fillable = [
         'financial_account_id',
         'chart_of_account_id',

@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\DB;
 
 class ChartOfAccountController extends Controller
 {
+    public function index()
+    {
+        return redirect()->route('admin.finance.settings.index', ['tab' => 'plano-contas']);
+    }
+
     public function show(ChartOfAccount $chartOfAccount)
     {
         return response()->json($chartOfAccount);

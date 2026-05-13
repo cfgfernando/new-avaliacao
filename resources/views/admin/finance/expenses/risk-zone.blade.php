@@ -4,27 +4,20 @@
 
 @section('content')
 <div class="space-y-6 animate-reveal-up pb-20">
-    <!-- Header Zona de Risco (Compact) -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-6 bg-white card-neo border-l-[8px] border-rose-500 shadow-lg relative overflow-hidden">
-        <div class="relative z-10">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-rose-500 flex items-center justify-center text-white shadow-lg shadow-rose-500/20 animate-pulse">
-                    <i class="fas fa-biohazard text-lg"></i>
-                </div>
-                <div>
-                    <h2 class="text-2xl font-black text-primary-dark tracking-tighter uppercase leading-none">Zona de Risco</h2>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span class="text-rose-500 font-bold text-[9px] uppercase tracking-[0.2em] italic">Alertas Ativos</span>
-                        <div class="w-1 h-1 rounded-full bg-slate-300"></div>
-                        <span class="text-primary-light font-bold text-[9px] uppercase tracking-[0.2em] italic">Gestão de Crise</span>
-                    </div>
-                </div>
-            </div>
+    <!-- Header Elite V8 -->
+    <div class="flex justify-between items-end mb-8">
+        <div>
+            <h1 class="text-2xl font-black text-slate-800 uppercase tracking-tight flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-rose-500 flex items-center justify-center text-white shadow-lg shadow-rose-500/20">
+                    <i class="fas fa-biohazard text-sm"></i>
+                </span>
+                Zona de Risco
+            </h1>
+            <p class="text-sm font-bold text-primary-light uppercase tracking-widest mt-1">Alertas Ativos & Gestão de Crise</p>
         </div>
-
-        <button onclick="openFinanceModal('expenseModal')" class="relative z-10 btn-neo btn-primary px-6 py-3.5 flex items-center gap-3 group shadow-lg shadow-accent/10">
-            <i class="fas fa-plus-circle text-xs group-hover:rotate-90 transition-transform"></i>
-            <span class="font-black uppercase tracking-[0.2em] text-[10px]">Nova Despesa</span>
+        <button onclick="openFinanceModal('expenseModal')" class="btn-neo btn-primary text-xs py-2.5">
+            <i class="fas fa-plus"></i>
+            <span>NOVA DESPESA</span>
         </button>
     </div>
 
@@ -37,7 +30,7 @@
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 italic">Qtd. Vencidos</p>
-                        <h3 class="text-3xl font-black text-primary-dark tracking-tighter">{{ $stats['critical_count'] }}</h3>
+                        <h3 class="text-3xl font-black text-slate-800 tracking-tighter">{{ $stats['critical_count'] }}</h3>
                         <p class="text-[9px] font-bold text-rose-500 mt-2 uppercase italic tracking-wider flex items-center gap-2">
                             <span class="w-1 h-1 rounded-full bg-rose-500 animate-ping"></span> Crítico
                         </p>
@@ -66,7 +59,7 @@
         <!-- Chart Column -->
         <div class="lg:col-span-3 card-neo p-6 bg-white flex flex-col justify-between">
             <div class="flex justify-between items-center mb-4">
-                <h4 class="text-[10px] font-black text-primary-dark uppercase tracking-[0.2em] italic">Top Categorias em Atraso</h4>
+                <h4 class="text-[10px] font-black text-slate-800 uppercase tracking-[0.2em] italic">Top Categorias em Atraso</h4>
                 <div class="text-[9px] font-bold text-slate-400 uppercase italic">Concentração de Risco</div>
             </div>
             <div class="flex-grow h-40">
@@ -128,7 +121,7 @@
     <!-- Tabela de Alerta Máximo (Compact) -->
     <div class="card-neo overflow-hidden">
         <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
-            <h3 class="text-xs font-black text-primary-dark uppercase tracking-[0.2em] flex items-center gap-3 italic">
+            <h3 class="text-xs font-black text-slate-800 uppercase tracking-[0.2em] flex items-center gap-3 italic">
                 <i class="fas fa-shield-virus text-rose-500"></i>
                 Listagem de Débitos em Atraso
             </h3>
@@ -160,7 +153,7 @@
                         </td>
                         <td class="p-5">
                             <div class="flex flex-col">
-                                <span class="font-black text-primary-dark uppercase text-[10px] tracking-tight">{{ $transaction->description ?: 'Fornecedor não identificado' }}</span>
+                                <span class="font-black text-slate-800 uppercase text-[10px] tracking-tight">{{ $transaction->description ?: 'Fornecedor não identificado' }}</span>
                                 <span class="text-[8px] font-bold text-slate-400 uppercase mt-0.5 italic tracking-widest">{{ $transaction->chartOfAccount->name }}</span>
                             </div>
                         </td>
@@ -173,14 +166,14 @@
                             </span>
                         </td>
                         <td class="p-5 text-right">
-                            <span class="font-money text-xs font-black text-primary-dark">R$ {{ number_format($transaction->amount, 2, ',', '.') }}</span>
+                            <span class="font-money text-xs font-black text-slate-800">R$ {{ number_format($transaction->amount, 2, ',', '.') }}</span>
                         </td>
                         <td class="p-5">
                             <div class="flex items-center justify-center gap-2" onclick="event.stopPropagation()">
                                 <button class="btn-action !w-8 !h-8 bg-slate-50 text-slate-400 hover:bg-rose-600 hover:text-white transition-all">
                                     <i class="fas fa-dollar-sign text-[10px]"></i>
                                 </button>
-                                <button class="btn-action !w-8 !h-8 bg-slate-50 text-slate-400 hover:bg-primary-dark hover:text-white transition-all">
+                                <button class="btn-action !w-8 !h-8 bg-slate-50 text-slate-400 hover:bg-accent-dark hover:text-white transition-all">
                                     <i class="fas fa-eye text-[10px]"></i>
                                 </button>
                             </div>

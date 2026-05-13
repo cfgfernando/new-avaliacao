@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\DB;
 
 class BankController extends Controller
 {
+    public function index()
+    {
+        return redirect()->route('admin.finance.settings.index', ['tab' => 'bancos']);
+    }
+
     public function show(Bank $bank)
     {
         return response()->json($bank);

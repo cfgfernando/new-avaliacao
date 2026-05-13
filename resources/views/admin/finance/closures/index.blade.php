@@ -7,7 +7,7 @@
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h2 class="text-3xl font-black text-primary-dark tracking-tight uppercase">Fechamento Contábil</h2>
+            <h2 class="text-3xl font-black text-slate-800 tracking-tight uppercase">Fechamento Contábil</h2>
             <p class="text-primary-light font-medium mt-1">Gerencie o bloqueio de períodos para garantir a integridade dos dados.</p>
         </div>
         <button onclick="openFinanceModal('closureModal')" class="btn-neo btn-primary px-8">
@@ -19,7 +19,7 @@
     <!-- Lista de Fechamentos -->
     <div class="card-neo overflow-hidden">
         <div class="p-8 pb-4 border-b border-slate-50">
-            <h3 class="text-sm font-black text-primary-dark uppercase tracking-widest flex items-center gap-2">
+            <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
                 <i class="fas fa-shield-halved text-accent"></i>
                 Histórico de Períodos
             </h3>
@@ -39,9 +39,9 @@
                 <tbody class="divide-y divide-slate-50">
                     @forelse($closures as $closure)
                     <tr class="group cursor-pointer hover:bg-slate-50/80 transition-colors" onclick="editClosure({{ $closure->id }}, {{ $closure->year }}, {{ $closure->month }})">
-                        <td class="font-money text-lg text-primary-dark">{{ $closure->year }}</td>
+                        <td class="font-money text-lg text-slate-800">{{ $closure->year }}</td>
                         <td>
-                            <span class="px-3 py-1 bg-slate-100 rounded-lg text-[9px] font-black text-primary-dark uppercase">
+                            <span class="px-3 py-1 bg-slate-100 rounded-lg text-[9px] font-black text-slate-800 uppercase">
                                 {{ date("F", mktime(0, 0, 0, $closure->month, 10)) }}
                             </span>
                         </td>
@@ -98,7 +98,7 @@
 <div id="closureModal" class="hidden fixed inset-0 bg-primary/40 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-reveal-up">
         <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-            <h3 class="text-xl font-black text-primary-dark uppercase tracking-tight">Novo Fechamento</h3>
+            <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">Novo Fechamento</h3>
             <button onclick="closeFinanceModal('closureModal')" class="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-all">
                 <i class="fas fa-times"></i>
             </button>

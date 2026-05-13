@@ -18,16 +18,16 @@ export default {
             },
             colors: {
                 primary: {
-                    DEFAULT: '#0f172a', // Sidebar Bg (Slate 900 - More modern/darker navy)
-                    dark: '#020617',    // Deep Dark Text (Slate 950 - Maximum contrast)
-                    light: '#94a3b8',   // Sidebar Inactive Text (Slate 400 - Better readability)
+                    DEFAULT: '#1c2434', // Sidebar Bg (Deep Navy)
+                    dark: '#111827',    // Deep Dark Text
+                    light: '#8a99af',   // Sidebar Inactive Text
                 },
                 accent: {
-                    DEFAULT: '#ea580c', // Orange 600 (More vibrant than amber, better contrast)
-                    hover: '#c2410c',   // Orange 700
+                    DEFAULT: '#f59e0b', // Amber/Orange
+                    hover: '#d97706',   // Darker Orange
                 },
                 background: {
-                    DEFAULT: '#f8fafc', // Main Content Bg (Slate 50 - Cleaner)
+                    DEFAULT: '#f1f5f9', // Main Content Bg (Off-white)
                 }
             },
             boxShadow: {

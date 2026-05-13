@@ -13,6 +13,7 @@ class FinancialAccount extends Model
     protected $fillable = [
         'name',
         'type',
+        'chart_of_account_id',
         'bank_name',
         'agency',
         'account_number',
@@ -24,6 +25,11 @@ class FinancialAccount extends Model
         'balance_cache' => 'decimal:2',
         'is_active' => 'boolean',
     ];
+
+    public function chartOfAccount()
+    {
+        return $this->belongsTo(ChartOfAccount::class, 'chart_of_account_id');
+    }
 
     public function transactions()
     {

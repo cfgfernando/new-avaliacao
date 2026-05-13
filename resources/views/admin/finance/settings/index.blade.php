@@ -3,33 +3,33 @@
 @section('title', 'Painel Central de Controle')
 
 @section('content')
-<div class="space-y-8 animate-reveal-up">
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-6">
+<div class="space-y-6 animate-reveal-up pb-20">
+    <!-- Header Elite V8 -->
+    <div class="flex justify-between items-end mb-8">
         <div>
-            <h2 class="text-3xl font-black text-primary-dark tracking-tight uppercase">Painel Central de <span class="text-accent italic">Controle</span></h2>
-            <p class="text-primary-light font-medium mt-1">Gestão técnica de unidades, fornecedores e parâmetros financeiros.</p>
+            <h1 class="text-xl font-black text-slate-800 uppercase tracking-tight">Painel Central de Controle</h1>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Gestão técnica de unidades, fornecedores e parâmetros financeiros</p>
         </div>
-        <div class="hidden md:flex items-center gap-3">
+        <div class="flex items-center gap-4 px-5 py-2.5 bg-white rounded-2xl border border-slate-100 shadow-sm">
             <div class="text-right">
-                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block">Status do Sistema</span>
-                <span class="text-[10px] font-black text-emerald-500 uppercase italic">Ambiente Seguro</span>
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block leading-none mb-1">Status do Sistema</span>
+                <span class="text-[10px] font-black text-emerald-600 uppercase">Ambiente Seguro Elite V8</span>
             </div>
-            <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-accent border border-slate-100">
-                <i class="fas fa-server"></i>
+            <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-primary">
+                <i class="fas fa-server text-sm"></i>
             </div>
         </div>
     </div>
 
-    <!-- Dynamic Tab Bar (Fixed Cut-off) -->
-    <div class="card-neo !p-2 bg-white/90 backdrop-blur-md border-slate-200/60 shadow-md sticky top-24 z-40">
+    <!-- Dynamic Tab Bar (Elite V8) -->
+    <div class="card-neo !p-2 bg-white/80 backdrop-blur-xl border border-slate-100 shadow-lg sticky top-24 z-40 rounded-3xl">
         <div class="flex items-center space-x-2 overflow-x-auto scrollbar-hide px-2 py-1" id="settings-tabs">
             @php
                 $tabs = [
-                    ['id' => 'unidades', 'label' => 'Unidade / Campus', 'icon' => 'fa-church'],
+                    ['id' => 'unidades', 'label' => 'Unidades', 'icon' => 'fa-church'],
                     ['id' => 'fornecedores', 'label' => 'Fornecedores', 'icon' => 'fa-truck-field'],
                     ['id' => 'plano-contas', 'label' => 'Plano de Contas', 'icon' => 'fa-sitemap'],
-                    ['id' => 'centros-custo', 'label' => 'Centro de Custos', 'icon' => 'fa-tags'],
+                    ['id' => 'centros-custo', 'label' => 'Centros de Custo', 'icon' => 'fa-tags'],
                     ['id' => 'bancos', 'label' => 'Bancos', 'icon' => 'fa-university'],
                     ['id' => 'contas', 'label' => 'Contas Financeiras', 'icon' => 'fa-credit-card'],
                     ['id' => 'bloqueios', 'label' => 'Bloqueios Contábeis', 'icon' => 'fa-lock-clock'],
@@ -39,9 +39,9 @@
             @foreach($tabs as $tab)
                 <button onclick="switchTab('{{ $tab['id'] }}')" 
                         data-tab-btn="{{ $tab['id'] }}"
-                        class="tab-btn flex items-center gap-3 px-5 py-3 rounded-xl transition-all duration-300 whitespace-nowrap min-w-fit">
+                        class="tab-btn flex items-center gap-3 px-6 py-4 rounded-2xl transition-all duration-300 whitespace-nowrap min-w-fit">
                     <i class="fas {{ $tab['icon'] }} text-xs"></i>
-                    <span class="text-[10px] font-black tracking-widest uppercase">{{ $tab['label'] }}</span>
+                    <span class="text-[11px] font-black tracking-widest uppercase">{{ $tab['label'] }}</span>
                 </button>
             @endforeach
         </div>
@@ -84,51 +84,51 @@
                 </div>
 
                 <!-- Table -->
-                <div class="overflow-hidden rounded-xl border border-slate-100">
-                    <table class="w-full text-left">
+                <div class="overflow-hidden rounded-2xl border border-slate-100">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-50/50">
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest">Unidade / Campus</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest">CNPJ / Identificador</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest">Responsável</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest">Status</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest text-right">Ações</th>
+                            <tr class="bg-slate-50 border-b border-slate-100">
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Unidade / Campus</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">CNPJ / Identificador</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Responsável</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Ações</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
                             @forelse($units ?? [] as $unit)
-                            <tr class="hover:bg-slate-50/30 transition-all group cursor-pointer" onclick="editEntity('units', {{ $unit->id }})">
-                                <td class="px-6 py-4">
+                            <tr class="hover:bg-white transition-all group cursor-pointer even:bg-slate-50" onclick="editEntity('units', {{ $unit->id }})">
+                                <td class="px-6 py-4 border-r border-slate-50/50">
                                     <div class="flex items-center gap-4">
-                                        <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-accent group-hover:text-white transition-all">
-                                            <i class="fas fa-church"></i>
+                                        <div class="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 group-hover:bg-accent group-hover:text-white transition-all shadow-sm">
+                                            <i class="fas fa-church text-sm"></i>
                                         </div>
                                         <div>
-                                            <span class="text-xs font-black text-primary-dark uppercase block tracking-tight">{{ $unit->name }}</span>
-                                            <span class="text-[9px] text-primary-light font-bold italic">Sede Administrativa</span>
+                                            <span class="text-xs font-black text-slate-800 uppercase block tracking-tight">{{ $unit->name }}</span>
+                                            <span class="text-[9px] text-slate-600 font-bold italic">Sede Administrativa</span>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 text-xs font-bold text-slate-500 font-mono italic">{{ $unit->tax_id ?? '00.000.000/0001-00' }}</td>
-                                <td class="px-6 py-4">
-                                    <span class="text-[10px] font-black text-primary-dark uppercase">Admin Principal</span>
+                                <td class="px-6 py-4 text-xs font-bold text-slate-800 font-mono italic border-r border-slate-50/50">{{ $unit->tax_id ?? '00.000.000/0001-00' }}</td>
+                                <td class="px-6 py-4 border-r border-slate-50/50">
+                                    <span class="text-[10px] font-black text-slate-800 uppercase">Admin Principal</span>
                                 </td>
-                                <td class="px-6 py-4">
-                                    <span class="badge-success">Ativo</span>
+                                <td class="px-6 py-4 border-r border-slate-50/50">
+                                    <span class="badge-success !bg-emerald-500 !text-white border-none text-[8px] px-2 py-0.5">Ativo</span>
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex justify-end gap-2" onclick="event.stopPropagation()">
-                                        <button onclick="editEntity('units', {{ $unit->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:bg-accent hover:text-white flex items-center justify-center transition-all">
+                                        <button onclick="editEntity('units', {{ $unit->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-800 hover:bg-accent hover:text-white flex items-center justify-center transition-all shadow-sm">
                                             <i class="fas fa-pen text-[10px]"></i>
                                         </button>
-                                        <button class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:bg-rose-500 hover:text-white transition-all">
+                                        <button class="w-8 h-8 rounded-lg bg-slate-50/50 text-slate-800 hover:bg-rose-600 hover:text-white transition-all">
                                             <i class="fas fa-trash text-[10px]"></i>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
                             @empty
-                            <tr><td colspan="5" class="py-10 text-center text-primary-light uppercase text-[10px] font-black italic">Nenhuma unidade configurada</td></tr>
+                            <tr><td colspan="5" class="py-10 text-center text-slate-400 uppercase text-[10px] font-black italic bg-slate-50">Nenhuma unidade configurada</td></tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -171,48 +171,48 @@
                     </button>
                 </div>
 
-                <div class="overflow-hidden rounded-xl border border-slate-100">
-                    <table class="w-full text-left">
+                <div class="overflow-hidden rounded-2xl border border-slate-100 shadow-md">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-50/50">
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest">Instituição / Conta</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest">Agência / Conta</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest">Saldo Atual</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest">Status</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest text-right">Ações</th>
+                            <tr class="bg-slate-50/50 border-b border-slate-100">
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest border-r border-slate-50/50 italic">Instituição / Conta</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest border-r border-slate-50/50 italic">Agência / Conta</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest border-r border-slate-50/50 italic">Saldo Atual</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest border-r border-slate-50/50 italic">Status</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest text-right italic">Ações</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
                             @forelse($financialAccounts ?? [] as $account)
-                            <tr class="hover:bg-slate-50/30 transition-all group cursor-pointer" onclick="editEntity('accounts', {{ $account->id }})">
-                                <td class="px-6 py-4">
+                            <tr class="hover:bg-white transition-all group cursor-pointer even:bg-slate-50" onclick="editEntity('accounts', {{ $account->id }})">
+                                <td class="px-6 py-4 border-r border-slate-50/50">
                                     <div class="flex items-center gap-4">
-                                        <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-accent text-sm group-hover:bg-accent group-hover:text-white transition-all">
-                                            <i class="fas fa-university"></i>
+                                        <div class="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 group-hover:bg-accent group-hover:text-white transition-all shadow-sm">
+                                            <i class="fas fa-university text-sm"></i>
                                         </div>
                                         <div>
-                                            <span class="text-xs font-black text-primary-dark uppercase block tracking-tight">{{ $account->name }}</span>
-                                            <span class="text-[8px] text-slate-400 font-bold uppercase tracking-widest italic">Conta Corrente</span>
+                                            <span class="text-xs font-black text-slate-800 uppercase block tracking-tight">{{ $account->name }}</span>
+                                            <span class="text-[8px] text-slate-600 font-bold uppercase tracking-widest italic">Conta Corrente</span>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 text-xs font-bold text-slate-500 font-mono">{{ $account->agency ?? '0001' }} / {{ $account->account_number ?? '12345-6' }}</td>
-                                <td class="px-6 py-4">
-                                    <span class="text-xs font-black text-emerald-600 font-money italic">R$ {{ number_format($account->balance ?? 0, 2, ',', '.') }}</span>
+                                <td class="px-6 py-4 text-xs font-bold text-slate-800 font-mono border-r border-slate-50/50 italic">{{ $account->agency ?? '0001' }} / {{ $account->account_number ?? '12345-6' }}</td>
+                                <td class="px-6 py-4 border-r border-slate-50/50">
+                                    <span class="text-xs font-black text-emerald-900 font-money italic">R$ {{ number_format($account->balance ?? 0, 2, ',', '.') }}</span>
                                 </td>
-                                <td class="px-6 py-4">
-                                    <span class="badge-success">Ativa</span>
+                                <td class="px-6 py-4 border-r border-slate-50/50">
+                                    <span class="badge-success !bg-emerald-500 !text-white border-none text-[8px] px-2 py-0.5">Ativa</span>
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                      <div class="flex justify-end gap-2" onclick="event.stopPropagation()">
-                                        <button onclick="editEntity('accounts', {{ $account->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:bg-accent hover:text-white flex items-center justify-center transition-all">
+                                        <button onclick="editEntity('accounts', {{ $account->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-800 hover:bg-accent hover:text-white flex items-center justify-center transition-all shadow-sm">
                                             <i class="fas fa-gear text-[10px]"></i>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
                             @empty
-                            <tr><td colspan="5" class="py-10 text-center text-primary-light uppercase text-[10px] font-black italic">Nenhuma conta encontrada</td></tr>
+                            <tr><td colspan="5" class="py-10 text-center text-slate-400 uppercase text-[10px] font-black italic bg-slate-50">Nenhuma conta encontrada</td></tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -256,39 +256,39 @@
                     </button>
                 </div>
 
-                <div class="overflow-hidden rounded-xl border border-slate-100">
-                    <table class="w-full text-left">
+                <div class="overflow-hidden rounded-2xl border border-slate-100 shadow-md">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-50/80">
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest italic">Código</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest italic">Nome da Conta</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest italic">Tipo</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest italic">Status</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest italic text-right">Ações</th>
+                            <tr class="bg-slate-50/50 border-b border-slate-100">
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest border-r border-slate-50/50 italic">Código</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest border-r border-slate-50/50 italic">Nome da Conta</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest border-r border-slate-50/50 italic">Tipo</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest border-r border-slate-50/50 italic">Status</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest text-right italic">Ações</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
                             @foreach($chartOfAccounts ?? [] as $coa)
-                            <tr class="hover:bg-slate-50/50 transition-colors cursor-pointer" onclick="editEntity('chart-of-accounts', {{ $coa->id }})">
-                                <td class="px-6 py-4 text-xs font-black text-accent italic">{{ $coa->code }}</td>
-                                <td class="px-6 py-4 font-black text-primary-dark uppercase text-xs tracking-tight">{{ $coa->name }}</td>
-                                <td class="px-6 py-4">
-                                    <span class="px-2 py-1 rounded text-[8px] font-black uppercase tracking-widest {{ $coa->type === 'revenue' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' }}">
+                            <tr class="hover:bg-white transition-colors cursor-pointer even:bg-slate-50" onclick="editEntity('chart-of-accounts', {{ $coa->id }})">
+                                <td class="px-6 py-4 text-xs font-black text-slate-800 border-r border-slate-50/50 italic">{{ $coa->code }}</td>
+                                <td class="px-6 py-4 font-black text-slate-800 uppercase text-xs tracking-tight border-r border-slate-50/50">{{ $coa->name }}</td>
+                                <td class="px-6 py-4 border-r border-slate-50/50">
+                                    <span class="px-2 py-1 rounded text-[8px] font-black uppercase tracking-widest {{ $coa->type === 'revenue' ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white' }}">
                                         {{ $coa->type === 'revenue' ? 'Receita' : 'Despesa' }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-4 border-r border-slate-50/50">
                                     <div class="flex items-center gap-2">
-                                        <div class="w-1.5 h-1.5 rounded-full {{ $coa->is_active ? 'bg-emerald-500' : 'bg-slate-300' }}"></div>
-                                        <span class="text-[9px] font-black uppercase tracking-widest {{ $coa->is_active ? 'text-emerald-600' : 'text-slate-400' }}">
+                                        <div class="w-2 h-2 rounded-full {{ $coa->is_active ? 'bg-emerald-600' : 'bg-slate-400' }} border border-black/20"></div>
+                                        <span class="text-[9px] font-black uppercase tracking-widest text-slate-800 italic">
                                             {{ $coa->is_active ? 'Ativo' : 'Inativo' }}
                                         </span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex justify-end gap-2" onclick="event.stopPropagation()">
-                                        <button onclick="editEntity('chart-of-accounts', {{ $coa->id }})" class="text-primary-light hover:text-accent p-2">
-                                            <i class="fas fa-pen text-xs"></i>
+                                        <button onclick="editEntity('chart-of-accounts', {{ $coa->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-800 hover:bg-accent hover:text-white flex items-center justify-center transition-all shadow-sm">
+                                            <i class="fas fa-pen text-[10px]"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -308,7 +308,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 space-y-6">
                     <div class="card-neo">
-                        <h3 class="text-xs font-black text-primary-dark uppercase tracking-[0.2em] italic mb-6 border-b border-slate-50 pb-4">Segurança Contábil</h3>
+                        <h3 class="text-xs font-black text-slate-800 uppercase tracking-[0.2em] italic mb-6 border-b border-slate-50 pb-4">Segurança Contábil</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div class="space-y-4">
                                 <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest italic">Data de Corte Retroativo</label>
@@ -324,27 +324,27 @@
                     </div>
 
                     <div class="card-neo">
-                        <h3 class="text-[10px] font-black text-primary-dark uppercase tracking-widest italic mb-6">Histórico de Fechamentos</h3>
-                        <div class="overflow-hidden rounded-xl border border-slate-50">
-                            <table class="w-full text-left">
+                        <h3 class="text-[10px] font-black text-slate-800 uppercase tracking-widest italic mb-6">Histórico de Fechamentos</h3>
+                        <div class="overflow-hidden rounded-2xl border border-slate-100 shadow-md">
+                            <table class="w-full text-left border-collapse">
                                 <tbody class="divide-y divide-slate-50">
                                     @forelse($closures ?? [] as $closure)
-                                    <tr class="hover:bg-slate-50/50 transition-all">
-                                        <td class="px-6 py-4">
+                                    <tr class="hover:bg-white transition-all group even:bg-slate-50">
+                                        <td class="px-6 py-4 border-r border-slate-50/50">
                                             <div class="flex items-center gap-4">
-                                                <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                                                <div class="w-8 h-8 rounded-lg bg-accent text-white flex items-center justify-center">
                                                     <i class="fas fa-calendar-check text-xs"></i>
                                                 </div>
-                                                <span class="text-[11px] font-black text-primary-dark uppercase tracking-tight">Fechamento {{ \Carbon\Carbon::createFromDate($closure->year, $closure->month, 1)->translatedFormat('F Y') }}</span>
+                                                <span class="text-[11px] font-black text-slate-800 uppercase tracking-tight">Fechamento {{ \Carbon\Carbon::createFromDate($closure->year, $closure->month, 1)->translatedFormat('F Y') }}</span>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 text-[9px] text-slate-400 font-bold uppercase italic">Auditado em {{ $closure->created_at->format('d/m/Y') }}</td>
+                                        <td class="px-6 py-4 text-[9px] text-slate-600 font-bold uppercase italic border-r border-slate-50/50">Auditado em {{ $closure->created_at->format('d/m/Y') }}</td>
                                         <td class="px-6 py-4 text-right">
-                                            <span class="badge-success">Encerrado</span>
+                                            <span class="badge-success !bg-emerald-500 !text-white border-none text-[8px] px-2 py-0.5">Encerrado</span>
                                         </td>
                                     </tr>
                                     @empty
-                                    <tr><td class="py-10 text-center text-[10px] font-black uppercase tracking-widest italic text-slate-300">Sem histórico</td></tr>
+                                    <tr><td class="py-10 text-center text-[10px] font-black uppercase tracking-widest italic text-slate-400 bg-slate-50">Sem histórico</td></tr>
                                     @endforelse
                                 </tbody>
                             </table>
@@ -353,18 +353,18 @@
                 </div>
 
                 <div class="space-y-6">
-                    <div class="card-neo bg-gradient-to-br from-primary-dark to-slate-800 text-white border-none shadow-2xl">
+                    <div class="card-neo shadow-sm border border-slate-100">
                         <div class="flex items-center gap-4 mb-6">
-                            <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-accent">
+                            <div class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-accent border border-slate-100 shadow-sm">
                                 <i class="fas fa-shield-check text-xl"></i>
                             </div>
-                            <h3 class="text-sm font-black uppercase tracking-widest italic leading-tight">Protocolo de <br>Auditoria</h3>
+                            <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest leading-tight">Protocolo de <br>Auditoria</h3>
                         </div>
-                        <p class="text-[11px] font-medium leading-relaxed mb-8 opacity-80 italic">
+                        <p class="text-[11px] font-bold text-slate-500 leading-relaxed mb-8 uppercase tracking-wide">
                             O bloqueio impede edições retroativas em todas as unidades, garantindo a integridade dos relatórios contábeis para o conselho fiscal.
                         </p>
-                        <div class="bg-white/5 p-4 rounded-xl border border-white/10">
-                            <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-600">
                                 <span>Última Trava</span>
                                 <span class="text-accent">{{ count($closures) > 0 ? \Carbon\Carbon::createFromDate($closures[0]->year, $closures[0]->month, 1)->translatedFormat('M Y') : 'N/A' }}</span>
                             </div>
@@ -386,63 +386,63 @@
                         <i class="fas fa-plus mr-2"></i> Novo Fornecedor
                     </button>
                 </div>
-                <div class="overflow-hidden rounded-xl border border-slate-100">
-                    <table class="w-full text-left">
+                <div class="overflow-hidden rounded-2xl border border-slate-100 shadow-md">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-50/50">
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest">Fornecedor</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest">CNPJ/CPF</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest">Contato</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest">Status</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest text-right">Ações</th>
+                            <tr class="bg-slate-50/50 border-b border-slate-100">
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest border-r border-slate-50/50 italic">Fornecedor</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest border-r border-slate-50/50 italic">CNPJ/CPF</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest border-r border-slate-50/50 italic">Contato</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest border-r border-slate-50/50 italic">Status</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest text-right italic">Ações</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
                             @forelse($suppliers as $supplier)
-                            <tr class="hover:bg-slate-50/30 transition-all group cursor-pointer" onclick="editEntity('suppliers', {{ $supplier->id }})">
-                                <td class="px-6 py-4">
+                            <tr class="hover:bg-white transition-all group cursor-pointer even:bg-slate-50" onclick="editEntity('suppliers', {{ $supplier->id }})">
+                                <td class="px-6 py-4 border-r border-slate-50/50">
                                     <div class="flex items-center gap-4">
-                                        <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-accent group-hover:text-white transition-all">
-                                            <i class="fas fa-truck-field"></i>
+                                        <div class="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 group-hover:bg-accent group-hover:text-white transition-all shadow-sm">
+                                            <i class="fas fa-truck-field text-sm"></i>
                                         </div>
                                         <div>
-                                            <span class="text-xs font-black text-primary-dark uppercase block tracking-tight">{{ $supplier->name }}</span>
+                                            <span class="text-xs font-black text-slate-800 uppercase block tracking-tight">{{ $supplier->name }}</span>
                                             @if($supplier->nickname)
-                                                <span class="text-[9px] text-accent font-black uppercase block mt-0.5">{{ $supplier->nickname }}</span>
+                                                <span class="text-[9px] text-accent font-black uppercase block mt-0.5 italic">{{ $supplier->nickname }}</span>
                                             @endif
-                                            <span class="text-[9px] text-primary-light font-bold italic">
+                                            <span class="text-[9px] text-slate-600 font-bold italic">
                                                 {{ $supplier->email ?: ($supplier->contacts['finance']['email'] ?? ($supplier->contacts['sales']['email'] ?? 'Sem e-mail')) }}
                                             </span>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 text-xs font-bold text-slate-500 font-mono italic">{{ $supplier->document ?? '---' }}</td>
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-4 text-xs font-bold text-slate-800 font-mono border-r border-slate-50/50 italic">{{ $supplier->document ?? '---' }}</td>
+                                <td class="px-6 py-4 border-r border-slate-50/50">
                                     <div class="flex flex-col">
-                                        <span class="text-[10px] font-black text-primary-dark uppercase">
+                                        <span class="text-[10px] font-black text-slate-800 uppercase">
                                             {{ $supplier->phone ?: ($supplier->contacts['finance']['phone'] ?? ($supplier->contacts['sales']['phone'] ?? '---')) }}
                                         </span>
                                         @if(!empty($supplier->contacts['finance']['name']))
-                                            <span class="text-[8px] text-primary-light font-bold italic uppercase">{{ $supplier->contacts['finance']['name'] }}</span>
+                                            <span class="text-[8px] text-slate-600 font-bold italic uppercase">{{ $supplier->contacts['finance']['name'] }}</span>
                                         @endif
                                     </div>
                                 </td>
-                                <td class="px-6 py-4">
-                                    <span class="{{ $supplier->status === 'active' ? 'badge-success' : 'badge-danger' }}">{{ $supplier->status === 'active' ? 'Ativo' : 'Inativo' }}</span>
+                                <td class="px-6 py-4 border-r border-slate-50/50">
+                                    <span class="{{ $supplier->status === 'active' ? 'badge-success !bg-emerald-500 !text-white' : 'badge-danger !bg-rose-500 !text-white' }} border-none text-[8px] px-2 py-0.5 uppercase">{{ $supplier->status === 'active' ? 'Ativo' : 'Inativo' }}</span>
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex justify-end gap-2" onclick="event.stopPropagation()">
-                                        <button onclick="editEntity('suppliers', {{ $supplier->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:bg-accent hover:text-white transition-all">
+                                        <button onclick="editEntity('suppliers', {{ $supplier->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-800 hover:bg-accent hover:text-white flex items-center justify-center transition-all shadow-sm">
                                             <i class="fas fa-pen text-[10px]"></i>
                                         </button>
-                                        <button onclick="deleteEntity('suppliers', {{ $supplier->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:bg-rose-500 hover:text-white transition-all">
+                                        <button onclick="deleteEntity('suppliers', {{ $supplier->id }})" class="w-8 h-8 rounded-lg bg-slate-50/50 text-slate-800 hover:bg-rose-600 hover:text-white transition-all">
                                             <i class="fas fa-trash text-[10px]"></i>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
                             @empty
-                            <tr><td colspan="5" class="py-10 text-center text-[10px] font-black uppercase tracking-widest italic text-slate-300">Nenhum fornecedor cadastrado</td></tr>
+                            <tr><td colspan="5" class="py-10 text-center text-[10px] font-black uppercase tracking-widest italic text-slate-400 bg-slate-50">Nenhum fornecedor cadastrado</td></tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -465,37 +465,37 @@
                         <i class="fas fa-plus mr-2"></i> Novo Centro de Custo
                     </button>
                 </div>
-                <div class="overflow-hidden rounded-xl border border-slate-100">
-                    <table class="w-full text-left">
+                <div class="overflow-hidden rounded-2xl border border-slate-100 shadow-md">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-50/50">
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest">Código</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest">Nome</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest">Status</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest text-right">Ações</th>
+                            <tr class="bg-slate-50/50 border-b border-slate-100">
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest border-r border-slate-50/50 italic">Código</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest border-r border-slate-50/50 italic">Nome</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest border-r border-slate-50/50 italic">Status</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest text-right italic">Ações</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
                             @forelse($costCenters as $cc)
-                            <tr class="hover:bg-slate-50/30 transition-all group cursor-pointer" onclick="editEntity('cost-centers', {{ $cc->id }})">
-                                <td class="px-6 py-4 text-xs font-black text-accent italic">{{ $cc->code }}</td>
-                                <td class="px-6 py-4 font-black text-primary-dark uppercase text-xs tracking-tight">{{ $cc->name }}</td>
-                                <td class="px-6 py-4">
-                                    <span class="{{ $cc->is_active ? 'badge-success' : 'badge-danger' }}">{{ $cc->is_active ? 'Ativo' : 'Inativo' }}</span>
+                            <tr class="hover:bg-white transition-all group cursor-pointer even:bg-slate-50" onclick="editEntity('cost-centers', {{ $cc->id }})">
+                                <td class="px-6 py-4 text-xs font-black text-slate-800 border-r border-slate-50/50 italic">{{ $cc->code }}</td>
+                                <td class="px-6 py-4 font-black text-slate-800 uppercase text-xs tracking-tight border-r border-slate-50/50">{{ $cc->name }}</td>
+                                <td class="px-6 py-4 border-r border-slate-50/50">
+                                    <span class="{{ $cc->is_active ? 'badge-success !bg-emerald-500 !text-white' : 'badge-danger !bg-rose-500 !text-white' }} border-none text-[8px] px-2 py-0.5 uppercase">{{ $cc->is_active ? 'Ativo' : 'Inativo' }}</span>
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex justify-end gap-2" onclick="event.stopPropagation()">
-                                        <button onclick="editEntity('cost-centers', {{ $cc->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:bg-accent hover:text-white transition-all">
+                                        <button onclick="editEntity('cost-centers', {{ $cc->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-800 hover:bg-accent hover:text-white flex items-center justify-center transition-all shadow-sm">
                                             <i class="fas fa-pen text-[10px]"></i>
                                         </button>
-                                        <button onclick="deleteEntity('cost-centers', {{ $cc->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:bg-rose-500 hover:text-white transition-all">
+                                        <button onclick="deleteEntity('cost-centers', {{ $cc->id }})" class="w-8 h-8 rounded-lg bg-slate-50/50 text-slate-800 hover:bg-rose-600 hover:text-white transition-all">
                                             <i class="fas fa-trash text-[10px]"></i>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
                             @empty
-                            <tr><td colspan="4" class="py-10 text-center text-[10px] font-black uppercase tracking-widest italic text-slate-300">Nenhum centro de custo cadastrado</td></tr>
+                            <tr><td colspan="4" class="py-10 text-center text-[10px] font-black uppercase tracking-widest italic text-slate-400 bg-slate-50">Nenhum centro de custo cadastrado</td></tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -518,39 +518,39 @@
                         <i class="fas fa-plus mr-2"></i> Novo Banco
                     </button>
                 </div>
-                <div class="overflow-hidden rounded-xl border border-slate-100">
-                    <table class="w-full text-left">
+                <div class="overflow-hidden rounded-2xl border border-slate-100 shadow-md">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-50/50">
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest">Código</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest">Nome do Banco</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest">ISPB</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest">Status</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-primary-light uppercase tracking-widest text-right">Ações</th>
+                            <tr class="bg-slate-50/50 border-b border-slate-100">
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest border-r border-slate-50/50 italic">Código</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest border-r border-slate-50/50 italic">Nome do Banco</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest border-r border-slate-50/50 italic">ISPB</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest border-r border-slate-50/50 italic">Status</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-800 uppercase tracking-widest text-right italic">Ações</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
                             @forelse($banks as $bank)
-                            <tr class="hover:bg-slate-50/30 transition-all group cursor-pointer" onclick="editEntity('banks', {{ $bank->id }})">
-                                <td class="px-6 py-4 text-xs font-black text-accent italic">{{ $bank->code ?? '---' }}</td>
-                                <td class="px-6 py-4 font-black text-primary-dark uppercase text-xs tracking-tight">{{ $bank->name }}</td>
-                                <td class="px-6 py-4 text-[10px] font-bold text-slate-500 font-mono">{{ $bank->ispb ?? '---' }}</td>
-                                <td class="px-6 py-4">
-                                    <span class="{{ $bank->is_active ? 'badge-success' : 'badge-danger' }}">{{ $bank->is_active ? 'Ativo' : 'Inativo' }}</span>
+                            <tr class="hover:bg-white transition-all group cursor-pointer even:bg-slate-50" onclick="editEntity('banks', {{ $bank->id }})">
+                                <td class="px-6 py-4 text-xs font-black text-slate-800 border-r border-slate-50/50 italic">{{ $bank->code ?? '---' }}</td>
+                                <td class="px-6 py-4 font-black text-slate-800 uppercase text-xs tracking-tight border-r border-slate-50/50">{{ $bank->name }}</td>
+                                <td class="px-6 py-4 text-[10px] font-bold text-slate-800 font-mono border-r border-slate-50/50">{{ $bank->ispb ?? '---' }}</td>
+                                <td class="px-6 py-4 border-r border-slate-50/50">
+                                    <span class="{{ $bank->is_active ? 'badge-success !bg-emerald-500 !text-white' : 'badge-danger !bg-rose-500 !text-white' }} border-none text-[8px] px-2 py-0.5 uppercase">{{ $bank->is_active ? 'Ativo' : 'Inativo' }}</span>
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex justify-end gap-2" onclick="event.stopPropagation()">
-                                        <button onclick="editEntity('banks', {{ $bank->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:bg-accent hover:text-white transition-all">
+                                        <button onclick="editEntity('banks', {{ $bank->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-800 hover:bg-accent hover:text-white flex items-center justify-center transition-all shadow-sm">
                                             <i class="fas fa-pen text-[10px]"></i>
                                         </button>
-                                        <button onclick="deleteEntity('banks', {{ $bank->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:bg-rose-500 hover:text-white transition-all">
+                                        <button onclick="deleteEntity('banks', {{ $bank->id }})" class="w-8 h-8 rounded-lg bg-slate-50/50 text-slate-800 hover:bg-rose-600 hover:text-white transition-all">
                                             <i class="fas fa-trash text-[10px]"></i>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
                             @empty
-                            <tr><td colspan="5" class="py-10 text-center text-[10px] font-black uppercase tracking-widest italic text-slate-300">Nenhum banco cadastrado</td></tr>
+                            <tr><td colspan="5" class="py-10 text-center text-[10px] font-black uppercase tracking-widest italic text-slate-400 bg-slate-50">Nenhum banco cadastrado</td></tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -567,100 +567,98 @@
 @push('modals')
     <!-- MODALS -->
     <!-- Modal Fornecedor -->
-    <div id="modal-supplier" class="fixed inset-0 z-[9999] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="card-neo w-full max-w-5xl max-h-[90vh] animate-reveal-up !p-0 overflow-hidden shadow-2xl flex flex-col">
-            <!-- Header with Tabs -->
-            <div class="bg-slate-50/50 border-b border-slate-100 shrink-0">
-                <div class="p-6 flex justify-between items-center">
-                    <div>
-                        <h3 class="text-xl font-black text-primary-dark uppercase tracking-tight flex items-center gap-2">
-                            <i class="fas fa-truck-field text-accent"></i>
-                            Ficha do Fornecedor
-                        </h3>
-                        <p class="text-[10px] text-primary-light font-bold uppercase tracking-widest mt-1">Gestão Avançada de Parceiros</p>
-                    </div>
-                    <button onclick="closeModal('modal-supplier')" class="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-all">
-                        <i class="fas fa-times"></i>
-                    </button>
+    <div id="modal-supplier" class="fixed inset-0 z-[9999] hidden bg-black/80 backdrop-blur-md items-center justify-center p-4">
+        <div class="card-neo w-full max-w-4xl max-h-[90vh] animate-reveal-up !p-0 overflow-hidden shadow-2xl flex flex-col border-white/20">
+            <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
+                <div>
+                    <h3 class="text-xl font-black text-slate-800 uppercase tracking-tighter flex items-center gap-3">
+                        <i class="fas fa-truck-field text-accent"></i>
+                        Ficha do Fornecedor
+                    </h3>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-0.5">Módulo de Gestão de Parceiros</p>
                 </div>
-                <!-- Navigation Tabs -->
-                <div class="flex px-6 gap-8">
-                    <button type="button" onclick="switchSupplierTab('geral')" class="supplier-tab-btn active border-b-2 border-accent pb-3 text-xs font-bold uppercase tracking-widest text-accent">Dados Gerais</button>
-                    <button type="button" onclick="switchSupplierTab('contatos')" class="supplier-tab-btn border-b-2 border-transparent pb-3 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-primary-dark transition-all">Contatos Adicionais</button>
-                    <button type="button" onclick="switchSupplierTab('historico')" class="supplier-tab-btn border-b-2 border-transparent pb-3 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-primary-dark transition-all">Histórico & Negociações</button>
-                </div>
+                <button onclick="closeModal('modal-supplier')" class="w-12 h-12 rounded-xl flex items-center justify-center bg-accent text-white hover:bg-accent-hover transition-all shadow-lg">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Modal Tabs -->
+            <div class="flex border-b border-slate-100 bg-slate-50/50 px-8 gap-6 shrink-0">
+                <button onclick="switchSupplierTab('geral')" class="supplier-tab-btn active px-4 py-4 text-[10px] font-bold uppercase tracking-widest border-b-2 border-accent text-accent transition-all">Dados Gerais</button>
+                <button onclick="switchSupplierTab('contatos')" class="supplier-tab-btn px-4 py-4 text-[10px] font-bold uppercase tracking-widest border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition-all">Contatos</button>
+                <button onclick="switchSupplierTab('historico')" class="supplier-tab-btn px-4 py-4 text-[10px] font-bold uppercase tracking-widest border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition-all">Histórico</button>
             </div>
             
             <form id="form-supplier" class="flex-1 overflow-y-auto custom-scrollbar">
                 <input type="hidden" name="id" id="supplier_id">
                 
                 <!-- Tab: Geral -->
-                <div id="supplier-tab-geral" class="supplier-tab-content p-8 space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                <div id="supplier-tab-geral" class="supplier-tab-content p-8 space-y-10">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-10">
                         <!-- Identificação -->
                         <div class="md:col-span-12">
-                            <h4 class="text-[12px] font-black text-primary-dark uppercase tracking-widest mb-4 flex items-center gap-3">
-                                <span class="w-7 h-7 rounded bg-accent/10 text-accent flex items-center justify-center text-[11px]">01</span>
+                            <h4 class="text-[11px] font-bold text-slate-600 uppercase tracking-widest mb-6 flex items-center gap-3">
+                                <span class="w-6 h-6 rounded-lg bg-slate-100 text-slate-400 flex items-center justify-center text-[10px] shadow-sm">01</span>
                                 Identificação Jurídica
                             </h4>
-                            <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
                                 <div class="md:col-span-4">
-                                    <div class="flex justify-between items-center mb-1.5">
-                                        <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light block">Documento</label>
-                                        <div class="flex bg-slate-100 p-0.5 rounded-lg scale-90 origin-right">
-                                            <button type="button" onclick="setDocType('cnpj')" id="btn-doc-cnpj" class="text-[9px] font-black uppercase px-2 py-1 rounded-md transition-all bg-white text-accent shadow-sm">CNPJ</button>
-                                            <button type="button" onclick="setDocType('cpf')" id="btn-doc-cpf" class="text-[9px] font-black uppercase px-2 py-1 rounded-md transition-all text-slate-400">CPF</button>
+                                    <div class="flex justify-between items-center mb-2">
+                                        <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Documento Principal</label>
+                                        <div class="flex bg-slate-50/50 p-1 rounded-xl scale-90 origin-right border border-slate-300">
+                                            <button type="button" onclick="setDocType('cnpj')" id="btn-doc-cnpj" class="text-[9px] font-black uppercase px-3 py-1.5 rounded-lg transition-all bg-accent text-white shadow-md">CNPJ</button>
+                                            <button type="button" onclick="setDocType('cpf')" id="btn-doc-cpf" class="text-[9px] font-black uppercase px-3 py-1.5 rounded-lg transition-all text-slate-600">CPF</button>
                                         </div>
                                     </div>
                                     <div class="relative">
-                                        <input type="text" name="document" id="supplier_document" class="input-neo font-bold !py-2.5 mask-cnpj w-full text-sm" required placeholder="00.000.000/0000-00">
+                                        <input type="text" name="document" id="supplier_document" class="input-neo !py-4 mask-cnpj w-full text-sm border-slate-100" required placeholder="00.000.000/0000-00">
                                         <input type="hidden" name="document_type" id="supplier_document_type" value="cnpj">
-                                        <div id="cnpj-loader" class="hidden absolute right-3 top-1/2 -translate-y-1/2"><i class="fas fa-circle-notch fa-spin text-accent text-xs"></i></div>
+                                        <div id="cnpj-loader" class="hidden absolute right-4 top-1/2 -translate-y-1/2"><i class="fas fa-circle-notch fa-spin text-slate-800 text-sm"></i></div>
                                     </div>
                                 </div>
                                 
                                 <div class="md:col-span-8">
-                                    <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1.5 block">Razão Social (Nome Completo)</label>
-                                    <input type="text" name="name" id="supplier_name" class="input-neo font-bold !py-2.5 w-full text-sm" required placeholder="Digite a razão social completa">
+                                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2 block">Razão Social (Nome Completo)</label>
+                                    <input type="text" name="name" id="supplier_name" class="input-neo !py-4 w-full text-sm border-slate-100" required placeholder="Digite a razão social completa">
                                 </div>
 
-                                <div class="md:col-span-3">
-                                    <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1.5 block">Status do Registro</label>
-                                    <select name="status" id="supplier_status_input" class="input-neo !py-2.5 w-full text-[11px] font-black uppercase text-accent cursor-pointer appearance-none">
+                                <div class="md:col-span-4">
+                                    <label class="text-[10px] font-black uppercase tracking-wider text-slate-800 mb-2 block italic">Status do Registro</label>
+                                    <select name="status" id="supplier_status_input" class="input-neo !py-4 w-full text-[10px] font-black uppercase text-slate-800 cursor-pointer appearance-none border-slate-100 bg-slate-50">
                                         <option value="active">🟢 Ativo / Operante</option>
                                         <option value="inactive">🔴 Inativo / Bloqueado</option>
                                     </select>
                                 </div>
 
-                                <div class="md:col-span-9">
-                                    <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1.5 block">Nome Fantasia / Apelido</label>
-                                    <input type="text" name="nickname" id="supplier_nickname" class="input-neo !py-2.5 w-full text-sm" placeholder="Nome como a empresa é conhecida popularmente">
+                                <div class="md:col-span-8">
+                                    <label class="text-[10px] font-black uppercase tracking-wider text-slate-800 mb-2 block italic">Nome Fantasia / Apelido</label>
+                                    <input type="text" name="nickname" id="supplier_nickname" class="input-neo !py-4 w-full text-sm border-slate-100" placeholder="Nome como a empresa é conhecida popularmente">
                                 </div>
                             </div>
                         </div>
 
                         <!-- Localização -->
                         <div class="md:col-span-12">
-                            <h4 class="text-[12px] font-black text-primary-dark uppercase tracking-widest mb-4 flex items-center gap-3">
-                                <span class="w-7 h-7 rounded bg-accent/10 text-accent flex items-center justify-center text-[11px]">02</span>
+                            <h4 class="text-[12px] font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center gap-3 italic">
+                                <span class="w-8 h-8 rounded-lg bg-slate-100 text-slate-400 flex items-center justify-center text-[11px] shadow-sm">02</span>
                                 Localização e Sede
                             </h4>
-                            <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
                                 <div class="md:col-span-3">
-                                    <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1.5 block">CEP</label>
-                                    <input type="text" name="address[zip_code]" id="supplier_zip_code" class="input-neo font-bold !py-2.5 mask-cep w-full text-sm" placeholder="00000-000">
+                                    <label class="text-[10px] font-black uppercase tracking-wider text-slate-800 mb-2 block italic">CEP</label>
+                                    <input type="text" name="address[zip_code]" id="supplier_zip_code" class="input-neo !py-4 mask-cep w-full text-sm border-slate-100" placeholder="00000-000">
                                 </div>
                                 <div class="md:col-span-4">
-                                    <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1.5 block">Bairro</label>
-                                    <input type="text" name="address[neighborhood]" id="supplier_neighborhood" class="input-neo !py-2.5 w-full text-sm" placeholder="Ex: Jardim Paulista">
+                                    <label class="text-[10px] font-black uppercase tracking-wider text-slate-800 mb-2 block italic">Bairro</label>
+                                    <input type="text" name="address[neighborhood]" id="supplier_neighborhood" class="input-neo !py-4 w-full text-sm border-slate-100" placeholder="Ex: Jardim Paulista">
                                 </div>
                                 <div class="md:col-span-5">
-                                    <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1.5 block">Cidade / UF</label>
-                                    <input type="text" name="address[city]" id="supplier_city" class="input-neo !py-2.5 w-full text-sm" placeholder="Ex: São Paulo / SP">
+                                    <label class="text-[10px] font-black uppercase tracking-wider text-slate-800 mb-2 block italic">Cidade / UF</label>
+                                    <input type="text" name="address[city]" id="supplier_city" class="input-neo !py-4 w-full text-sm border-slate-100" placeholder="Ex: São Paulo / SP">
                                 </div>
                                 <div class="md:col-span-12">
-                                    <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1.5 block">Logradouro / Rua (Completo)</label>
-                                    <input type="text" name="address[street]" id="supplier_address" class="input-neo !py-2.5 w-full text-sm" placeholder="Rua, Avenida, Número, Complemento...">
+                                    <label class="text-[10px] font-black uppercase tracking-wider text-slate-800 mb-2 block italic">Logradouro / Rua (Completo)</label>
+                                    <input type="text" name="address[street]" id="supplier_address" class="input-neo !py-4 w-full text-sm border-slate-100" placeholder="Rua, Avenida, Número, Complemento...">
                                 </div>
                             </div>
                         </div>
@@ -668,39 +666,45 @@
                 </div>
 
                 <!-- Tab: Contatos -->
-                <div id="supplier-tab-contatos" class="supplier-tab-content hidden p-8 space-y-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="card-neo !shadow-none border-dashed bg-slate-50/30 p-6">
-                            <h5 class="text-xs font-black text-primary-dark uppercase tracking-widest mb-4">Contato Financeiro</h5>
-                            <div class="space-y-4">
+                <div id="supplier-tab-contatos" class="supplier-tab-content hidden p-8 space-y-10">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div class="card-neo !p-6 border border-slate-100 bg-slate-50/50">
+                            <h5 class="text-xs font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center gap-2">
+                                <i class="fas fa-file-invoice-dollar text-slate-800"></i>
+                                Contato Financeiro
+                            </h5>
+                            <div class="space-y-5">
                                 <div>
-                                    <label class="text-[11px] font-bold text-primary-light uppercase block mb-1">Nome do Responsável</label>
-                                    <input type="text" name="contacts[finance][name]" id="supplier_fin_name" class="input-neo" placeholder="Ex: João da Silva">
+                                    <label class="text-[10px] font-black text-slate-600 uppercase block mb-2 italic">Nome do Responsável</label>
+                                    <input type="text" name="contacts[finance][name]" id="supplier_fin_name" class="input-neo w-full !py-3" placeholder="Ex: João da Silva">
                                 </div>
                                 <div>
-                                    <label class="text-[11px] font-bold text-primary-light uppercase block mb-1">E-mail</label>
-                                    <input type="email" name="contacts[finance][email]" id="supplier_fin_email" class="input-neo" placeholder="financeiro@fornecedor.com">
+                                    <label class="text-[10px] font-black text-slate-600 uppercase block mb-2 italic">E-mail</label>
+                                    <input type="email" name="contacts[finance][email]" id="supplier_fin_email" class="input-neo w-full !py-3" placeholder="financeiro@fornecedor.com">
                                 </div>
                                 <div>
-                                    <label class="text-[11px] font-bold text-primary-light uppercase block mb-1">Telefone / WhatsApp</label>
-                                    <input type="text" name="contacts[finance][phone]" id="supplier_fin_phone" class="input-neo mask-phone" placeholder="(00) 00000-0000">
+                                    <label class="text-[10px] font-black text-slate-600 uppercase block mb-2 italic">Telefone / WhatsApp</label>
+                                    <input type="text" name="contacts[finance][phone]" id="supplier_fin_phone" class="input-neo w-full !py-3 mask-phone" placeholder="(00) 00000-0000">
                                 </div>
                             </div>
                         </div>
-                        <div class="card-neo !shadow-none border-dashed bg-slate-50/30 p-6">
-                            <h5 class="text-xs font-black text-primary-dark uppercase tracking-widest mb-4">Contato Comercial / Vendas</h5>
-                            <div class="space-y-4">
+                        <div class="card-neo !p-6 border border-slate-100 bg-slate-50/50">
+                            <h5 class="text-xs font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center gap-2">
+                                <i class="fas fa-handshake text-slate-800"></i>
+                                Contato Comercial
+                            </h5>
+                            <div class="space-y-5">
                                 <div>
-                                    <label class="text-[11px] font-bold text-primary-light uppercase block mb-1">Consultor de Vendas</label>
-                                    <input type="text" name="contacts[sales][name]" id="supplier_sales_name" class="input-neo" placeholder="Ex: Maria Oliveira">
+                                    <label class="text-[10px] font-black text-slate-600 uppercase block mb-2 italic">Consultor de Vendas</label>
+                                    <input type="text" name="contacts[sales][name]" id="supplier_sales_name" class="input-neo w-full !py-3" placeholder="Ex: Maria Oliveira">
                                 </div>
                                 <div>
-                                    <label class="text-[11px] font-bold text-primary-light uppercase block mb-1">E-mail Comercial</label>
-                                    <input type="email" name="contacts[sales][email]" id="supplier_sales_email" class="input-neo" placeholder="vendas@fornecedor.com">
+                                    <label class="text-[10px] font-black text-slate-600 uppercase block mb-2 italic">E-mail Comercial</label>
+                                    <input type="email" name="contacts[sales][email]" id="supplier_sales_email" class="input-neo w-full !py-3" placeholder="vendas@fornecedor.com">
                                 </div>
                                 <div>
-                                    <label class="text-[11px] font-bold text-primary-light uppercase block mb-1">Telefone Direto</label>
-                                    <input type="text" name="contacts[sales][phone]" id="supplier_sales_phone" class="input-neo mask-phone" placeholder="(00) 00000-0000">
+                                    <label class="text-[10px] font-black text-slate-600 uppercase block mb-2 italic">Telefone Direto</label>
+                                    <input type="text" name="contacts[sales][phone]" id="supplier_sales_phone" class="input-neo w-full !py-3 mask-phone" placeholder="(00) 00000-0000">
                                 </div>
                             </div>
                         </div>
@@ -708,201 +712,173 @@
                 </div>
 
                 <!-- Tab: Histórico -->
-                <div id="supplier-tab-historico" class="supplier-tab-content hidden p-8 space-y-6">
+                <div id="supplier-tab-historico" class="supplier-tab-content hidden p-8 space-y-8">
                     <div>
-                        <label class="text-[11px] font-bold text-primary-light uppercase block mb-2">Observações Internas / Histórico de Negociação</label>
-                        <textarea name="notes" id="supplier_notes" rows="4" class="input-neo !py-4 text-sm" placeholder="Registre aqui detalhes importantes sobre este fornecedor..."></textarea>
+                        <label class="text-[11px] font-black text-slate-800 uppercase block mb-3 italic tracking-widest">Observações Internas / Histórico Técnico</label>
+                        <textarea name="notes" id="supplier_notes" rows="6" class="input-neo !py-4 w-full text-sm border-slate-100" placeholder="Registre aqui detalhes importantes sobre este fornecedor..."></textarea>
                     </div>
 
-                    <div class="bg-blue-50 border border-blue-100 p-4 rounded-xl flex gap-4 items-center mb-6">
-                        <i class="fas fa-info-circle text-blue-500 text-xl"></i>
-                        <p class="text-xs text-blue-700 font-medium">Este histórico é alimentado automaticamente pelas transações e observações registradas para este parceiro.</p>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <div class="flex gap-4">
-                            <div class="w-10 shrink-0 flex flex-col items-center">
-                                <div class="w-8 h-8 rounded-full bg-accent/10 text-accent flex items-center justify-center text-xs ring-4 ring-white"><i class="fas fa-plus"></i></div>
-                                <div class="flex-1 w-px bg-slate-200 my-2"></div>
-                            </div>
-                            <div class="flex-1 pb-6">
-                                <div class="flex justify-between items-start mb-1">
-                                    <span class="text-xs font-black text-primary-dark uppercase tracking-tight">Cadastro Inicial</span>
-                                    <span class="text-[10px] font-bold text-slate-400">13/05/2026 12:57</span>
-                                </div>
-                                <p class="text-xs text-slate-500 leading-relaxed italic">Fornecedor cadastrado no sistema via Painel de Configurações.</p>
-                            </div>
+                    <div class="bg-amber-50 text-amber-600 p-5 rounded-2xl flex gap-5 items-center border border-amber-100 shadow-sm">
+                        <i class="fas fa-shield-halved text-xl"></i>
+                        <div>
+                            <p class="text-[10px] font-bold uppercase tracking-widest leading-tight">Nota de Auditoria</p>
+                            <p class="text-[9px] font-medium mt-1 opacity-80 uppercase">Este histórico é registrado para fins de compliance financeiro.</p>
                         </div>
-                        
-                        <!-- Timeline Placeholder -->
-                        <div class="flex gap-4">
-                            <div class="w-10 shrink-0 flex flex-col items-center">
-                                <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-xs"><i class="fas fa-handshake"></i></div>
-                            </div>
-                            <div class="flex-1">
-                                <span class="text-xs font-black text-slate-400 uppercase tracking-tight">Nenhuma negociação registrada recentemente</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pt-6">
-                        <label class="text-[11px] font-bold uppercase tracking-wider text-primary-light mb-2 block">Dica de Negociação</label>
-                        <p class="text-[10px] text-slate-400 leading-relaxed italic">As anotações acima são persistidas diretamente no registro principal do fornecedor.</p>
                     </div>
                 </div>
             </form>
 
-            <div class="p-6 border-t border-slate-100 bg-slate-50/30 flex justify-end gap-4 shrink-0">
-                <button type="button" onclick="closeModal('modal-supplier')" class="btn-neo uppercase tracking-widest text-[10px] !py-3 !px-8 hover:bg-slate-100 transition-all">Cancelar</button>
-                <button type="submit" form="form-supplier" class="btn-neo btn-primary uppercase tracking-widest text-[11px] !py-3.5 !px-10 shadow-lg shadow-accent/20 transition-all">
-                    <i class="fas fa-save"></i>
-                    Salvar Ficha Completa
+            <div class="p-8 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-5 shrink-0">
+                <button type="button" onclick="closeModal('modal-supplier')" class="px-8 py-4 bg-white border border-slate-100 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all">Cancelar</button>
+                <button type="submit" form="form-supplier" class="px-10 py-4 bg-accent text-white border border-accent-hover rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-accent-hover transition-all shadow-xl">
+                    <i class="fas fa-save mr-2"></i>
+                    Salvar Ficha Cadastral
                 </button>
             </div>
         </div>
     </div>
 
     <!-- Modal Centro de Custo -->
-    <div id="modal-cost-center" class="fixed inset-0 z-[9999] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="card-neo w-full max-w-lg max-h-[90vh] animate-reveal-up !p-0 overflow-hidden shadow-2xl flex flex-col">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
+    <div id="modal-cost-center" class="fixed inset-0 z-[9999] hidden bg-black/80 backdrop-blur-md items-center justify-center p-4">
+        <div class="card-neo w-full max-w-lg max-h-[90vh] animate-reveal-up !p-0 overflow-hidden shadow-2xl flex flex-col border-slate-100">
+            <div class="p-6 border-b-2 border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
                 <div>
-                    <h3 class="text-xl font-black text-primary-dark uppercase tracking-tight flex items-center gap-2">
-                        <i class="fas fa-tags text-accent"></i>
+                    <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
+                        <i class="fas fa-tags text-slate-800"></i>
                         Centro de Custo
                     </h3>
-                    <p class="text-[10px] text-primary-light font-bold uppercase tracking-widest mt-1">Configuração / Orçamentário</p>
+                    <p class="text-[10px] text-slate-600 font-black uppercase tracking-widest mt-1 italic">Configuração / Orçamentário</p>
                 </div>
-                <button onclick="closeModal('modal-cost-center')" class="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-all">
+                <button onclick="closeModal('modal-cost-center')" class="w-10 h-10 rounded-xl flex items-center justify-center bg-accent text-white hover:bg-accent-hover transition-all shadow-lg">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
-            <form id="form-cost-center" class="p-5 space-y-4 overflow-y-auto custom-scrollbar flex-1">
+            <form id="form-cost-center" class="p-8 space-y-6 overflow-y-auto custom-scrollbar flex-1 bg-white">
                 <input type="hidden" name="id" id="cc_id">
-                <div class="grid grid-cols-1 gap-4">
+                <div class="grid grid-cols-1 gap-6">
                     <div>
-                        <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1 block">Código</label>
-                        <input type="text" name="code" id="cc_code" class="input-neo !py-2 text-sm" required placeholder="Ex: 01.001">
+                        <label class="text-[10px] font-black uppercase tracking-wider text-slate-800 mb-2 block italic">Código Classificador</label>
+                        <input type="text" name="code" id="cc_code" class="input-neo !py-4 w-full text-sm border-slate-100" required placeholder="Ex: 01.001">
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1 block">Nome do Centro de Custo</label>
-                        <input type="text" name="name" id="cc_name" class="input-neo !py-2 text-sm" required placeholder="Ex: Secretaria Executiva">
+                        <label class="text-[10px] font-black uppercase tracking-wider text-slate-800 mb-2 block italic">Nome do Centro de Custo</label>
+                        <input type="text" name="name" id="cc_name" class="input-neo !py-4 w-full text-sm border-slate-100" required placeholder="Ex: Secretaria Executiva">
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1 block">Descrição (Opcional)</label>
-                        <textarea name="description" id="cc_description" class="input-neo !py-2 text-sm h-20" placeholder="Finalidade deste centro..."></textarea>
+                        <label class="text-[10px] font-black uppercase tracking-wider text-slate-800 mb-2 block italic">Descrição Técnica</label>
+                        <textarea name="description" id="cc_description" class="input-neo !py-4 w-full text-sm h-28 border-slate-100" placeholder="Finalidade deste centro..."></textarea>
                     </div>
                 </div>
             </form>
 
-            <div class="p-4 border-t border-slate-100 bg-slate-50/30 flex justify-end gap-3 shrink-0">
-                <button type="button" onclick="closeModal('modal-cost-center')" class="btn-neo uppercase tracking-widest text-[10px] !py-2 !px-6 hover:bg-slate-100 transition-all">Cancelar</button>
-                <button type="submit" form="form-cost-center" class="btn-neo btn-primary uppercase tracking-widest text-[10px] !py-2 !px-6 shadow-lg shadow-accent/20 transition-all">Salvar Centro</button>
+            <div class="p-6 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-4 shrink-0">
+                <button type="button" onclick="closeModal('modal-cost-center')" class="px-6 py-3 bg-white border border-slate-100 rounded-xl text-[10px] font-bold text-slate-500 uppercase tracking-widest hover:bg-slate-50 transition-all">Cancelar</button>
+                <button type="submit" form="form-cost-center" class="px-8 py-3 bg-accent text-white border border-accent-hover rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-accent-hover transition-all shadow-lg">Salvar Centro</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Banco -->
-    <div id="modal-bank" class="fixed inset-0 z-[9999] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="card-neo w-full max-w-xl max-h-[90vh] animate-reveal-up !p-0 overflow-hidden shadow-2xl flex flex-col">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
+    <!-- Modal Instituição Bancária -->
+    <div id="modal-bank" class="fixed inset-0 z-[9999] hidden bg-black/80 backdrop-blur-md items-center justify-center p-4">
+        <div class="card-neo w-full max-w-xl max-h-[90vh] animate-reveal-up !p-0 overflow-hidden shadow-2xl flex flex-col border-white/20">
+            <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
                 <div>
-                    <h3 class="text-xl font-black text-primary-dark uppercase tracking-tight flex items-center gap-2">
+                    <h3 class="text-lg font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
                         <i class="fas fa-university text-accent"></i>
                         Instituição Bancária
                     </h3>
-                    <p class="text-[10px] text-primary-light font-bold uppercase tracking-widest mt-1">Parâmetros / Integração</p>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Parâmetros / Integração</p>
                 </div>
-                <button onclick="closeModal('modal-bank')" class="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-all">
+                <button onclick="closeModal('modal-bank')" class="w-10 h-10 rounded-xl flex items-center justify-center bg-accent text-white hover:bg-accent-hover transition-all shadow-lg">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
-            <form id="form-bank" class="p-5 space-y-4 overflow-y-auto custom-scrollbar flex-1">
+            <form id="form-bank" class="p-8 space-y-6 overflow-y-auto custom-scrollbar flex-1 bg-white">
                 <input type="hidden" name="id" id="bank_id">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="md:col-span-2">
-                        <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1 block">Nome da Instituição</label>
-                        <input type="text" name="name" id="bank_name" class="input-neo !py-2 text-sm" required placeholder="Ex: Itaú Unibanco S.A.">
+                        <label class="text-[10px] font-black uppercase tracking-wider text-slate-800 mb-2 block italic">Nome da Instituição</label>
+                        <input type="text" name="name" id="bank_name" class="input-neo !py-4 w-full text-sm border-slate-100" required placeholder="Ex: Itaú Unibanco S.A.">
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1 block">Código COMPE</label>
-                        <input type="text" name="code" id="bank_code" class="input-neo !py-2 text-sm" placeholder="Ex: 341">
+                        <label class="text-[10px] font-black uppercase tracking-wider text-slate-800 mb-2 block italic">Código COMPE</label>
+                        <input type="text" name="code" id="bank_code" class="input-neo !py-4 w-full text-sm border-slate-100" placeholder="Ex: 341">
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1 block">Código ISPB</label>
-                        <input type="text" name="ispb" id="bank_ispb" class="input-neo !py-2 text-sm" placeholder="00000000">
+                        <label class="text-[10px] font-black uppercase tracking-wider text-slate-800 mb-2 block italic">Código ISPB</label>
+                        <input type="text" name="ispb" id="bank_ispb" class="input-neo !py-4 w-full text-sm border-slate-100" placeholder="00000000">
                     </div>
                 </div>
             </form>
 
-            <div class="p-4 border-t border-slate-100 bg-slate-50/30 flex justify-end gap-3 shrink-0">
-                <button type="button" onclick="closeModal('modal-bank')" class="btn-neo uppercase tracking-widest text-[10px] !py-2 !px-6 hover:bg-slate-100 transition-all">Cancelar</button>
-                <button type="submit" form="form-bank" class="btn-neo btn-primary uppercase tracking-widest text-[10px] !py-2 !px-6 shadow-lg shadow-accent/20 transition-all">Salvar Banco</button>
+            <div class="p-6 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-4 shrink-0">
+                <button type="button" onclick="closeModal('modal-bank')" class="px-6 py-3 bg-white border border-slate-100 rounded-xl text-[10px] font-bold text-slate-500 uppercase tracking-widest hover:bg-slate-50 transition-all">Cancelar</button>
+                <button type="submit" form="form-bank" class="px-8 py-3 bg-accent text-white border border-accent-hover rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-accent-hover transition-all shadow-lg">Salvar Banco</button>
             </div>
         </div>
     </div>
 
     <!-- Modal Unidade -->
-    <div id="modal-units" class="fixed inset-0 z-[9999] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="card-neo w-full max-w-lg max-h-[90vh] animate-reveal-up !p-0 overflow-hidden shadow-2xl flex flex-col">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
+    <div id="modal-units" class="fixed inset-0 z-[9999] hidden bg-black/80 backdrop-blur-md items-center justify-center p-4">
+        <div class="card-neo w-full max-w-lg max-h-[90vh] animate-reveal-up !p-0 overflow-hidden shadow-2xl flex flex-col border-slate-100">
+            <div class="p-6 border-b-2 border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
                 <div>
-                    <h3 class="text-xl font-black text-primary-dark uppercase tracking-tight flex items-center gap-2">
+                    <h3 class="text-lg font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
                         <i class="fas fa-church text-accent"></i>
                         Unidade / Campus
                     </h3>
-                    <p class="text-[10px] text-primary-light font-bold uppercase tracking-widest mt-1">Hierarquia Organizacional</p>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Hierarquia Organizacional</p>
                 </div>
-                <button onclick="closeModal('modal-units')" class="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-all">
+                <button onclick="closeModal('modal-units')" class="w-10 h-10 rounded-xl flex items-center justify-center bg-accent text-white hover:bg-accent-hover transition-all shadow-lg">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
-            <form id="form-units" class="p-5 space-y-4 overflow-y-auto custom-scrollbar flex-1">
+            <form id="form-units" class="p-8 space-y-6 overflow-y-auto custom-scrollbar flex-1 bg-white">
                 <input type="hidden" name="id" id="unit_id">
-                <div class="grid grid-cols-1 gap-4">
+                <div class="grid grid-cols-1 gap-6">
                     <div>
-                        <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1 block">Nome da Unidade / Campus</label>
-                        <input type="text" name="name" id="unit_name" class="input-neo !py-2 text-sm" required placeholder="Ex: Sede Principal">
+                        <label class="text-[10px] font-black uppercase tracking-wider text-slate-800 mb-2 block italic">Nome da Unidade / Campus</label>
+                        <input type="text" name="name" id="unit_name" class="input-neo !py-4 w-full text-sm border-slate-100" required placeholder="Ex: Sede Principal">
                     </div>
                 </div>
             </form>
 
-            <div class="p-4 border-t border-slate-100 bg-slate-50/30 flex justify-end gap-3 shrink-0">
-                <button type="button" onclick="closeModal('modal-units')" class="btn-neo uppercase tracking-widest text-[10px] !py-2 !px-6 hover:bg-slate-100 transition-all">Cancelar</button>
-                <button type="submit" form="form-units" class="btn-neo btn-primary uppercase tracking-widest text-[10px] !py-2 !px-6 shadow-lg shadow-accent/20 transition-all">Salvar Unidade</button>
+            <div class="p-6 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-4 shrink-0">
+                <button type="button" onclick="closeModal('modal-units')" class="px-6 py-3 bg-white border border-slate-100 rounded-xl text-[10px] font-bold text-slate-500 uppercase tracking-widest hover:bg-slate-50 transition-all">Cancelar</button>
+                <button type="submit" form="form-units" class="px-8 py-3 bg-accent text-white border border-accent-hover rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-accent-hover transition-all shadow-lg">Salvar Unidade</button>
             </div>
         </div>
     </div>
 
     <!-- Modal Plano de Contas -->
-    <div id="modal-chart-of-accounts" class="fixed inset-0 z-[9999] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="card-neo w-full max-w-lg max-h-[90vh] animate-reveal-up !p-0 overflow-hidden shadow-2xl flex flex-col">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
+    <div id="modal-chart-of-accounts" class="fixed inset-0 z-[9999] hidden bg-black/80 backdrop-blur-md items-center justify-center p-4">
+        <div class="card-neo w-full max-w-lg max-h-[90vh] animate-reveal-up !p-0 overflow-hidden shadow-2xl flex flex-col border-slate-100">
+            <div class="p-6 border-b-2 border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
                 <div>
-                    <h3 class="text-xl font-black text-primary-dark uppercase tracking-tight flex items-center gap-2">
+                    <h3 class="text-lg font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
                         <i class="fas fa-sitemap text-accent"></i>
                         Plano de Contas
                     </h3>
-                    <p class="text-[10px] text-primary-light font-bold uppercase tracking-widest mt-1">Contábil / Estrutura</p>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Contábil / Estrutura</p>
                 </div>
-                <button onclick="closeModal('modal-chart-of-accounts')" class="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-all">
-                    <i class="fas fa-times"></i>
+                <button onclick="closeModal('modal-chart-of-accounts')" class="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all">
+                    <i class="fas fa-times text-sm"></i>
                 </button>
             </div>
             
-            <form id="form-chart-of-accounts" class="p-8 space-y-6 overflow-y-auto custom-scrollbar flex-1">
+            <form id="form-chart-of-accounts" class="p-8 space-y-6 overflow-y-auto custom-scrollbar flex-1 bg-white">
                 <input type="hidden" name="id" id="coa_id">
                 <div class="grid grid-cols-2 gap-6">
                     <div>
-                        <label class="text-[11px] font-bold uppercase tracking-wider text-primary-light mb-2 block">Código Classificador</label>
-                        <input type="text" name="code" id="coa_code" class="input-neo" required placeholder="Ex: 1.01.01">
+                        <label class="text-[10px] font-black uppercase tracking-wider text-slate-800 mb-2 block italic">Código Classificador</label>
+                        <input type="text" name="code" id="coa_code" class="input-neo !py-4 w-full text-sm border-slate-100" required placeholder="Ex: 1.01.01">
                     </div>
                     <div>
-                        <label class="text-[11px] font-bold uppercase tracking-wider text-primary-light mb-2 block">Tipo de Conta</label>
-                        <select name="type" id="coa_type" class="input-neo" required>
+                        <label class="text-[10px] font-black uppercase tracking-wider text-slate-800 mb-2 block italic">Tipo de Conta</label>
+                        <select name="type" id="coa_type" class="input-neo !py-4 w-full text-sm border-slate-100 bg-slate-50" required>
                             <option value="revenue">Receita</option>
                             <option value="expense">Despesa</option>
                             <option value="asset">Ativo</option>
@@ -911,82 +887,82 @@
                         </select>
                     </div>
                     <div class="col-span-2">
-                        <label class="text-[11px] font-bold uppercase tracking-wider text-primary-light mb-2 block">Nome da Conta / Descrição</label>
-                        <input type="text" name="name" id="coa_name" class="input-neo" required placeholder="Ex: Dízimos e Ofertas">
+                        <label class="text-[10px] font-black uppercase tracking-wider text-slate-800 mb-2 block italic">Nome da Conta / Descrição</label>
+                        <input type="text" name="name" id="coa_name" class="input-neo !py-4 w-full text-sm border-slate-100" required placeholder="Ex: Dízimos e Ofertas">
                     </div>
                 </div>
-                <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-slate-50">
-                    <button type="button" onclick="closeModal('modal-chart-of-accounts')" class="btn-neo uppercase tracking-widest text-[10px] !py-3 !px-8 hover:bg-slate-100 transition-all">Cancelar</button>
-                    <button type="submit" class="btn-neo btn-primary uppercase tracking-widest text-[10px] !py-3 !px-12">
-                        <i class="fas fa-save mr-2"></i> Salvar Conta
-                    </button>
-                </div>
             </form>
+            <div class="p-6 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-4 shrink-0">
+                <button type="button" onclick="closeModal('modal-chart-of-accounts')" class="px-6 py-3 bg-white border border-slate-100 rounded-xl text-[10px] font-bold text-slate-500 uppercase tracking-widest hover:bg-slate-50 transition-all">Cancelar</button>
+                <button type="submit" form="form-chart-of-accounts" class="px-8 py-3 bg-accent text-white border border-accent-hover rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-accent-hover transition-all shadow-lg">Salvar Conta</button>
+            </div>
         </div>
     </div>
 
     <!-- Modal Conta Financeira -->
-    <div id="modal-accounts" class="fixed inset-0 z-[9999] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="card-neo w-full max-w-xl max-h-[90vh] animate-reveal-up !p-0 overflow-hidden shadow-2xl flex flex-col">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
-                <div>
-                    <h3 class="text-xl font-black text-primary-dark uppercase tracking-tight flex items-center gap-2">
-                        <i class="fas fa-wallet text-accent"></i>
-                        Conta Financeira
-                    </h3>
-                    <p class="text-[10px] text-primary-light font-bold uppercase tracking-widest mt-1">Tesouraria / Disponibilidades</p>
+    <div id="modal-accounts" class="fixed inset-0 z-[9999] hidden bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white rounded-[30px] border border-slate-100 w-full max-w-xl max-h-[90vh] animate-reveal-up !p-0 overflow-hidden shadow-2xl flex flex-col">
+            <div class="p-6 border-b-2 border-slate-100 flex justify-between items-center bg-slate-50/30 shrink-0">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-accent flex items-center justify-center text-white shadow-lg">
+                        <i class="fas fa-wallet text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-black text-slate-800 uppercase tracking-tight">Conta Financeira</h3>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Tesouraria / Disponibilidades</p>
+                    </div>
                 </div>
-                <button onclick="closeModal('modal-accounts')" class="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-all">
+                <button onclick="closeModal('modal-accounts')" class="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-rose-500 hover:text-white text-slate-400 transition-all">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
-            <form id="form-accounts" class="p-5 space-y-4 overflow-y-auto custom-scrollbar flex-1">
+            <form id="form-accounts" class="p-8 space-y-6 overflow-y-auto custom-scrollbar flex-1 bg-slate-50/50">
                 <input type="hidden" name="id" id="account_id">
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="md:col-span-2">
-                        <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1 block">Nome da Conta / Identificador</label>
-                        <input type="text" name="name" id="account_name" class="input-neo !py-2 text-sm" required placeholder="Ex: Itaú - Movimentação">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2 card-neo p-4 border border-slate-100">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-800 mb-2 block italic">Nome da Conta / Identificador</label>
+                        <input type="text" name="name" id="account_name" class="input-neo !py-3 text-sm font-black text-slate-800 border-slate-300 focus:border-black" required placeholder="Ex: Itaú - Movimentação">
                     </div>
-                    <div>
-                        <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1 block">Tipo de Conta</label>
-                        <select name="type" id="account_type" class="input-neo !py-2 text-sm" required>
+                    <div class="card-neo p-4 border border-slate-100">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-800 mb-2 block italic">Tipo de Conta</label>
+                        <select name="type" id="account_type" class="input-neo !py-3 text-sm font-black uppercase border-slate-300 focus:border-black" required>
                             <option value="bank">Banco / Corrente</option>
                             <option value="cash">Caixa / Dinheiro</option>
                             <option value="investment">Investimento</option>
                         </select>
                     </div>
-                    <div id="initial_balance_container">
-                        <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1 block">Saldo Inicial (R$)</label>
-                        <input type="text" name="initial_balance" id="account_initial_balance" class="input-neo !py-2 text-sm mask-money" placeholder="0,00">
+                    <div id="initial_balance_container" class="card-neo p-4 border border-slate-100">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-800 mb-2 block italic">Saldo Inicial (R$)</label>
+                        <input type="text" name="initial_balance" id="account_initial_balance" class="input-neo !py-3 text-sm font-black border-slate-300 focus:border-black mask-money" placeholder="0,00">
                     </div>
                     
-                    <div class="md:col-span-2 p-4 bg-slate-50/50 rounded-xl border border-slate-100 grid grid-cols-2 gap-3">
+                    <div class="md:col-span-2 p-6 bg-slate-50/30 border border-slate-100 rounded-2xl p-6 grid grid-cols-2 gap-4">
                         <div class="col-span-2">
-                            <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1 block italic">Banco Vinculado (Opcional)</label>
-                            <select name="bank_id" id="account_bank_id" class="input-neo !py-2 text-sm">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-800 mb-2 block italic">Banco Vinculado (Opcional)</label>
+                            <select name="bank_id" id="account_bank_id" class="input-neo !py-3 text-sm font-black border-slate-300 focus:border-black">
                                 <option value="">Nenhum Banco</option>
                                 @foreach($banks as $bank)
                                     <option value="{{ $bank->id }}">{{ $bank->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div>
-                            <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1 block">Agência</label>
-                            <input type="text" name="agency" id="account_agency" class="input-neo !py-2 text-sm" placeholder="0000">
+                        <div class="card-neo p-3 border border-slate-300 bg-white">
+                            <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-1 block">Agência</label>
+                            <input type="text" name="agency" id="account_agency" class="input-neo !py-2 text-xs font-black text-slate-800 border-none !p-0" placeholder="0000">
                         </div>
-                        <div>
-                            <label class="text-[10px] font-bold uppercase tracking-wider text-primary-light mb-1 block">Número Conta</label>
-                            <input type="text" name="account_number" id="account_number" class="input-neo !py-2 text-sm" placeholder="00000-0">
+                        <div class="card-neo p-3 border border-slate-300 bg-white">
+                            <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-1 block">Número Conta</label>
+                            <input type="text" name="account_number" id="account_number" class="input-neo !py-2 text-xs font-black text-slate-800 border-none !p-0" placeholder="00000-0">
                         </div>
                     </div>
                 </div>
             </form>
 
-            <div class="p-4 border-t border-slate-100 bg-slate-50/30 flex justify-end gap-3 shrink-0">
-                <button type="button" onclick="closeModal('modal-accounts')" class="btn-neo uppercase tracking-widest text-[10px] !py-2 !px-6 hover:bg-slate-100 transition-all">Cancelar</button>
-                <button type="submit" form="form-accounts" class="btn-neo btn-primary uppercase tracking-widest text-[10px] !py-2 !px-6 shadow-lg shadow-accent/20 transition-all">Salvar Conta</button>
+            <div class="p-8 border-t border-slate-100 bg-slate-50/50 flex justify-between items-center shrink-0">
+                <button type="button" onclick="closeModal('modal-accounts')" class="text-[10px] font-black text-primary-light uppercase tracking-widest hover:text-rose-600 transition-colors">Cancelar</button>
+                <button type="submit" form="form-accounts" class="btn-neo btn-primary !py-4 !px-12 !rounded-2xl transition-all hover:scale-105 active:scale-95">Salvar Configuração</button>
             </div>
         </div>
     </div>
@@ -998,27 +974,36 @@
 <style>
     .tab-btn {
         background: transparent;
-        color: #94a3b8;
+        color: #64748b;
         border: 1px solid transparent;
+        @apply font-black tracking-widest uppercase;
     }
 
     .tab-btn.active {
-        @apply bg-accent text-white shadow-lg shadow-accent/20 border-accent;
+        @apply bg-accent text-white shadow-xl shadow-accent/20 border-accent scale-105;
     }
 
     .tab-btn:hover:not(.active) {
-        @apply bg-slate-50 text-primary-dark;
+        @apply bg-slate-50 text-slate-800 border-slate-100;
     }
 
     #settings-tabs::-webkit-scrollbar {
-        height: 3px;
+        height: 4px;
     }
     #settings-tabs::-webkit-scrollbar-thumb {
-        @apply bg-slate-200 rounded-full;
+        @apply bg-slate-50/50 rounded-full;
     }
     
-    .badge-success { @apply px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600; }
-    .badge-danger { @apply px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-rose-50 text-rose-600; }
+    .card-neo {
+        @apply bg-white rounded-[32px] border border-slate-100 p-8 shadow-xl relative overflow-hidden transition-all duration-300;
+    }
+
+    .input-neo {
+        @apply bg-white border border-slate-200 rounded-2xl px-5 py-4 text-slate-800 font-bold text-xs transition-all duration-300 placeholder:text-slate-400 placeholder:font-medium focus:border-primary-dark focus:ring-4 focus:ring-primary-dark/5 outline-none;
+    }
+
+    .badge-success { @apply px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 border border-emerald-100; }
+    .badge-danger { @apply px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest bg-rose-50 text-rose-600 border border-rose-100; }
 </style>
 @endpush
 

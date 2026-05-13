@@ -23,7 +23,7 @@
     <!-- Header Actions -->
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h2 class="text-3xl font-black text-primary-dark tracking-tight">ESTRUTURA DE NAVEGAÇÃO</h2>
+            <h2 class="text-3xl font-black text-slate-800 tracking-tight">ESTRUTURA DE NAVEGAÇÃO</h2>
             <p class="text-primary-light font-medium mt-1">Arraste e solte para organizar categorias e itens.</p>
         </div>
         <div class="flex gap-4">
@@ -47,7 +47,7 @@
                         <div class="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-accent">
                             <i class="fas fa-layer-group text-xs"></i>
                         </div>
-                        <h3 class="font-black text-primary-dark uppercase tracking-wider text-sm">{{ $category->name }}</h3>
+                        <h3 class="font-black text-slate-800 uppercase tracking-wider text-sm">{{ $category->name }}</h3>
                     </div>
                     <div class="flex gap-2">
                         <button onclick="editCategory({{ $category->id }}, '{{ $category->name }}')" class="p-2 hover:bg-white rounded-lg transition-colors text-slate-400 hover:text-blue-500">
@@ -64,11 +64,11 @@
                                     <div class="drag-handle cursor-grab active:cursor-grabbing text-slate-300 group-hover:text-accent transition-colors p-1">
                                         <i class="fas fa-grip-vertical"></i>
                                     </div>
-                                    <div class="w-10 h-10 rounded-xl {{ $item->is_active ? 'bg-slate-50 text-primary-dark group-hover:bg-accent group-hover:text-white' : 'bg-slate-200 text-slate-400' }} flex items-center justify-center transition-all duration-500">
+                                    <div class="w-10 h-10 rounded-xl {{ $item->is_active ? 'bg-slate-50 text-slate-800 group-hover:bg-accent group-hover:text-white' : 'bg-slate-200 text-slate-400' }} flex items-center justify-center transition-all duration-500">
                                         <i class="{{ $item->icon ?: 'fas fa-link' }}"></i>
                                     </div>
                                     <div>
-                                        <p class="font-bold text-primary-dark text-sm tracking-tight flex items-center gap-2">
+                                        <p class="font-bold text-slate-800 text-sm tracking-tight flex items-center gap-2">
                                             {{ $item->title }}
                                             @if(!$item->is_active)
                                                 <span class="text-[8px] bg-slate-200 text-slate-500 px-1.5 py-0.5 rounded uppercase font-black tracking-widest">Inativo</span>
@@ -110,8 +110,8 @@
 <div id="itemModal" class="hidden fixed inset-0 bg-primary/40 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-reveal-up">
         <div class="p-8 border-b border-slate-100 flex justify-between items-center">
-            <h3 id="itemModalTitle" class="text-xl font-black text-primary-dark uppercase tracking-tight">Novo Item de Menu</h3>
-            <button onclick="closeModal('itemModal')" class="text-slate-400 hover:text-primary-dark"><i class="fas fa-times"></i></button>
+            <h3 id="itemModalTitle" class="text-xl font-black text-slate-800 uppercase tracking-tight">Novo Item de Menu</h3>
+            <button onclick="closeModal('itemModal')" class="text-slate-400 hover:text-slate-800"><i class="fas fa-times"></i></button>
         </div>
         <form id="itemForm" action="{{ route('admin.menus.store') }}" method="POST" class="p-8 space-y-6">
             @csrf
@@ -168,8 +168,8 @@
 <div id="categoryModal" class="hidden fixed inset-0 bg-primary/40 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-reveal-up">
         <div class="p-8 border-b border-slate-100 flex justify-between items-center">
-            <h3 id="categoryModalTitle" class="text-xl font-black text-primary-dark uppercase tracking-tight">Nova Categoria</h3>
-            <button onclick="closeModal('categoryModal')" class="text-slate-400 hover:text-primary-dark"><i class="fas fa-times"></i></button>
+            <h3 id="categoryModalTitle" class="text-xl font-black text-slate-800 uppercase tracking-tight">Nova Categoria</h3>
+            <button onclick="closeModal('categoryModal')" class="text-slate-400 hover:text-slate-800"><i class="fas fa-times"></i></button>
         </div>
         <form id="categoryForm" action="{{ route('admin.menus.categories.store') }}" method="POST" class="p-8 space-y-6">
             @csrf

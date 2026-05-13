@@ -70,6 +70,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // ----------------------------------------------------------
+    // MÓDULO CONTÁBIL - INTELLIGENCE (Admin & Contador)
+    // ----------------------------------------------------------
+    Route::middleware(['role:Admin,Treasurer'])->prefix('admin/accounting')->name('admin.accounting.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Accounting\AccountingDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/journal', function() {
+            $entries = \App\Models\Finance\JournalEntry::with(['items.chartOfAccount'])->orderBy('date', 'desc')->paginate(30);
+            return view('admin.accounting.journal.index', compact('entries'));
+        })->name('journal.index');
+        Route::get('/reports/trial-balance', [\App\Http\Controllers\Accounting\TrialBalanceController::class, 'index'])->name('reports.trial-balance');
+        Route::get('/reports/income-statement', [\App\Http\Controllers\Accounting\IncomeStatementController::class, 'index'])->name('reports.income-statement');
+
+        // Manual Entries
+        Route::post('/manual-entry', [\App\Http\Controllers\Accounting\ManualEntryController::class, 'store'])->name('manual-entry.store');
+    });
+
+    // ----------------------------------------------------------
     // RELATÓRIOS SEMANAIS (Malotes)
     // ----------------------------------------------------------
     Route::resource('reports', WeeklyReportController::class);

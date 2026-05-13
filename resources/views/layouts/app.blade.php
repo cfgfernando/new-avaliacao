@@ -17,6 +17,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     
     <!-- DataTables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
@@ -28,34 +29,38 @@
     <style>
         /* FORCED TECH DESIGN - ELITE V8 */
         
-        /* 1. Grade e Bordas */
+        /* 1. Grade e Bordas Suaves */
         .card-neo table {
             border-collapse: separate !important;
             border-spacing: 0 !important;
             width: 100% !important;
-            border: 2px solid #e2e8f0 !important; /* border-slate-200 */
+            border: 1px solid #f1f5f9 !important; /* border-slate-100 */
             border-radius: 16px !important;
             overflow: hidden !important;
         }
 
         .card-neo table th, 
         .card-neo table td {
-            border: 1px solid #f1f5f9 !important; /* border-slate-100 */
-            padding: 16px 24px !important;
+            border-bottom: 1px solid #f8fafc !important;
+            border-right: 1px solid #f8fafc !important;
+            padding: 12px 20px !important;
         }
 
         .card-neo table thead th {
             background-color: #f8fafc !important; /* bg-slate-50 */
-            color: #1e293b !important; /* text-slate-800 */
-            font-weight: 900 !important;
+            color: #64748b !important; /* text-slate-500 */
+            font-weight: 700 !important;
             text-transform: uppercase !important;
-            letter-spacing: 0.1em !important;
-            font-size: 11px !important;
+            letter-spacing: 0.05em !important;
+            font-size: 10px !important;
         }
 
-        /* 2. Linhas Mescladas (Zebra) */
+        /* 2. Linhas Zebra Suaves */
         .card-neo table tbody tr:nth-child(even) {
-            background-color: #f8fafc !important; /* mesclado claro */
+            background-color: #ffffff !important;
+        }
+        .card-neo table tbody tr:hover {
+            background-color: #f8fafc !important;
         }
         
         .card-neo table tbody tr:hover {
@@ -90,9 +95,73 @@
             font-family: 'JetBrains Mono', monospace !important;
             font-weight: 800 !important;
         }
+
+        /* 4. FIDELIDADE DE IMPRESSÃO (A4/PDF) */
+        @media print {
+            .sidebar-neo, .topbar-neo, .btn-neo, .no-print, button, form {
+                display: none !important;
+            }
+            
+            body {
+                background: white !important;
+                padding: 0 !important;
+            }
+
+            main {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+            }
+
+            .card-neo {
+                border: none !important;
+                box-shadow: none !important;
+                background: white !important;
+                padding: 0 !important;
+            }
+
+            table {
+                width: 100% !important;
+                border: 1px solid #000 !important;
+            }
+
+            th, td {
+                border: 1px solid #ddd !important;
+                color: black !important;
+                font-size: 10px !important;
+                padding: 8px !important;
+            }
+
+            .print-header {
+                display: block !important;
+                text-align: center;
+                margin-bottom: 30px;
+                border-bottom: 2px solid #000;
+                padding-bottom: 10px;
+            }
+
+            .print-footer {
+                display: block !important;
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+                text-align: center;
+                font-size: 8px;
+                border-top: 1px solid #ddd;
+                padding-top: 5px;
+            }
+        }
+
+        .print-header, .print-footer {
+            display: none;
+        }
     </style>
 </head>
-<body class="font-sans antialiased bg-background text-primary-dark">
+<body class="font-sans antialiased bg-background text-slate-800" hx-boost="true">
+    <!-- SPA Progress Bar -->
+    <div class="htmx-indicator fixed top-0 left-0 w-full h-1 bg-accent z-[9999] transition-all duration-500 origin-left scale-x-0" id="spa-progress"></div>
+    <style>.htmx-request#spa-progress { @apply scale-x-100; }</style>
+
     <div class="flex min-h-screen overflow-hidden">
         <!-- SIDEBAR -->
         <aside id="sidebar" class="sidebar-neo shrink-0 -translate-x-full lg:translate-x-0">
@@ -106,10 +175,25 @@
                 </div>
             </div>
 
-            <nav class="mt-4 px-2 space-y-1.5 overflow-y-auto max-h-[calc(100vh-350px)] custom-scrollbar">
+            <nav id="sidebar-nav" 
+                 class="mt-4 px-2 space-y-1.5 overflow-y-auto max-h-[calc(100vh-350px)] custom-scrollbar"
+                 hx-target="#main-content" 
+                 hx-select="#main-content" 
+                 hx-swap="innerHTML transition:true"
+                 hx-push-url="true"
+                 hx-indicator="#spa-progress">
                 @if(isset($menuCategories) && $menuCategories->count() > 0)
                     @foreach($menuCategories as $category)
-                        <div class="text-[10px] font-black {{ $category->name === 'CONTROLE DE CRISE' ? 'text-rose-500' : 'text-primary-light' }} uppercase tracking-[0.3em] px-8 mb-4 mt-8 opacity-50">{{ $category->name }}</div>
+                        @php
+                            $catColor = match($category->name) {
+                                'CONTROLE DE CRISE' => 'text-rose-500',
+                                'INTELIGÊNCIA CONTÁBIL' => 'text-slate-400',
+                                'MÓDULO FINANCEIRO' => 'text-slate-400',
+                                'ADMINISTRAÇÃO' => 'text-slate-400',
+                                default => 'text-slate-400'
+                            };
+                        @endphp
+                        <div class="text-[10px] font-black {{ $catColor }} uppercase tracking-[0.3em] px-8 mb-4 mt-8 opacity-80">{{ $category->name }}</div>
                         
                         @foreach($category->items as $item)
                             @if($item->is_active && (!$item->is_admin_only || (Auth::user() && Auth::user()->role === 'Admin')))
@@ -134,7 +218,7 @@
                 @endif
 
                 @if(Auth::user() && Auth::user()->role === 'Admin')
-                    <div class="pt-10 text-[10px] font-black text-rose-400 uppercase tracking-[0.3em] px-8 mb-6 opacity-50">Administração</div>
+                    <div class="pt-10 text-[10px] font-black text-rose-400 uppercase tracking-[0.3em] px-8 mb-6 opacity-80">Administração</div>
 
                     <a href="{{ route('admin.menus.index') }}" class="nav-link-neo {{ request()->routeIs('admin.menus.*') ? 'active' : '' }}">
                         <i class="fas fa-bars-staggered w-5"></i>
@@ -222,7 +306,8 @@
             </header>
 
             <!-- PAGE CONTENT -->
-            <div class="p-10 max-w-[1600px] mx-auto w-full">
+            <div id="main-content" class="p-10 max-w-[1600px] mx-auto w-full transition-opacity duration-300"
+                 hx-target="#main-content" hx-select="#main-content" hx-swap="innerHTML transition:true">
                 @yield('content')
                 {{ $slot ?? '' }}
             </div>
@@ -233,9 +318,51 @@
     @stack('scripts')
     <script>
         $(document).ready(function() {
+            // Persistência de Scroll da Sidebar
+            const sidebarNav = document.getElementById('sidebar-nav');
+            
+            // Restaurar posição salva ao carregar
+            const savedScrollPos = localStorage.getItem('sidebarScrollPos');
+            if (savedScrollPos && sidebarNav) {
+                sidebarNav.scrollTop = savedScrollPos;
+            }
+
+            // Salvar posição ao clicar em qualquer link da sidebar
+            $('#sidebar-nav a').on('click', function() {
+                if (sidebarNav) {
+                    localStorage.setItem('sidebarScrollPos', sidebarNav.scrollTop);
+                }
+            });
+
             // Sidebar Toggle for Mobile
             $('#toggle-sidebar').on('click', function() {
                 $('#sidebar').toggleClass('-translate-x-full');
+            });
+
+            // Re-inicialização após navegação SPA (HTMX)
+            document.addEventListener('htmx:afterOnLoad', function(evt) {
+                // Re-inicializar Máscaras
+                $('.mask-money').mask('#.##0,00', {reverse: true});
+                $('.mask-phone').mask('(00) 00000-0000');
+                $('.mask-cpf').mask('000.000.000-00');
+                
+                // Fechar sidebar no mobile se estiver aberta
+                if (window.innerWidth < 1024) {
+                    $('#sidebar').addClass('-translate-x-full');
+                }
+
+                // Scroll para o topo
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                // Sincronizar classes ativas no menu
+                const currentPath = window.location.pathname;
+                $('#sidebar-nav a').removeClass('active');
+                $(`#sidebar-nav a`).each(function() {
+                    const href = $(this).attr('href');
+                    if (href && (href === currentPath || href === window.location.origin + currentPath)) {
+                        $(this).addClass('active');
+                    }
+                });
             });
 
             // Input masking examples

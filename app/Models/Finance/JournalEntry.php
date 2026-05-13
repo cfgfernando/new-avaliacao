@@ -29,4 +29,9 @@ class JournalEntry extends Model
     {
         return $this->hasMany(AccountingAudit::class, 'journal_entry_id');
     }
+
+    public function items()
+    {
+        return $this->hasMany(AccountingAudit::class, 'journal_entry_id');
+    }
 }

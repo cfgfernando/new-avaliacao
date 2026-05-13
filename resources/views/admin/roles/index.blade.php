@@ -4,7 +4,7 @@
 <div class="max-w-5xl mx-auto space-y-6">
     <div class="flex justify-between items-end mb-8">
         <div>
-            <h1 class="text-2xl font-black text-primary-dark uppercase tracking-tight">Perfis de Acesso</h1>
+            <h1 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Perfis de Acesso</h1>
             <p class="text-sm font-bold text-primary-light uppercase tracking-widest mt-1">Gerencie os níveis de acesso (Roles)</p>
         </div>
         <a href="{{ route('admin.roles.create') }}" class="btn-neo btn-primary text-xs py-2 px-6">
@@ -31,11 +31,11 @@
                         <div class="drag-handle cursor-grab active:cursor-grabbing text-slate-300 group-hover:text-accent transition-colors p-1">
                             <i class="fas fa-grip-vertical"></i>
                         </div>
-                        <div class="w-10 h-10 rounded-xl bg-slate-50 text-primary-dark group-hover:bg-accent group-hover:text-white flex items-center justify-center transition-all duration-500">
+                        <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-800 group-hover:bg-accent group-hover:text-white flex items-center justify-center transition-all duration-500">
                             <i class="fas fa-shield-alt"></i>
                         </div>
                         <div>
-                            <p class="font-bold text-primary-dark text-sm tracking-tight">{{ $role->name }}</p>
+                            <p class="font-bold text-slate-800 text-sm tracking-tight">{{ $role->name }}</p>
                             <p class="text-[10px] font-bold text-primary-light uppercase tracking-widest opacity-60">{{ $role->permissions->count() }} Permissões vinculadas</p>
                         </div>
                     </div>

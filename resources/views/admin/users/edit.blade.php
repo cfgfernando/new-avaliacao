@@ -3,11 +3,11 @@
 @section('content')
 <div class="max-w-3xl mx-auto space-y-6">
     <div class="flex items-center gap-4 mb-8">
-        <a href="{{ route('admin.users.index') }}" class="w-10 h-10 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary-dark hover:border-slate-300 transition-all shadow-sm">
+        <a href="{{ route('admin.users.index') }}" class="w-10 h-10 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 hover:border-slate-300 transition-all shadow-sm">
             <i class="fas fa-arrow-left"></i>
         </a>
         <div>
-            <h1 class="text-2xl font-black text-primary-dark uppercase tracking-tight">Editar Usuário</h1>
+            <h1 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Editar Usuário</h1>
             <p class="text-sm font-bold text-primary-light uppercase tracking-widest mt-1">{{ $user->name }}</p>
         </div>
     </div>
@@ -47,7 +47,7 @@
                     @foreach($roles as $role)
                         <label class="flex items-center gap-3 p-4 border border-slate-100 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
                             <input type="checkbox" name="roles[]" value="{{ $role->name }}" class="w-5 h-5 rounded border-slate-300 text-accent focus:ring-accent" {{ (is_array(old('roles')) && in_array($role->name, old('roles'))) || $user->hasRole($role->name) ? 'checked' : '' }}>
-                            <span class="font-bold text-sm text-primary-dark">{{ $role->name }}</span>
+                            <span class="font-bold text-sm text-slate-800">{{ $role->name }}</span>
                         </label>
                     @endforeach
                 </div>
