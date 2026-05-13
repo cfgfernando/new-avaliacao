@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Alias do Middleware RBAC: uso nas rotas via ->middleware('role:Admin,Supervisor')
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureRole::class,
+            'accounting_closure' => \App\Http\Middleware\CheckAccountingClosure::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

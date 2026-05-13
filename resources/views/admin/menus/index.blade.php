@@ -105,6 +105,7 @@
     </div>
 </div>
 
+@push('modals')
 <!-- Modal Novo Item -->
 <div id="itemModal" class="hidden fixed inset-0 bg-primary/40 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-reveal-up">
@@ -183,6 +184,7 @@
         </form>
     </div>
 </div>
+@endpush
 
 @endsection
 

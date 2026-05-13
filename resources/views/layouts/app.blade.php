@@ -10,13 +10,87 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@800;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* FORCED TECH DESIGN - ELITE V8 */
+        
+        /* 1. Grade e Bordas */
+        .card-neo table {
+            border-collapse: separate !important;
+            border-spacing: 0 !important;
+            width: 100% !important;
+            border: 2px solid #e2e8f0 !important; /* border-slate-200 */
+            border-radius: 16px !important;
+            overflow: hidden !important;
+        }
+
+        .card-neo table th, 
+        .card-neo table td {
+            border: 1px solid #f1f5f9 !important; /* border-slate-100 */
+            padding: 16px 24px !important;
+        }
+
+        .card-neo table thead th {
+            background-color: #f8fafc !important; /* bg-slate-50 */
+            color: #1e293b !important; /* text-slate-800 */
+            font-weight: 900 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.1em !important;
+            font-size: 11px !important;
+        }
+
+        /* 2. Linhas Mescladas (Zebra) */
+        .card-neo table tbody tr:nth-child(even) {
+            background-color: #f8fafc !important; /* mesclado claro */
+        }
+        
+        .card-neo table tbody tr:hover {
+            background-color: #f1f5f9 !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+        }
+
+        /* 3. Botões de Ação Maiores */
+        .btn-action {
+            width: 44px !important;
+            height: 44px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 12px !important;
+            transition: all 0.3s ease !important;
+            margin: 0 4px !important;
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-3px) scale(1.1) !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .btn-action i {
+            font-size: 16px !important;
+        }
+
+        /* Tipografia Financeira */
+        .font-money {
+            font-family: 'JetBrains Mono', monospace !important;
+            font-weight: 800 !important;
+        }
+    </style>
 </head>
 <body class="font-sans antialiased bg-background text-primary-dark">
     <div class="flex min-h-screen overflow-hidden">
@@ -35,14 +109,17 @@
             <nav class="mt-4 px-2 space-y-1.5 overflow-y-auto max-h-[calc(100vh-350px)] custom-scrollbar">
                 @if(isset($menuCategories) && $menuCategories->count() > 0)
                     @foreach($menuCategories as $category)
-                        <div class="text-[10px] font-black text-primary-light uppercase tracking-[0.3em] px-8 mb-4 mt-8 opacity-50">{{ $category->name }}</div>
+                        <div class="text-[10px] font-black {{ $category->name === 'CONTROLE DE CRISE' ? 'text-rose-500' : 'text-primary-light' }} uppercase tracking-[0.3em] px-8 mb-4 mt-8 opacity-50">{{ $category->name }}</div>
                         
                         @foreach($category->items as $item)
                             @if($item->is_active && (!$item->is_admin_only || (Auth::user() && Auth::user()->role === 'Admin')))
                                 <a href="{{ str_starts_with($item->url, 'http') ? $item->url : url($item->url) }}" 
-                                   class="nav-link-neo {{ request()->is(trim($item->url, '/')) ? 'active' : '' }}">
-                                    <i class="{{ $item->icon ?: 'fas fa-link' }} w-5"></i>
+                                   class="nav-link-neo {{ request()->is(trim($item->url, '/')) ? 'active' : '' }} {{ $category->name === 'CONTROLE DE CRISE' ? '!text-rose-400 group' : '' }}">
+                                    <i class="{{ $item->icon ?: 'fas fa-link' }} w-5 {{ $category->name === 'CONTROLE DE CRISE' ? 'group-hover:animate-pulse' : '' }}"></i>
                                     <span>{{ $item->title }}</span>
+                                    @if($item->title === 'Zona de Risco')
+                                        <span class="ml-auto w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)] animate-ping"></span>
+                                    @endif
                                 </a>
                             @endif
                         @endforeach
@@ -152,6 +229,7 @@
         </main>
     </div>
 
+    @stack('modals')
     @stack('scripts')
     <script>
         $(document).ready(function() {

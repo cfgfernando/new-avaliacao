@@ -18,6 +18,31 @@ class MemberController extends Controller
         $this->authorizeResource(Member::class, 'member');
     }
 
+    /**
+     * Busca de membros para Select2 AJAX.
+     */
+    public function search(Request $request)
+    {
+        $term = $request->q;
+        if (strlen($term) < 3) return response()->json([]);
+
+        $members = Member::query()
+            ->whereHas('user', function($q) use ($term) {
+                $q->where('name', 'like', "%{$term}%");
+            })
+            ->with('user')
+            ->limit(15)
+            ->get()
+            ->map(function($member) {
+                return [
+                    'id' => $member->id,
+                    'name' => $member->user->name
+                ];
+            });
+
+        return response()->json($members);
+    }
+
     // =========================================================================
     // INDEX
     // =========================================================================

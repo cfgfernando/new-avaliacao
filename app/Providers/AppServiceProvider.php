@@ -6,6 +6,7 @@ use App\Models\Cell;
 use App\Models\Member;
 use App\Policies\CellPolicy;
 use App\Policies\MemberPolicy;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -57,5 +58,10 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('menuCategories', $menuCategories);
             }
         });
+
+        // ---------------------------------------------------------------------
+        // Configuração de Paginação
+        // ---------------------------------------------------------------------
+        Paginator::useTailwind();
     }
 }

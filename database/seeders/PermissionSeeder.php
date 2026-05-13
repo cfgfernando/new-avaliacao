@@ -24,7 +24,16 @@ class PermissionSeeder extends Seeder
                 'Ver Trilha de Auditoria',
                 'Ver Configurações'
             ],
-            // Outros módulos (ex: Financeiro, RH, etc) serão adicionados dinamicamente no futuro.
+            'Financeiro' => [
+                'Acesso ao Módulo',
+                'Gerenciar Plano de Contas',
+                'Gerenciar Centros de Custo',
+                'Gerenciar Contas',
+                'Gerenciar Malotes',
+                'Gerenciar Transações',
+                'Ver Livro Diário',
+                'Gerenciar Imobilizado',
+            ]
         ];
 
         foreach ($modules as $module => $permissions) {

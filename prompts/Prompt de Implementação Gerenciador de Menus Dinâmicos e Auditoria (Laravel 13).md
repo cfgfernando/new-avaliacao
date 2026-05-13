@@ -13,6 +13,7 @@ Implementar uma interface administrativa para controle total da sidebar do siste
 - **Frontend:** HTML5, Tailwind CSS (Vite)
 - **Scripting:** JavaScript, JQuery, SortableJS
 - **Banco de Dados:** MySQL
+- **Feedback Visual: **Use Toastr ou SweetAlert2 para confirmar quando a ordem for salva com sucesso via AJAX
 
 ---
 
@@ -160,3 +161,6 @@ document.querySelectorAll('.sortable-list').forEach(el => {
 - **Micro-interações:** Ícone de grip (`drag-handle`) deve mudar de cor ao passar o mouse.
 - **Empty States:** Se uma categoria não tiver itens, mostrar uma mensagem "Arraste um item aqui" com borda tracejada.
 - **Modo Escuro:** Garantir contraste perfeito usando a paleta `slate` ou `zinc` do Tailwind.
+
+
+Gere os códigos completos baseando-se nesta descrição, garantindo que as rotas estejam protegidas por middleware de autenticação e que o frontend utilize Vite para compilar os assets."
