@@ -35,7 +35,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ----------------------------------------------------------
     // DASHBOARD & PERFIL
     // ----------------------------------------------------------
-    Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
+    Route::get('dashboard', [OperacionalController::class, 'dashboard'])->name('dashboard');
+    Route::get('hierarchy', [OperacionalController::class, 'hierarchy'])->name('hierarchy');
+    Route::get('consolidation', [OperacionalController::class, 'monthlyConsolidation'])->name('consolidation');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

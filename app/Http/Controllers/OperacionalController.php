@@ -113,6 +113,45 @@ class OperacionalController extends Controller
         ]);
 
         return response()->json(['success' => true, 'message' => 'Contato registrado com sucesso!']);
+    /**
+     * Visualização do Organograma (Estrutura Hierárquica).
+     */
+    public function hierarchy(): View
+    {
+        $networks = HierarchyNode::whereNull('parent_id')
+            ->with(['children.children.children.cells.leader', 'cells.leader'])
+            ->orderBy('name')
+            ->get();
+
+        return view('operacional.hierarchy', compact('networks'));
+    /**
+     * Consolidação Mensal (Relatório de Fechamento).
+     */
+    public function monthlyConsolidation(Request $request): View
+    {
+        $month = $request->get('month', now()->month);
+        $year  = $request->get('year', now()->year);
+        $date  = now()->setYear($year)->setMonth($month);
+
+        $prevDate = $date->copy()->subMonth();
+
+        // Dados Mês Atual
+        $stats = [
+            'cells_total'    => Cell::where('active', true)->count(),
+            'cells_new'      => Cell::whereMonth('created_at', $month)->whereYear('created_at', $year)->count(),
+            'members_total'  => Member::where('status', 'Active')->count(),
+            'members_new'    => Member::whereMonth('created_at', $month)->whereYear('created_at', $year)->count(),
+            'visitors_new'   => Visitor::whereMonth('created_at', $month)->whereYear('created_at', $year)->count(),
+            'offers_total'   => WeeklyReport::whereMonth('report_date', $month)->whereYear('report_date', $year)->sum('total_offering'),
+        ];
+
+        // Dados Mês Anterior (para comparação)
+        $prevStats = [
+            'members_new'    => Member::whereMonth('created_at', $prevDate->month)->whereYear('created_at', $prevDate->year)->count(),
+            'offers_total'   => WeeklyReport::whereMonth('report_date', $prevDate->month)->whereYear('report_date', $prevDate->year)->sum('total_offering'),
+        ];
+
+        return view('operacional.consolidation', compact('stats', 'prevStats', 'date'));
     }
 }
 
