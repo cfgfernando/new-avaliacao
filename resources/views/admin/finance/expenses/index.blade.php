@@ -152,16 +152,34 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-center">
-                            <span class="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border {{ $transaction->status == 'paid' ? 'bg-rose-50 text-rose-600 border-rose-100' : 'bg-amber-50 text-amber-600 border-amber-100' }}">
-                                {{ $transaction->status == 'paid' ? 'Pago' : 'Pendente' }}
+                            @php
+                                $statusClasses = match($transaction->status) {
+                                    'paid' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                                    'approved' => 'bg-blue-50 text-blue-600 border-blue-100',
+                                    'pending_approval' => 'bg-amber-50 text-amber-600 border-amber-100 animate-pulse',
+                                    'rejected' => 'bg-rose-50 text-rose-600 border-rose-100',
+                                    default => 'bg-slate-50 text-slate-600 border-slate-100'
+                                };
+                                $statusLabel = match($transaction->status) {
+                                    'paid' => 'Pago',
+                                    'approved' => 'Aprovado',
+                                    'pending_approval' => 'Aguardando Aprovação',
+                                    'rejected' => 'Rejeitado',
+                                    'pending' => 'Pendente',
+                                    default => $transaction->status
+                                };
+                            @endphp
+                            <span class="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border {{ $statusClasses }}">
+                                {{ $statusLabel }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 text-center" onclick="event.stopPropagation()">
-                            <div class="flex items-center justify-center gap-2">
-                                <button onclick="editExpense({{ $transaction->id }})" class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-blue-500 transition-colors shadow-sm border border-transparent hover:border-slate-100" title="Visualizar">
+
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex items-center justify-center gap-2" onclick="event.stopPropagation()">
+                                <button onclick="editExpense({{ $transaction->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 hover:bg-blue-500 hover:text-white flex items-center justify-center transition-all shadow-sm group/btn" title="Visualizar">
                                     <i class="fas fa-eye text-[10px]"></i>
                                 </button>
-                                <button class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-slate-800 transition-colors shadow-sm border border-transparent hover:border-slate-100" title="Recibo">
+                                <button class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-800 hover:text-white flex items-center justify-center transition-all shadow-sm group/btn" title="Recibo">
                                     <i class="fas fa-print text-[10px]"></i>
                                 </button>
                             </div>
@@ -189,10 +207,14 @@
         @endif
     </div>
 </div>
+@endsection
 
+@push('modals')
 <!-- Modal Nova Despesa -->
 @include('admin.finance.expenses.modal_create')
+@endpush
 
+@push('scripts')
 <script>
     function openFinanceModal(id) {
         $(`#${id}`).removeClass('hidden').addClass('flex');
@@ -204,7 +226,7 @@
         $('#form-expense')[0].reset();
         $('#expenseModal h3').text('Nova Despesa');
         $('#form-expense').attr('action', `{{ route('admin.finance.expenses.store') }}`);
-        $('#form-expense input[name="_method"]').remove();
+        $('#method-container-exp').html('');
     }
     function switchTab(module, tab) {
         $(`#${module}Modal .modal-tab-clean`).removeClass('active');
@@ -214,11 +236,27 @@
     }
     function editExpense(id) {
         openFinanceModal('expenseModal');
-        $('#expenseModal h3').text('Editar Despesa: #' + id);
-        $('#form-expense').attr('action', `/admin/finance/expenses/${id}`);
-        if ($('#form-expense input[name="_method"]').length === 0) {
-            $('#form-expense').append('<input type="hidden" name="_method" value="PUT">');
-        }
+        
+        // Feedback visual de carregamento
+        $('#expenseModal h3').text('Carregando...');
+        
+        $.get(`/admin/finance/expenses/${id}`, function(data) {
+            $('#form-expense').attr('action', `/admin/finance/expenses/${id}`);
+            $('#method-container-exp').html('<input type="hidden" name="_method" value="PUT">');
+            
+            // Preencher campos
+            $('[name="transaction_date"]').val(data.transaction_date_formatted);
+            $('[name="amount"]').val(data.amount.toString().replace('.', ',')).trigger('input');
+            $('[name="financial_account_id"]').val(data.financial_account_id);
+            $('[name="chart_of_account_id"]').val(data.chart_of_account_id);
+            $('[name="payment_method"]').val(data.payment_method);
+            $('[name="cost_center_id"]').val(data.cost_center_id);
+            $('[name="description"]').val(data.description);
+            $('[name="status"]').val(data.status);
+            
+            $('#expenseModal h3').text('Editar Despesa #TX-' + String(data.id).padStart(6, '0'));
+            $('#expenseModal button[type="submit"]').html('<i class="fas fa-save mr-2"></i> Salvar Alterações');
+        });
     }
 
     $(document).ready(function() {
@@ -258,4 +296,4 @@
         });
     });
 </script>
-@endsection
+@endpush

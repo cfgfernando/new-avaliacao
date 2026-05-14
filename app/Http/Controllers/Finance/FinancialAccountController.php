@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Finance;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Finance\FinancialAccount;
+use App\Models\Finance\Bank;
 use Illuminate\Support\Facades\DB;
 
 class FinancialAccountController extends Controller
@@ -24,7 +25,7 @@ class FinancialAccountController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:100',
             'type' => 'required|in:bank,cash,investment',
-            'bank_name' => 'nullable|string|max:100',
+            'bank_id' => 'nullable|exists:banks,id',
             'agency' => 'nullable|string|max:20',
             'account_number' => 'nullable|string|max:50',
             'initial_balance' => 'required',
@@ -34,7 +35,12 @@ class FinancialAccountController extends Controller
         try {
             DB::beginTransaction();
             
-            // Handle balance format
+            // Handle bank_name if bank_id is provided
+            if ($request->bank_id) {
+                $bank = Bank::find($request->bank_id);
+                $validated['bank_name'] = $bank->name;
+            }
+            unset($validated['bank_id']);
             $balance = $validated['initial_balance'];
             if (is_string($balance)) {
                 $balance = str_replace(['.', ','], ['', '.'], $balance);
@@ -65,7 +71,7 @@ class FinancialAccountController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:100',
             'type' => 'required|in:bank,cash,investment',
-            'bank_name' => 'nullable|string|max:100',
+            'bank_id' => 'nullable|exists:banks,id',
             'agency' => 'nullable|string|max:20',
             'account_number' => 'nullable|string|max:50',
             'is_active' => 'boolean'
@@ -73,6 +79,13 @@ class FinancialAccountController extends Controller
 
         try {
             DB::beginTransaction();
+
+            // Handle bank_name if bank_id is provided
+            if ($request->bank_id) {
+                $bank = Bank::find($request->bank_id);
+                $validated['bank_name'] = $bank->name;
+            }
+            unset($validated['bank_id']);
             $account->update($validated);
             DB::commit();
 

@@ -109,12 +109,12 @@
                                 R$ {{ number_format($account->balance_cache, 2, ',', '.') }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 text-center" onclick="event.stopPropagation()">
-                            <div class="flex items-center justify-center gap-1.5">
-                                <button onclick="editAccount({{ $account->id }})" class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-accent transition-all shadow-sm border border-transparent hover:border-slate-100" title="Editar">
-                                    <i class="fas fa-pencil-alt text-[10px]"></i>
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex items-center justify-center gap-2" onclick="event.stopPropagation()">
+                                <button onclick="editAccount({{ $account->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 hover:bg-accent hover:text-white flex items-center justify-center transition-all shadow-sm group/btn" title="Configurar">
+                                    <i class="fas fa-gear text-[10px]"></i>
                                 </button>
-                                <button onclick="deleteAccount({{ $account->id }})" class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-rose-500 transition-all shadow-sm border border-transparent hover:border-slate-100" title="Excluir">
+                                <button onclick="deleteAccount({{ $account->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-all shadow-sm group/btn" title="Excluir">
                                     <i class="fas fa-trash text-[10px]"></i>
                                 </button>
                             </div>
@@ -129,8 +129,8 @@
 
 @push('modals')
 <!-- Modal Elite V8 -->
-<div id="financialAccountModal" class="hidden fixed inset-0 bg-primary/40 backdrop-blur-sm z-[999] items-center justify-center p-6">
-    <div class="bg-white w-full max-w-lg animate-reveal-up overflow-hidden shadow-2xl border border-white/20 rounded-[2rem] flex flex-col">
+<div id="financialAccountModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+    <div class="bg-white w-full max-w-lg m-auto animate-reveal-up overflow-hidden shadow-2xl border border-white/20 rounded-[2rem] flex flex-col">
         
         <!-- Header -->
         <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">

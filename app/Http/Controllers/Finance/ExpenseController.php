@@ -127,6 +127,12 @@ class ExpenseController extends Controller
 
     public function store(Request $request)
     {
+        if ($request->has('amount')) {
+            $request->merge([
+                'amount' => str_replace(['.', ','], ['', '.'], $request->amount)
+            ]);
+        }
+
         $data = $request->validate([
             'financial_account_id' => 'required|exists:financial_accounts,id',
             'chart_of_account_id' => 'required|exists:chart_of_accounts,id',
@@ -135,13 +141,61 @@ class ExpenseController extends Controller
             'transaction_date' => 'required|date',
             'payment_method' => 'required|string',
             'description' => 'nullable|string',
-            'status' => 'required|string|in:pending,paid,cancelled',
+            'status' => 'required|string|in:pending,paid,cancelled,pending_approval',
         ]);
 
         $data['type'] = 'expense';
 
+        // Política de Governança: Se não for admin, ou se a regra for estrita, 
+        // forçamos o status para 'pending_approval' se o usuário tentar criar como 'paid' ou 'pending'
+        // Para este ERP, forçaremos todas as despesas novas para a fila de aprovação.
+        if ($data['status'] !== 'cancelled') {
+            $data['status'] = 'pending_approval';
+        }
+
         Transaction::create($data);
 
-        return redirect()->route('admin.finance.expenses.index')->with('success', 'Despesa registrada com sucesso!');
+        return redirect()->route('admin.finance.expenses.index')->with('success', 'Despesa enviada para aprovação com sucesso!');
+
+    }
+
+    public function show(Transaction $expense)
+    {
+        if ($expense->type !== 'expense') {
+            abort(404);
+        }
+        
+        $expense->transaction_date_formatted = \Carbon\Carbon::parse($expense->transaction_date)->format('Y-m-d');
+        
+        return response()->json($expense);
+    }
+
+    public function update(Request $request, Transaction $expense)
+    {
+        if ($expense->type !== 'expense') {
+            abort(404);
+        }
+
+        if ($request->has('amount')) {
+            $request->merge([
+                'amount' => str_replace(['.', ','], ['', '.'], $request->amount)
+            ]);
+        }
+
+        $data = $request->validate([
+            'financial_account_id' => 'required|exists:financial_accounts,id',
+            'chart_of_account_id' => 'required|exists:chart_of_accounts,id',
+            'cost_center_id' => 'required|exists:cost_centers,id',
+            'amount' => 'required|numeric',
+            'transaction_date' => 'required|date',
+            'payment_method' => 'required|string',
+            'description' => 'nullable|string',
+            'status' => 'required|string|in:pending,paid,cancelled,pending_approval',
+        ]);
+
+
+        $expense->update($data);
+
+        return redirect()->route('admin.finance.expenses.index')->with('success', 'Despesa atualizada com sucesso!');
     }
 }

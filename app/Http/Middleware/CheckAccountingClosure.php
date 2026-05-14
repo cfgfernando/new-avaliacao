@@ -16,21 +16,45 @@ class CheckAccountingClosure
             return $next($request);
         }
 
-        // Tenta pegar a data da requisição (comum em lançamentos financeiros)
-        $date = $request->input('date') ?? $request->input('payment_date') ?? $request->input('created_at');
+        // 1. Identificar a data da operação
+        $date = $request->input('transaction_date') 
+                ?? $request->input('purchase_date')
+                ?? $request->input('date') 
+                ?? $request->input('payment_date');
 
-        // Se não houver data na requisição, mas for uma edição/exclusão, 
-        // em um cenário ideal buscaríamos o registro no BD para ver a data original.
-        // Por agora, validaremos a data de entrada se existir.
-        
+        // 2. Se for uma rota de recurso (edit/update/delete), tentar inferir a data do modelo
+        if (!$date && $request->route()) {
+            $params = $request->route()->parameters();
+            $modelInstance = reset($params);
+            
+            if ($modelInstance instanceof \Illuminate\Database\Eloquent\Model) {
+                $date = $modelInstance->transaction_date ?? $modelInstance->purchase_date ?? $modelInstance->date;
+            }
+        }
+
+        // 3. Se ainda não houver data, e for uma rota de "movimentação", usar a data atual
+        if (!$date && $request->route()) {
+            $routeName = $request->route()->getName();
+            $movementRoutes = ['transactions.', 'income.', 'expenses.', 'batches.', 'journal.', 'fixed-assets.'];
+            
+            foreach ($movementRoutes as $movement) {
+                if (str_contains($routeName, $movement)) {
+                    $date = now();
+                    break;
+                }
+            }
+        }
+
+        // 4. Validar se o período está fechado
         if ($date && AccountingClosure::isPeriodClosed($date)) {
-            if ($request->ajax()) {
+            if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
-                    'message' => 'Este período contábil está FECHADO e não permite alterações.'
+                    'error' => 'Período Bloqueado',
+                    'message' => 'Este período contábil (' . \Carbon\Carbon::parse($date)->format('m/Y') . ') está FECHADO e não permite alterações.'
                 ], 403);
             }
 
-            return back()->with('error', 'Operação bloqueada: Este período contábil já foi encerrado.');
+            return back()->with('error', 'Operação bloqueada: O período ' . \Carbon\Carbon::parse($date)->format('m/Y') . ' já foi encerrado contabilmente.');
         }
 
         return $next($request);

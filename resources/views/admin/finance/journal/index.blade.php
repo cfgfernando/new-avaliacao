@@ -71,15 +71,15 @@
                                 <span class="text-[9px] text-slate-200 font-black">---</span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 text-center" onclick="event.stopPropagation()">
-                            <div class="flex items-center justify-center gap-1.5">
-                                <button onclick="viewJournal({{ $entry->id }})" class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-accent transition-all shadow-sm border border-transparent hover:border-slate-100" title="Detalhes">
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex items-center justify-center gap-2" onclick="event.stopPropagation()">
+                                <button onclick="viewJournal({{ $entry->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 hover:bg-accent hover:text-white flex items-center justify-center transition-all shadow-sm group/btn" title="Detalhes">
                                     <i class="fas fa-eye text-[10px]"></i>
                                 </button>
-                                <button onclick="printJournal({{ $entry->id }})" class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-slate-800 transition-all shadow-sm border border-transparent hover:border-slate-100" title="Imprimir">
+                                <button onclick="printJournal({{ $entry->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-800 hover:text-white flex items-center justify-center transition-all shadow-sm group/btn" title="Imprimir">
                                     <i class="fas fa-print text-[10px]"></i>
                                 </button>
-                                <button onclick="reverseJournal({{ $entry->id }})" class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-rose-500 transition-all shadow-sm border border-transparent hover:border-slate-100" title="Estornar">
+                                <button onclick="reverseJournal({{ $entry->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-all shadow-sm group/btn" title="Estornar">
                                     <i class="fas fa-undo-alt text-[10px]"></i>
                                 </button>
                             </div>

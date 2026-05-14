@@ -23,7 +23,7 @@
 
     <!-- Dynamic Tab Bar (Elite V8) -->
     <div class="card-neo !p-2 bg-white/80 backdrop-blur-xl border border-slate-100 shadow-lg sticky top-24 z-40 rounded-3xl">
-        <div class="flex items-center space-x-2 overflow-x-auto scrollbar-hide px-2 py-1" id="settings-tabs">
+        <div class="flex items-center gap-1 overflow-x-auto scrollbar-thin px-1 py-1" id="settings-tabs">
             @php
                 $tabs = [
                     ['id' => 'unidades', 'label' => 'Unidades', 'icon' => 'fa-church'],
@@ -39,9 +39,9 @@
             @foreach($tabs as $tab)
                 <button onclick="switchTab('{{ $tab['id'] }}')" 
                         data-tab-btn="{{ $tab['id'] }}"
-                        class="tab-btn flex items-center gap-3 px-6 py-4 rounded-2xl transition-all duration-300 whitespace-nowrap min-w-fit">
-                    <i class="fas {{ $tab['icon'] }} text-xs"></i>
-                    <span class="text-[11px] font-black tracking-widest uppercase">{{ $tab['label'] }}</span>
+                        class="tab-btn flex items-center gap-2 px-4 py-3 rounded-xl transition-all duration-300 whitespace-nowrap min-w-fit">
+                    <i class="fas {{ $tab['icon'] }} text-[10px]"></i>
+                    <span class="text-[10px] font-black tracking-widest uppercase">{{ $tab['label'] }}</span>
                 </button>
             @endforeach
         </div>
@@ -121,7 +121,7 @@
                                         <button onclick="editEntity('units', {{ $unit->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-800 hover:bg-accent hover:text-white flex items-center justify-center transition-all shadow-sm">
                                             <i class="fas fa-pen text-[10px]"></i>
                                         </button>
-                                        <button class="w-8 h-8 rounded-lg bg-slate-50/50 text-slate-800 hover:bg-rose-600 hover:text-white transition-all">
+                                        <button onclick="deleteEntity('units', {{ $unit->id }})" class="w-8 h-8 rounded-lg bg-slate-50/50 text-slate-800 hover:bg-rose-600 hover:text-white transition-all">
                                             <i class="fas fa-trash text-[10px]"></i>
                                         </button>
                                     </div>
@@ -192,21 +192,22 @@
                                         </div>
                                         <div>
                                             <span class="text-xs font-black text-slate-800 uppercase block tracking-tight">{{ $account->name }}</span>
-                                            <span class="text-[8px] text-slate-600 font-bold uppercase tracking-widest italic">Conta Corrente</span>
+                                            <span class="text-[8px] text-slate-600 font-bold uppercase tracking-widest italic">
+                                                {{ $account->type === 'bank' ? 'Conta Bancária' : ($account->type === 'cash' ? 'Cofre Físico' : 'Investimento') }}
+                                            </span>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-xs font-bold text-slate-800 font-mono border-r border-slate-50/50 italic">{{ $account->agency ?? '0001' }} / {{ $account->account_number ?? '12345-6' }}</td>
                                 <td class="px-6 py-4 border-r border-slate-50/50">
-                                    <span class="text-xs font-black text-emerald-900 font-money italic">R$ {{ number_format($account->balance ?? 0, 2, ',', '.') }}</span>
+                                    <span class="text-xs font-black text-emerald-900 font-money italic">R$ {{ number_format($account->balance_cache ?? 0, 2, ',', '.') }}</span>
                                 </td>
                                 <td class="px-6 py-4 border-r border-slate-50/50">
                                     <span class="badge-success !bg-emerald-500 !text-white border-none text-[8px] px-2 py-0.5">Ativa</span>
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                     <div class="flex justify-end gap-2" onclick="event.stopPropagation()">
-                                        <button onclick="editEntity('accounts', {{ $account->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-800 hover:bg-accent hover:text-white flex items-center justify-center transition-all shadow-sm">
-                                            <i class="fas fa-gear text-[10px]"></i>
+                                        <button onclick="deleteEntity('accounts', {{ $account->id }})" class="w-8 h-8 rounded-lg bg-slate-50/50 text-slate-800 hover:bg-rose-600 hover:text-white transition-all">
+                                            <i class="fas fa-trash text-[10px]"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -290,6 +291,9 @@
                                         <button onclick="editEntity('chart-of-accounts', {{ $coa->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-800 hover:bg-accent hover:text-white flex items-center justify-center transition-all shadow-sm">
                                             <i class="fas fa-pen text-[10px]"></i>
                                         </button>
+                                        <button onclick="deleteEntity('chart-of-accounts', {{ $coa->id }})" class="w-8 h-8 rounded-lg bg-slate-50/50 text-slate-800 hover:bg-rose-600 hover:text-white transition-all">
+                                            <i class="fas fa-trash text-[10px]"></i>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -340,7 +344,11 @@
                                         </td>
                                         <td class="px-6 py-4 text-[9px] text-slate-600 font-bold uppercase italic border-r border-slate-50/50">Auditado em {{ $closure->created_at->format('d/m/Y') }}</td>
                                         <td class="px-6 py-4 text-right">
-                                            <span class="badge-success !bg-emerald-500 !text-white border-none text-[8px] px-2 py-0.5">Encerrado</span>
+                                            <div class="flex justify-end gap-2" onclick="event.stopPropagation()">
+                                                <button onclick="window.location.href='/admin/finance/closures'" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-800 hover:bg-accent hover:text-white flex items-center justify-center transition-all shadow-sm">
+                                                    <i class="fas fa-eye text-[10px]"></i>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                     @empty
@@ -348,6 +356,9 @@
                                     @endforelse
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="mt-8 px-6 pb-6">
+                            {{ $closures->appends(['tab' => 'bloqueios'])->links() }}
                         </div>
                     </div>
                 </div>
@@ -562,14 +573,14 @@
         </div>
 
     </div>
-    @endsection
+</div>
 
 @push('modals')
     <!-- MODALS -->
     <!-- Modal Fornecedor -->
-    <div id="modal-supplier" class="fixed inset-0 z-[9999] hidden bg-black/80 backdrop-blur-md items-center justify-center p-4">
-        <div class="card-neo w-full max-w-4xl max-h-[90vh] animate-reveal-up !p-0 overflow-hidden shadow-2xl flex flex-col border-white/20">
-            <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
+    <div id="modal-supplier" class="fixed inset-0 z-[9999] hidden bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+        <div class="card-neo w-full max-w-3xl m-auto animate-reveal-up !p-0 shadow-2xl flex flex-col border-white/20">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
                 <div>
                     <h3 class="text-xl font-black text-slate-800 uppercase tracking-tighter flex items-center gap-3">
                         <i class="fas fa-truck-field text-accent"></i>
@@ -593,7 +604,7 @@
                 <input type="hidden" name="id" id="supplier_id">
                 
                 <!-- Tab: Geral -->
-                <div id="supplier-tab-geral" class="supplier-tab-content p-8 space-y-10">
+                <div id="supplier-tab-geral" class="supplier-tab-content p-6 space-y-8">
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-10">
                         <!-- Identificação -->
                         <div class="md:col-span-12">
@@ -728,7 +739,7 @@
                 </div>
             </form>
 
-            <div class="p-8 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-5 shrink-0">
+            <div class="p-6 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-5 shrink-0">
                 <button type="button" onclick="closeModal('modal-supplier')" class="px-8 py-4 bg-white border border-slate-100 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all">Cancelar</button>
                 <button type="submit" form="form-supplier" class="px-10 py-4 bg-accent text-white border border-accent-hover rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-accent-hover transition-all shadow-xl">
                     <i class="fas fa-save mr-2"></i>
@@ -739,8 +750,8 @@
     </div>
 
     <!-- Modal Centro de Custo -->
-    <div id="modal-cost-center" class="fixed inset-0 z-[9999] hidden bg-black/80 backdrop-blur-md items-center justify-center p-4">
-        <div class="card-neo w-full max-w-lg max-h-[90vh] animate-reveal-up !p-0 overflow-hidden shadow-2xl flex flex-col border-slate-100">
+    <div id="modal-cost-center" class="fixed inset-0 z-[9999] hidden bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+        <div class="card-neo w-full max-w-lg m-auto animate-reveal-up !p-0 shadow-2xl flex flex-col border-slate-100">
             <div class="p-6 border-b-2 border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
                 <div>
                     <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
@@ -780,8 +791,8 @@
     </div>
 
     <!-- Modal Instituição Bancária -->
-    <div id="modal-bank" class="fixed inset-0 z-[9999] hidden bg-black/80 backdrop-blur-md items-center justify-center p-4">
-        <div class="card-neo w-full max-w-xl max-h-[90vh] animate-reveal-up !p-0 overflow-hidden shadow-2xl flex flex-col border-white/20">
+    <div id="modal-bank" class="fixed inset-0 z-[9999] hidden bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+        <div class="card-neo w-full max-w-xl m-auto animate-reveal-up !p-0 shadow-2xl flex flex-col border-white/20">
             <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
                 <div>
                     <h3 class="text-lg font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
@@ -821,8 +832,8 @@
     </div>
 
     <!-- Modal Unidade -->
-    <div id="modal-units" class="fixed inset-0 z-[9999] hidden bg-black/80 backdrop-blur-md items-center justify-center p-4">
-        <div class="card-neo w-full max-w-lg max-h-[90vh] animate-reveal-up !p-0 overflow-hidden shadow-2xl flex flex-col border-slate-100">
+    <div id="modal-units" class="fixed inset-0 z-[9999] hidden bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+        <div class="card-neo w-full max-w-lg m-auto animate-reveal-up !p-0 shadow-2xl flex flex-col border-slate-100">
             <div class="p-6 border-b-2 border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
                 <div>
                     <h3 class="text-lg font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
@@ -854,8 +865,8 @@
     </div>
 
     <!-- Modal Plano de Contas -->
-    <div id="modal-chart-of-accounts" class="fixed inset-0 z-[9999] hidden bg-black/80 backdrop-blur-md items-center justify-center p-4">
-        <div class="card-neo w-full max-w-lg max-h-[90vh] animate-reveal-up !p-0 overflow-hidden shadow-2xl flex flex-col border-slate-100">
+    <div id="modal-chart-of-accounts" class="fixed inset-0 z-[9999] hidden bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+        <div class="card-neo w-full max-w-lg m-auto animate-reveal-up !p-0 shadow-2xl flex flex-col border-slate-100">
             <div class="p-6 border-b-2 border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
                 <div>
                     <h3 class="text-lg font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
@@ -900,8 +911,8 @@
     </div>
 
     <!-- Modal Conta Financeira -->
-    <div id="modal-accounts" class="fixed inset-0 z-[9999] hidden bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="bg-white rounded-[30px] border border-slate-100 w-full max-w-xl max-h-[90vh] animate-reveal-up !p-0 overflow-hidden shadow-2xl flex flex-col">
+    <div id="modal-accounts" class="fixed inset-0 z-[9999] hidden bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+        <div class="bg-white rounded-[30px] border border-slate-100 w-full max-w-xl m-auto animate-reveal-up !p-0 shadow-2xl flex flex-col">
             <div class="p-6 border-b-2 border-slate-100 flex justify-between items-center bg-slate-50/30 shrink-0">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 rounded-2xl bg-accent flex items-center justify-center text-white shadow-lg">
@@ -966,11 +977,9 @@
             </div>
         </div>
     </div>
-</div>
-
 @endpush
 
-@push('styles')
+@push('scripts')
 <style>
     .tab-btn {
         background: transparent;
@@ -988,10 +997,13 @@
     }
 
     #settings-tabs::-webkit-scrollbar {
-        height: 4px;
+        height: 3px;
+    }
+    #settings-tabs::-webkit-scrollbar-track {
+        @apply bg-slate-50 rounded-full;
     }
     #settings-tabs::-webkit-scrollbar-thumb {
-        @apply bg-slate-50/50 rounded-full;
+        @apply bg-slate-200 rounded-full;
     }
     
     .card-neo {
@@ -1001,14 +1013,12 @@
     .input-neo {
         @apply bg-white border border-slate-200 rounded-2xl px-5 py-4 text-slate-800 font-bold text-xs transition-all duration-300 placeholder:text-slate-400 placeholder:font-medium focus:border-primary-dark focus:ring-4 focus:ring-primary-dark/5 outline-none;
     }
-
     .badge-success { @apply px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 border border-emerald-100; }
     .badge-danger { @apply px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest bg-rose-50 text-rose-600 border border-rose-100; }
 </style>
-@endpush
 
-@push('scripts')
 <script>
+    // Tab switching logic
     function switchTab(tabId) {
         document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
         const activePane = document.querySelector(`[data-tab-content="${tabId}"]`);
@@ -1024,7 +1034,6 @@
 
         localStorage.setItem('activeFinanceTab', tabId);
         
-        // Update URL to keep tab on refresh if needed (Optional)
         const url = new URL(window.location);
         url.searchParams.set('tab', tabId);
         window.history.pushState({}, '', url);
@@ -1033,7 +1042,7 @@
     function setDocType(type) {
         const input = $('#supplier_document');
         $('#supplier_document_type').val(type);
-        input.val(''); // Clear on change to avoid mask issues
+        input.val(''); 
         
         if (type === 'cnpj') {
             input.mask('00.000.000/0000-00');
@@ -1056,14 +1065,12 @@
     function closeModal(modalId) {
         document.getElementById(modalId).classList.add('hidden');
         document.getElementById(modalId).classList.remove('flex');
-        // Reset form
         const form = document.querySelector(`#${modalId} form`);
         if (form) {
             form.reset();
-            const idField = form.querySelector('input[type="hidden"]');
+            const idField = form.querySelector('input[name="id"]');
             if (idField) idField.value = '';
             
-            // Special case for accounts balance
             const balanceContainer = document.getElementById('initial_balance_container');
             if (balanceContainer) balanceContainer.style.display = 'block';
         }
@@ -1137,6 +1144,17 @@
                 setValue('account_id', data.id);
                 setValue('account_name', data.name);
                 setValue('account_type', data.type);
+                setValue('account_agency', data.agency);
+                setValue('account_number', data.account_number);
+                
+                // Find and select bank by name if bank_id isn't in data
+                if (data.bank_name) {
+                    $("#account_bank_id option").each(function() {
+                        if($(this).text().trim() === data.bank_name) {
+                            $(this).prop('selected', true);
+                        }
+                    });
+                }
                 
                 const balanceContainer = document.getElementById('initial_balance_container');
                 if (balanceContainer) balanceContainer.style.display = 'none';
@@ -1153,7 +1171,6 @@
         }
     }
 
-    // Alternar Abas do Fornecedor
     function switchSupplierTab(tabId) {
         $('.supplier-tab-btn').removeClass('active border-accent text-accent').addClass('border-transparent text-slate-400');
         $(`.supplier-tab-btn[onclick*="${tabId}"]`).addClass('active border-accent text-accent').removeClass('border-transparent text-slate-400');
@@ -1161,79 +1178,23 @@
         $(`#supplier-tab-${tabId}`).removeClass('hidden');
     }
 
-    // Busca Automática de CNPJ (Expandida)
-    $('#supplier_document').on('blur', function() {
-        let val = $(this).val().replace(/\D/g, '');
-        
-        if (val.length === 14) {
-            $('#cnpj-loader').removeClass('hidden');
-            $.ajax({
-                url: `https://brasilapi.com.br/api/cnpj/v1/${val}`,
-                method: 'GET',
-                success: function(data) {
-                    $('#supplier_name').val(data.razao_social);
-                    $('#supplier_nickname').val(data.nome_fantasia || data.razao_social);
-                    $('#supplier_cnae').val(`${data.cnae_fiscal} - ${data.cnae_fiscal_descricao}`);
-                    $('#supplier_opening').val(data.data_inicio_atividade);
-                    
-                    if (data.capital_social) {
-                        let formattedCapital = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(data.capital_social);
-                        $('#supplier_capital').val(formattedCapital);
-                    }
-
-                    if (data.cep) {
-                        $('#supplier_zip_code').val(data.cep).trigger('input').trigger('blur');
-                    }
-                },
-                complete: function() {
-                    $('#cnpj-loader').addClass('hidden');
-                }
-            });
-        }
-    });
-
-    // Busca Automática de CEP
-    $('#supplier_zip_code').on('blur', function() {
-        let val = $(this).val().replace(/\D/g, '');
-        if (val.length === 8) {
-            $.ajax({
-                url: `https://viacep.com.br/ws/${val}/json/`,
-                method: 'GET',
-                success: function(data) {
-                    if (!data.erro) {
-                        $('#supplier_neighborhood').val(data.bairro);
-                        $('#supplier_address').val(data.logradouro);
-                        $('#supplier_city').val(`${data.localidade} / ${data.uf}`);
-                    }
-                }
-            });
-        }
-    });
-
-    // Inicializar Mascaras Dinâmicas
     const maskBehavior = function (val) {
         return val.replace(/\D/g, '').length === 11 ? '(00) 00000-0000' : '(00) 0000-00009';
     };
-    const options = {
-        onKeyPress: function(val, e, field, options) {
-            field.mask(maskBehavior.apply({}, arguments), options);
+    
+    const applyMasks = () => {
+        if (typeof $.fn.mask === 'function') {
+            $('.mask-cep').mask('00000-000');
+            $('.mask-cnpj').mask('00.000.000/0000-00');
+            $('.mask-cpf').mask('000.000.000-00');
+            $('.mask-money').mask('#.##0,00', {reverse: true});
+            $('.mask-phone').mask(maskBehavior, { 
+                onKeyPress: function(val, e, field, options) { 
+                    field.mask(maskBehavior.apply({}, arguments), options); 
+                } 
+            });
         }
     };
-    $('.mask-phone').mask(maskBehavior, options);
-    // Inicialização de Máscaras
-    const applyMasks = () => {
-        $('.mask-cep').mask('00000-000');
-        $('.mask-cnpj').mask('00.000.000/0000-00');
-        $('.mask-cpf').mask('000.000.000-00');
-        $('.mask-money').mask('#.##0,00', {reverse: true});
-        $('.mask-phone').mask(maskBehavior, { 
-            onKeyPress: function(val, e, field, options) { 
-                field.mask(maskBehavior.apply({}, arguments), options); 
-            } 
-        });
-    };
-
-    applyMasks();
 
     async function deleteEntity(type, id) {
         if (!confirm('Tem certeza que deseja excluir este registro?')) return;
@@ -1242,7 +1203,7 @@
             const response = await fetch(`/admin/finance/${type}/${id}`, {
                 method: 'DELETE',
                 headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Accept': 'application/json'
                 }
             });
@@ -1259,22 +1220,74 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    // CNPJ search
+    $(document).on('blur', '#supplier_document', function() {
+        let val = $(this).val().replace(/\D/g, '');
+        if (val.length === 14) {
+            $('#cnpj-loader').removeClass('hidden');
+            $.ajax({
+                url: `https://brasilapi.com.br/api/cnpj/v1/${val}`,
+                method: 'GET',
+                success: function(data) {
+                    $('#supplier_name').val(data.razao_social);
+                    $('#supplier_nickname').val(data.nome_fantasia || data.razao_social);
+                    $('#supplier_zip_code').val(data.cep).trigger('blur');
+                },
+                complete: function() {
+                    $('#cnpj-loader').addClass('hidden');
+                }
+            });
+        }
+    });
+
+    // CEP search
+    $(document).on('blur', '#supplier_zip_code', function() {
+        let val = $(this).val().replace(/\D/g, '');
+        if (val.length === 8) {
+            $.ajax({
+                url: `https://viacep.com.br/ws/${val}/json/`,
+                method: 'GET',
+                success: function(data) {
+                    if (!data.erro) {
+                        $('#supplier_neighborhood').val(data.bairro);
+                        $('#supplier_address').val(data.logradouro);
+                        $('#supplier_city').val(`${data.localidade} / ${data.uf}`);
+                    }
+                }
+            });
+        }
+    });
+
+    function initFinanceSettings() {
+        applyMasks();
+        
         const forms = ['form-supplier', 'form-cost-center', 'form-bank', 'form-chart-of-accounts', 'form-accounts', 'form-units'];
         
         forms.forEach(formId => {
             const form = document.getElementById(formId);
             if (!form) return;
             
-            form.addEventListener('submit', async (e) => {
+            // Remove existing listeners to avoid multiple submissions
+            const newForm = form.cloneNode(true);
+            form.parentNode.replaceChild(newForm, form);
+            
+            newForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const formData = new FormData(form);
+                const formData = new FormData(newForm);
                 const id = formData.get('id');
-                const type = formId.replace('form-', '').replace('cost-center', 'cost-centers').replace('supplier', 'suppliers').replace('bank', 'banks');
+                let type = formId.replace('form-', '');
+                
+                // Map types
+                if (type === 'cost-center') type = 'cost-centers';
+                if (type === 'supplier') type = 'suppliers';
+                if (type === 'bank') type = 'banks';
+                if (type === 'chart-of-accounts') type = 'chart-of-accounts';
+                if (type === 'accounts') type = 'accounts';
+                if (type === 'units') type = 'units';
                 
                 const url = id ? `/admin/finance/${type}/${id}` : `/admin/finance/${type}`;
-                
                 const payload = {};
+                
                 formData.forEach((value, key) => {
                     if (key.includes('[')) {
                         const keys = key.split(/\[|\]/).filter(Boolean);
@@ -1299,7 +1312,7 @@
                     const response = await fetch(url, {
                         method: 'POST',
                         headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'
                         },
@@ -1320,16 +1333,21 @@
             });
         });
 
-        // Re-apply masks when modals open
-        $(document).on('click', '[onclick*="openModal"], [onclick*="editEntity"]', function() {
-            setTimeout(applyMasks, 100);
-        });
-
-        // Initialize Tab
         const urlParams = new URLSearchParams(window.location.search);
         const tabParam = urlParams.get('tab');
         const savedTab = tabParam || localStorage.getItem('activeFinanceTab') || 'unidades';
         switchTab(savedTab);
+    }
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', initFinanceSettings);
+
+    // Re-initialize after HTMX load
+    document.addEventListener('htmx:afterSettle', function(evt) {
+        if (document.getElementById('settings-tabs')) {
+            initFinanceSettings();
+        }
     });
 </script>
 @endpush
+@endsection

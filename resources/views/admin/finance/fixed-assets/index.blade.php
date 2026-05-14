@@ -61,15 +61,15 @@
                                 {{ $asset->status === 'active' ? 'Operacional' : 'Baixado' }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 text-center" onclick="event.stopPropagation()">
-                            <div class="flex items-center justify-center gap-2">
-                                <button onclick="viewAsset({{ $asset->id }})" class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-blue-500 transition-colors shadow-sm border border-transparent hover:border-slate-100" title="Histórico">
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex items-center justify-center gap-2" onclick="event.stopPropagation()">
+                                <button onclick="viewAsset({{ $asset->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 hover:bg-blue-500 hover:text-white flex items-center justify-center transition-all shadow-sm group/btn" title="Histórico">
                                     <i class="fas fa-clock-rotate-left text-[10px]"></i>
                                 </button>
-                                <button onclick="editAsset({{ $asset->id }})" class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-accent transition-colors shadow-sm border border-transparent hover:border-slate-100" title="Editar">
+                                <button onclick="editAsset({{ $asset->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 hover:bg-accent hover:text-white flex items-center justify-center transition-all shadow-sm group/btn" title="Editar">
                                     <i class="fas fa-pencil-alt text-[10px]"></i>
                                 </button>
-                                <button onclick="deleteAsset({{ $asset->id }})" class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-rose-500 transition-colors shadow-sm border border-transparent hover:border-slate-100" title="Baixar">
+                                <button onclick="deleteAsset({{ $asset->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-all shadow-sm group/btn" title="Baixar">
                                     <i class="fas fa-arrow-down-long text-[10px]"></i>
                                 </button>
                             </div>
@@ -84,8 +84,8 @@
 
 @push('modals')
 <!-- Modal Elite V8 -->
-<div id="assetModal" class="hidden fixed inset-0 bg-primary/40 backdrop-blur-sm z-[999] items-center justify-center p-6">
-    <div class="bg-white w-full max-w-lg animate-reveal-up overflow-hidden shadow-2xl border border-white/20 rounded-[2rem] flex flex-col">
+<div id="assetModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+    <div class="bg-white w-full max-w-lg m-auto animate-reveal-up overflow-hidden shadow-2xl border border-white/20 rounded-[2rem] flex flex-col">
         
         <!-- Header -->
         <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">

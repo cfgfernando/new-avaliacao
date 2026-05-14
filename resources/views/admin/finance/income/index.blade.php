@@ -156,14 +156,14 @@
                                 {{ $transaction->status == 'paid' ? 'Efetivado' : 'Pendente' }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 text-center" onclick="event.stopPropagation()">
-                            <div class="flex items-center justify-center gap-2">
-                                <button onclick="editIncome({{ $transaction->id }})" class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-blue-500 transition-colors shadow-sm border border-transparent hover:border-slate-100" title="Visualizar">
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex items-center justify-center gap-2" onclick="event.stopPropagation()">
+                                <button onclick="editIncome({{ $transaction->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 hover:bg-blue-500 hover:text-white flex items-center justify-center transition-all shadow-sm group/btn" title="Visualizar">
                                     <i class="fas fa-eye text-[10px]"></i>
                                 </button>
-                                <button class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-slate-800 transition-colors shadow-sm border border-transparent hover:border-slate-100" title="Recibo">
+                                <a href="{{ route('admin.finance.income.receipt', $transaction->id) }}" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-800 hover:text-white flex items-center justify-center transition-all shadow-sm group/btn" title="Recibo">
                                     <i class="fas fa-print text-[10px]"></i>
-                                </button>
+                                </a>
                             </div>
                         </td>
                     </tr>
@@ -192,13 +192,13 @@
 
 @push('modals')
 <!-- Modal Nova Receita Elite V8 -->
-<div id="incomeModal" class="hidden fixed inset-0 bg-primary/40 backdrop-blur-sm z-[999] items-center justify-center p-6">
-    <div class="bg-white w-full max-w-xl animate-reveal-up overflow-hidden shadow-2xl border border-white/20 rounded-[2.5rem] flex flex-col max-h-[95vh]">
+<div id="incomeModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+    <div class="bg-white w-full max-w-xl m-auto animate-reveal-up overflow-hidden shadow-2xl border border-white/20 rounded-[2.5rem] flex flex-col">
         
         <!-- Header -->
         <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
             <div>
-                <h3 class="text-lg font-black text-slate-800 uppercase tracking-tight">Nova Receita</h3>
+                <h3 class="text-lg font-black text-slate-800 uppercase tracking-tight modal-title">Nova Receita</h3>
                 <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Lançamento de Arrecadação</p>
             </div>
             <button onclick="closeFinanceModal('incomeModal')" class="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all">
@@ -217,6 +217,7 @@
         <div class="overflow-y-auto flex-grow bg-white">
             <form action="{{ route('admin.finance.income.store') }}" method="POST" id="form-income" class="p-0" enctype="multipart/form-data">
                 @csrf
+                <div id="method-container"></div>
                 <input type="hidden" name="status" value="paid">
                 <input type="hidden" name="donor_type" id="donor_type" value="membro">
                 <input type="hidden" name="member_id" id="selected_member_id">
@@ -362,7 +363,7 @@
         <!-- Footer -->
         <div class="p-6 border-t border-slate-100 flex justify-between items-center bg-slate-50/30 shrink-0">
             <button type="button" onclick="closeFinanceModal('incomeModal')" class="px-6 py-3 bg-white border border-slate-100 rounded-xl text-[10px] font-bold text-slate-500 uppercase tracking-widest hover:bg-slate-50 transition-all">Descartar</button>
-            <button type="submit" form="form-income" class="px-10 py-3 btn-neo btn-primary text-[10px] font-bold uppercase tracking-widest">
+            <button type="button" onclick="$('#form-income').submit()" class="px-10 py-3 btn-neo btn-primary text-[10px] font-bold uppercase tracking-widest">
                 <i class="fas fa-check-circle mr-2"></i> Registrar Receita
             </button>
         </div>
@@ -426,6 +427,16 @@
     function openFinanceModal(id) {
         $(`#${id}`).removeClass('hidden').addClass('flex');
         $('body').addClass('overflow-hidden');
+        
+        // Reset modal to "New" state if opening a generic finance modal
+        if (id === 'incomeModal') {
+            $('#form-income').attr('action', "{{ route('admin.finance.income.store') }}");
+            $('#method-container').html('');
+            $('#incomeModal .modal-title').text('Nova Receita');
+            $('#incomeModal button[type="submit"]').html('<i class="fas fa-check-circle mr-2"></i> Registrar Receita');
+            resetFormWithPins();
+        }
+        
         restorePinnedValues();
     }
 
@@ -494,6 +505,37 @@
 
     function editIncome(id) {
         openFinanceModal('incomeModal');
+        
+        // Feedback visual de carregamento
+        $('#incomeModal .modal-title').text('Carregando...');
+        
+        $.get(`/admin/finance/income/${id}`, function(data) {
+            $('#form-income').attr('action', `/admin/finance/income/${id}`);
+            $('#method-container').html('<input type="hidden" name="_method" value="PUT">');
+            
+            // Preencher campos
+            $('[name="transaction_date"]').val(data.transaction_date_formatted);
+            $('[name="amount"]').val(data.amount.toString().replace('.', ',')).trigger('input');
+            $('[name="financial_account_id"]').val(data.financial_account_id);
+            $('[name="chart_of_account_id"]').val(data.chart_of_account_id);
+            $('[name="payment_method"]').val(data.payment_method);
+            $('[name="cost_center_id"]').val(data.cost_center_id);
+            $('[name="description"]').val(data.description);
+            $('[name="status"]').val(data.status);
+            
+            if (data.member_id) {
+                setDonorType('membro');
+                $('#selected_member_id').val(data.member_id);
+                $('#member_search_input').val(data.member.name);
+            } else if (data.description && data.description.includes('Visitante')) {
+                setDonorType('visitante');
+            } else {
+                setDonorType('anonima');
+            }
+            
+            $('#incomeModal .modal-title').text('Editar Receita #TX-' + String(data.id).padStart(6, '0'));
+            $('#incomeModal button[type="submit"]').html('<i class="fas fa-save mr-2"></i> Salvar Alterações');
+        });
     }
 
     $(document).ready(function() {

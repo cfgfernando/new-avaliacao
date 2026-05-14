@@ -17,10 +17,11 @@
             <p class="text-sm font-bold text-primary-light uppercase tracking-widest mt-1">Análise de Performance Operacional e Sobra Líquida</p>
         </div>
         <div class="flex gap-4">
-             <button onclick="window.print()" class="btn-neo bg-white text-slate-800 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+            <a href="{{ route('admin.accounting.reports.pdf.income-statement', request()->all()) }}" target="_blank" class="btn-neo bg-white text-slate-800 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
                 <i class="fas fa-file-pdf text-rose-500"></i>
-                <span>Exportar PDF</span>
-            </button>
+                <span>GERAR PDF OFICIAL</span>
+            </a>
+
         </div>
     </div>
 
@@ -115,14 +116,18 @@
                         <td colspan="3" class="px-6 py-3 text-[10px] font-black text-emerald-600 uppercase tracking-widest">1. RECEITAS E ENTRADAS OPERACIONAIS</td>
                     </tr>
                     @foreach($revenues as $rev)
-                    <tr class="group hover:bg-slate-50/30 transition-all">
-                        <td class="px-6 py-4">
+                    @php
+                        $isParent = \App\Models\Finance\ChartOfAccount::where('parent_id', $rev->id)->exists();
+                        $depth = substr_count($rev->code, '.');
+                    @endphp
+                    <tr class="group {{ $isParent ? 'bg-slate-50/20' : '' }} hover:bg-slate-50/30 transition-all">
+                        <td class="px-6 py-4" style="padding-left: {{ ($depth * 1.5) + 1.5 }}rem">
                             <div class="flex items-center gap-4">
                                 <span class="text-[9px] text-slate-400 font-black font-money tracking-widest">{{ $rev->code }}</span>
-                                <span class="text-sm font-bold text-slate-800 uppercase tracking-tight">{{ $rev->name }}</span>
+                                <span class="text-sm {{ $isParent ? 'font-black text-slate-900' : 'font-bold text-slate-800' }} uppercase tracking-tight">{{ $rev->name }}</span>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-right font-money text-sm font-bold text-slate-800">
+                        <td class="px-6 py-4 text-right font-money text-sm {{ $isParent ? 'font-black text-slate-900' : 'font-bold text-slate-800' }}">
                             {{ number_format($rev->total, 2, ',', '.') }}
                         </td>
                         <td class="px-6 py-4 text-right">
@@ -146,14 +151,18 @@
                         <td colspan="3" class="px-6 py-3 text-[10px] font-black text-rose-600 uppercase tracking-widest">2. DESPESAS E CUSTOS OPERACIONAIS</td>
                     </tr>
                     @foreach($expenses as $exp)
-                    <tr class="group hover:bg-slate-50/30 transition-all">
-                        <td class="px-6 py-4">
+                    @php
+                        $isParent = \App\Models\Finance\ChartOfAccount::where('parent_id', $exp->id)->exists();
+                        $depth = substr_count($exp->code, '.');
+                    @endphp
+                    <tr class="group {{ $isParent ? 'bg-slate-50/20' : '' }} hover:bg-slate-50/30 transition-all">
+                        <td class="px-6 py-4" style="padding-left: {{ ($depth * 1.5) + 1.5 }}rem">
                             <div class="flex items-center gap-4">
                                 <span class="text-[9px] text-slate-400 font-black font-money tracking-widest">{{ $exp->code }}</span>
-                                <span class="text-sm font-bold text-slate-800 uppercase tracking-tight">{{ $exp->name }}</span>
+                                <span class="text-sm {{ $isParent ? 'font-black text-slate-900' : 'font-bold text-slate-800' }} uppercase tracking-tight">{{ $exp->name }}</span>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-right font-money text-sm font-bold text-rose-600">
+                        <td class="px-6 py-4 text-right font-money text-sm {{ $isParent ? 'font-black text-slate-900' : 'font-bold text-rose-600' }}">
                             {{ number_format($exp->total, 2, ',', '.') }}
                         </td>
                         <td class="px-6 py-4 text-right">

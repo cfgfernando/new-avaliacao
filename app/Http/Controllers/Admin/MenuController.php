@@ -82,6 +82,34 @@ class MenuController extends Controller
     }
 
     /**
+     * Reordena as categorias.
+     */
+    public function reorderCategories(Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'order' => 'required|array',
+            ]);
+
+            foreach ($request->order as $index => $id) {
+                MenuCategory::where('id', $id)->update(['order' => $index + 1]);
+            }
+
+            AuditService::log('UPDATE_MENU_CATEGORY_ORDER', [
+                'new_order' => $request->order
+            ]);
+
+            return response()->json(['success' => true, 'message' => 'Ordem das categorias atualizada!']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false, 
+                'message' => 'Erro interno: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    /**
      * Adiciona um novo item de menu.
      */
     public function store(Request $request)

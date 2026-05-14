@@ -81,6 +81,12 @@ class IncomeController extends Controller
 
     public function store(Request $request)
     {
+        if ($request->has('amount')) {
+            $request->merge([
+                'amount' => str_replace(['.', ','], ['', '.'], $request->amount)
+            ]);
+        }
+
         $data = $request->validate([
             'financial_account_id' => 'required|exists:financial_accounts,id',
             'chart_of_account_id' => 'required|exists:chart_of_accounts,id',
@@ -98,5 +104,55 @@ class IncomeController extends Controller
         Transaction::create($data);
 
         return redirect()->route('admin.finance.income.index')->with('success', 'Receita registrada com sucesso!');
+    }
+
+    public function show(Transaction $income)
+    {
+        if ($income->type !== 'income') {
+            abort(404);
+        }
+        
+        $income->transaction_date_formatted = \Carbon\Carbon::parse($income->transaction_date)->format('Y-m-d');
+        
+        return response()->json($income->load(['member']));
+    }
+
+    public function update(Request $request, Transaction $income)
+    {
+        if ($income->type !== 'income') {
+            abort(404);
+        }
+
+        if ($request->has('amount')) {
+            $request->merge([
+                'amount' => str_replace(['.', ','], ['', '.'], $request->amount)
+            ]);
+        }
+
+        $data = $request->validate([
+            'financial_account_id' => 'required|exists:financial_accounts,id',
+            'chart_of_account_id' => 'required|exists:chart_of_accounts,id',
+            'cost_center_id' => 'required|exists:cost_centers,id',
+            'member_id' => 'nullable|exists:members,id',
+            'amount' => 'required|numeric',
+            'transaction_date' => 'required|date',
+            'payment_method' => 'required|string',
+            'description' => 'nullable|string',
+            'status' => 'required|string|in:pending,paid,cancelled',
+        ]);
+
+        $income->update($data);
+
+        return redirect()->route('admin.finance.income.index')->with('success', 'Receita atualizada com sucesso!');
+    }
+
+    public function receipt(Transaction $transaction)
+    {
+        if ($transaction->type !== 'income') {
+            abort(404);
+        }
+        
+        $transaction->load(['financialAccount', 'chartOfAccount', 'costCenter', 'member']);
+        return view('admin.finance.income.receipt', compact('transaction'));
     }
 }

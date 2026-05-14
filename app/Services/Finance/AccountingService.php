@@ -14,6 +14,11 @@ class AccountingService
      */
     public function journalize(Transaction $transaction)
     {
+        if (\App\Models\Finance\Closure::isPeriodClosed($transaction->transaction_date)) {
+            // Se o período estiver fechado, não permitimos a movimentação contábil
+            return null;
+        }
+
         return DB::transaction(function () use ($transaction) {
             // 1. Criar o cabeçalho do lançamento (JournalEntry)
             $journalEntry = JournalEntry::create([
@@ -46,6 +51,16 @@ class AccountingService
                 
                 // CRÉDITO: Conta de Ativo (Banco/Caixa)
                 $this->createItem($journalEntry, $financialCoaId, 'credit', $transaction->amount);
+            } elseif ($transaction->type === 'transfer') {
+                // TRANSFERÊNCIA:
+                // DÉBITO: Conta de Ativo Destino (Banco/Caixa)
+                $destCoaId = $transaction->destinationAccount?->chart_of_account_id;
+                if ($destCoaId) {
+                    $this->createItem($journalEntry, $destCoaId, 'debit', $transaction->amount);
+                    
+                    // CRÉDITO: Conta de Ativo Origem (Banco/Caixa)
+                    $this->createItem($journalEntry, $financialCoaId, 'credit', $transaction->amount);
+                }
             }
 
             return $journalEntry;

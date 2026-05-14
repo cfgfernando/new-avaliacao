@@ -33,7 +33,7 @@
                 </thead>
                 <tbody class="divide-y divide-slate-50">
                     @foreach($costCenters as $center)
-                    <tr class="group hover:bg-slate-50/50 transition-all">
+                    <tr class="group hover:bg-slate-50/50 transition-all cursor-pointer" onclick="editCostCenter({{ $center->id }}, '{{ $center->code }}', '{{ $center->name }}', '{{ $center->description }}')">
                         <td class="px-6 py-4">
                             <span class="text-xs font-bold text-slate-800">{{ $center->code }}</span>
                         </td>
@@ -51,11 +51,11 @@
                             <span class="text-[10px] text-slate-400 font-black uppercase tracking-widest">{{ $center->description ?? 'Nenhuma observação registrada' }}</span>
                         </td>
                         <td class="px-6 py-4 text-center">
-                            <div class="flex items-center justify-center gap-2">
-                                <button onclick="editCostCenter({{ $center->id }}, '{{ $center->code }}', '{{ $center->name }}', '{{ $center->description }}')" class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-accent transition-colors shadow-sm border border-transparent hover:border-slate-100" title="Editar">
+                            <div class="flex items-center justify-center gap-2" onclick="event.stopPropagation()">
+                                <button onclick="editCostCenter({{ $center->id }}, '{{ $center->code }}', '{{ $center->name }}', '{{ $center->description }}')" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 hover:bg-accent hover:text-white flex items-center justify-center transition-all shadow-sm group/btn" title="Editar">
                                     <i class="fas fa-pencil-alt text-[10px]"></i>
                                 </button>
-                                <button onclick="deleteCostCenter({{ $center->id }})" class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-rose-500 transition-colors shadow-sm border border-transparent hover:border-slate-100" title="Excluir">
+                                <button onclick="deleteCostCenter({{ $center->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-all shadow-sm group/btn" title="Excluir">
                                     <i class="fas fa-trash text-[10px]"></i>
                                 </button>
                             </div>
@@ -70,8 +70,8 @@
 
 @push('modals')
 <!-- Modal Elite V8 -->
-<div id="costCenterModal" class="hidden fixed inset-0 bg-primary/40 backdrop-blur-sm z-[999] items-center justify-center p-6">
-    <div class="bg-white w-full max-w-xl animate-reveal-up overflow-hidden shadow-2xl border border-white/20 rounded-[2rem] flex flex-col">
+<div id="costCenterModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+    <div class="bg-white w-full max-w-xl m-auto animate-reveal-up overflow-hidden shadow-2xl border border-white/20 rounded-[2rem] flex flex-col">
         
         <!-- Header -->
         <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">

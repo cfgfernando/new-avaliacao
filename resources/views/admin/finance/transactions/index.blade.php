@@ -29,6 +29,7 @@
                         <th class="px-6 py-4">Descrição / Categoria</th>
                         <th class="px-6 py-4">Conta / C. Custo</th>
                         <th class="px-6 py-4 text-right">Valor</th>
+                        <th class="px-6 py-4 text-center">Status</th>
                         <th class="px-6 py-4 text-center">Ações</th>
                     </tr>
                 </thead>
@@ -58,6 +59,27 @@
                                 {{ $transaction->type === 'income' ? '+' : '-' }} R$ {{ number_format($transaction->amount, 2, ',', '.') }}
                             </span>
                         </td>
+                        <td class="px-6 py-5 text-center">
+                            @php
+                                $statusClasses = match($transaction->status) {
+                                    'paid' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                                    'approved' => 'bg-blue-50 text-blue-600 border-blue-100',
+                                    'pending_approval' => 'bg-amber-50 text-amber-600 border-amber-100',
+                                    'rejected' => 'bg-rose-50 text-rose-600 border-rose-100',
+                                    default => 'bg-slate-50 text-slate-600 border-slate-100'
+                                };
+                            @endphp
+                            <span class="px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border {{ $statusClasses }}">
+                                {{ match($transaction->status) {
+                                    'paid' => 'Pago',
+                                    'approved' => 'Aprovado',
+                                    'pending_approval' => 'Aprovação',
+                                    'rejected' => 'Rejeitado',
+                                    default => $transaction->status
+                                } }}
+                            </span>
+                        </td>
+
                         <td class="px-6 py-5 text-center" onclick="event.stopPropagation()">
                             <div class="flex items-center justify-center gap-2">
                                 <button onclick="editTransaction({{ $transaction->id }})" class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-blue-500 transition-colors shadow-sm border border-transparent hover:border-slate-100" title="Editar">
@@ -78,8 +100,8 @@
 
 @push('modals')
 <!-- Modal Nova Transação Elite V8 -->
-<div id="transactionModal" class="hidden fixed inset-0 bg-primary/40 backdrop-blur-sm z-[999] items-center justify-center p-6">
-    <div class="bg-white w-full max-w-2xl animate-reveal-up overflow-hidden shadow-2xl border border-white/20 rounded-[2.5rem] flex flex-col max-h-[95vh]">
+<div id="transactionModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+    <div class="bg-white w-full max-w-2xl m-auto animate-reveal-up overflow-hidden shadow-2xl border border-white/20 rounded-[2.5rem] flex flex-col">
         
         <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
             <div>
@@ -99,19 +121,26 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
                         <label class="block text-[10px] font-black text-primary-light uppercase tracking-widest mb-4">Natureza da Operação</label>
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-3 gap-3">
                             <label class="cursor-pointer group">
-                                <input type="radio" name="type" value="income" class="hidden peer" checked>
-                                <div class="p-5 rounded-2xl border border-slate-100 bg-slate-50/50 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-600 transition-all hover:bg-slate-100">
-                                    <i class="fas fa-arrow-up mb-2 text-xl"></i>
-                                    <p class="text-[10px] font-black uppercase tracking-widest">Entrada</p>
+                                <input type="radio" name="type" value="income" class="hidden peer" checked onchange="toggleTransferFields()">
+                                <div class="p-4 rounded-2xl border border-slate-100 bg-slate-50/50 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-600 transition-all hover:bg-slate-100">
+                                    <i class="fas fa-arrow-up mb-1 text-lg"></i>
+                                    <p class="text-[9px] font-black uppercase tracking-widest">Entrada</p>
                                 </div>
                             </label>
                             <label class="cursor-pointer group">
-                                <input type="radio" name="type" value="expense" class="hidden peer">
-                                <div class="p-5 rounded-2xl border border-slate-100 bg-slate-50/50 text-center peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-600 transition-all hover:bg-slate-100">
-                                    <i class="fas fa-arrow-down mb-2 text-xl"></i>
-                                    <p class="text-[10px] font-black uppercase tracking-widest">Saída</p>
+                                <input type="radio" name="type" value="expense" class="hidden peer" onchange="toggleTransferFields()">
+                                <div class="p-4 rounded-2xl border border-slate-100 bg-slate-50/50 text-center peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-600 transition-all hover:bg-slate-100">
+                                    <i class="fas fa-arrow-down mb-1 text-lg"></i>
+                                    <p class="text-[9px] font-black uppercase tracking-widest">Saída</p>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer group">
+                                <input type="radio" name="type" value="transfer" class="hidden peer" onchange="toggleTransferFields()">
+                                <div class="p-4 rounded-2xl border border-slate-100 bg-slate-50/50 text-center peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-600 transition-all hover:bg-slate-100">
+                                    <i class="fas fa-exchange-alt mb-1 text-lg"></i>
+                                    <p class="text-[9px] font-black uppercase tracking-widest">Transf.</p>
                                 </div>
                             </label>
                         </div>
@@ -127,8 +156,17 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
-                        <label class="block text-[10px] font-black text-primary-light uppercase tracking-widest mb-3 px-1">Conta Financeira</label>
+                        <label class="block text-[10px] font-black text-primary-light uppercase tracking-widest mb-3 px-1">Conta de Origem</label>
                         <select name="financial_account_id" required class="input-neo uppercase">
+                            @foreach($accounts as $acc)
+                                <option value="{{ $acc->id }}">{{ $acc->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div id="destAccountField" class="hidden">
+                        <label class="block text-[10px] font-black text-primary-light uppercase tracking-widest mb-3 px-1">Conta de Destino</label>
+                        <select name="destination_account_id" class="input-neo uppercase">
+                            <option value="">Selecione o destino...</option>
                             @foreach($accounts as $acc)
                                 <option value="{{ $acc->id }}">{{ $acc->name }}</option>
                             @endforeach
@@ -227,6 +265,16 @@
             form.innerHTML = `@csrf @method('DELETE')`;
             document.body.appendChild(form);
             form.submit();
+        }
+    }
+    function toggleTransferFields() {
+        const type = $('input[name="type"]:checked').val();
+        if (type === 'transfer') {
+            $('#destAccountField').removeClass('hidden');
+            $('select[name="destination_account_id"]').prop('required', true);
+        } else {
+            $('#destAccountField').addClass('hidden');
+            $('select[name="destination_account_id"]').prop('required', false);
         }
     }
 </script>

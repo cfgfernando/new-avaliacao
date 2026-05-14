@@ -17,10 +17,11 @@
             <p class="text-sm font-bold text-primary-light uppercase tracking-widest mt-1">Auditoria de Saldos e Integridade Contábil</p>
         </div>
         <div class="flex gap-4">
-             <button onclick="window.print()" class="btn-neo bg-white text-slate-800 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+            <a href="{{ route('admin.accounting.reports.pdf.trial-balance', request()->all()) }}" target="_blank" class="btn-neo bg-white text-slate-800 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
                 <i class="fas fa-file-pdf text-rose-500"></i>
-                <span>Exportar PDF</span>
-            </button>
+                <span>GERAR PDF OFICIAL</span>
+            </a>
+
             <a href="{{ route('admin.accounting.reports.income-statement') }}" class="btn-neo btn-primary text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
                 <i class="fas fa-chart-line"></i>
                 <span>Analisar DRE</span>
@@ -69,23 +70,27 @@
                 </thead>
                 <tbody class="divide-y divide-slate-50">
                     @foreach($trialBalance as $row)
-                    <tr class="group hover:bg-slate-50/30 transition-all">
-                        <td class="px-6 py-4">
+                    @php
+                        $isParent = $trialBalance->where('parent_id', $row->id)->count() > 0;
+                        $depth = substr_count($row->code, '.');
+                    @endphp
+                    <tr class="group {{ $isParent ? 'bg-slate-50/50' : '' }} hover:bg-slate-50 transition-all">
+                        <td class="px-6 py-4" style="padding-left: {{ ($depth * 1.5) + 1.5 }}rem">
                             <div class="flex flex-col">
-                                <span class="text-sm font-bold text-slate-800 uppercase tracking-tight">{{ $row->name }}</span>
+                                <span class="text-sm {{ $isParent ? 'font-black text-slate-900' : 'font-bold text-slate-800' }} uppercase tracking-tight">{{ $row->name }}</span>
                                 <span class="text-[9px] text-slate-400 font-black tracking-widest uppercase mt-1">{{ $row->code }}</span>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-right font-money text-xs font-bold text-slate-500 bg-slate-50/10">
+                        <td class="px-6 py-4 text-right font-money text-xs {{ $isParent ? 'font-black text-slate-900' : 'font-bold text-slate-500' }} bg-slate-50/10">
                             {{ number_format(abs($row->opening_balance), 2, ',', '.') }} <span class="text-[8px] font-black ml-1 opacity-40">{{ $row->opening_balance >= 0 ? 'D' : 'C' }}</span>
                         </td>
-                        <td class="px-6 py-4 text-right font-money text-xs font-bold text-slate-800">
+                        <td class="px-6 py-4 text-right font-money text-xs {{ $isParent ? 'font-black text-slate-900' : 'font-bold text-slate-800' }}">
                             {{ number_format($row->debit, 2, ',', '.') }}
                         </td>
-                        <td class="px-6 py-4 text-right font-money text-xs font-bold text-slate-800">
+                        <td class="px-6 py-4 text-right font-money text-xs {{ $isParent ? 'font-black text-slate-900' : 'font-bold text-slate-800' }}">
                             {{ number_format($row->credit, 2, ',', '.') }}
                         </td>
-                        <td class="px-6 py-4 text-right font-money text-xs font-bold {{ $row->closing_balance >= 0 ? 'text-slate-800' : 'text-rose-500' }} bg-slate-50/10">
+                        <td class="px-6 py-4 text-right font-money text-xs {{ $isParent ? 'font-black text-slate-900' : 'font-bold' }} {{ $row->closing_balance >= 0 ? 'text-slate-800' : 'text-rose-500' }} bg-slate-50/10">
                             {{ number_format(abs($row->closing_balance), 2, ',', '.') }} <span class="text-[8px] font-black ml-1 opacity-40">{{ $row->closing_balance >= 0 ? 'D' : 'C' }}</span>
                         </td>
                     </tr>

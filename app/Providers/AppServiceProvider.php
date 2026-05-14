@@ -60,8 +60,10 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // ---------------------------------------------------------------------
-        // Configuração de Paginação
+        // Observers de Auditoria e Saldo
         // ---------------------------------------------------------------------
+        \App\Models\Finance\Transaction::observe(\App\Observers\TransactionObserver::class);
+
         Paginator::useTailwind();
     }
 }

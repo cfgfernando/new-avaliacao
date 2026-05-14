@@ -1,6 +1,6 @@
 <!-- Modal Nova Despesa Elite V8 -->
-<div id="expenseModal" class="hidden fixed inset-0 bg-primary/40 backdrop-blur-sm z-[999] items-center justify-center p-6">
-    <div class="bg-white w-full max-w-xl animate-reveal-up overflow-hidden shadow-2xl border border-white/20 rounded-[2.5rem] flex flex-col max-h-[95vh]">
+<div id="expenseModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+    <div class="bg-white w-full max-w-xl m-auto animate-reveal-up overflow-hidden shadow-2xl border border-white/20 rounded-[2.5rem] flex flex-col">
         
         <!-- Header -->
         <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
@@ -24,6 +24,7 @@
         <div class="overflow-y-auto flex-grow bg-white custom-scrollbar">
             <form action="{{ route('admin.finance.expenses.store') }}" method="POST" id="form-expense" class="p-0" enctype="multipart/form-data">
                 @csrf
+                <div id="method-container-exp"></div>
                 <input type="hidden" name="status" value="paid">
                 
                 <!-- Tab: Perfil -->
@@ -122,7 +123,7 @@
         <!-- Footer -->
         <div class="p-6 border-t border-slate-100 flex justify-between items-center bg-slate-50/30 shrink-0">
             <button type="button" onclick="closeFinanceModal('expenseModal')" class="px-6 py-3 bg-white border border-slate-100 rounded-xl text-[10px] font-bold text-slate-500 uppercase tracking-widest hover:bg-slate-50 transition-all">Descartar</button>
-            <button type="submit" form="form-expense" class="px-10 py-3 btn-neo btn-primary text-[10px] font-bold uppercase tracking-widest">
+            <button type="button" onclick="$('#form-expense').submit()" class="px-10 py-3 btn-neo btn-primary text-[10px] font-bold uppercase tracking-widest">
                 <i class="fas fa-check-circle mr-2"></i> Registrar Saída
             </button>
         </div>

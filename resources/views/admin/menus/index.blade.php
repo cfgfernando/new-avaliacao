@@ -39,16 +39,17 @@
     </div>
 
     <!-- Categories Grid -->
-    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 categories-grid">
         @foreach($categories as $category)
             <div class="card-neo !p-0 overflow-hidden" data-category-id="{{ $category->id }}">
                 <div class="bg-slate-50 border-b border-slate-100 p-5 flex justify-between items-center">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-accent">
+                        <div class="category-handle cursor-grab active:cursor-grabbing w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-accent hover:bg-accent hover:text-white transition-all">
                             <i class="fas fa-layer-group text-xs"></i>
                         </div>
                         <h3 class="font-black text-slate-800 uppercase tracking-wider text-sm">{{ $category->name }}</h3>
                     </div>
+
                     <div class="flex gap-2">
                         <button onclick="editCategory({{ $category->id }}, '{{ $category->name }}')" class="p-2 hover:bg-white rounded-lg transition-colors text-slate-400 hover:text-blue-500">
                             <i class="fas fa-edit text-xs"></i>
@@ -88,10 +89,10 @@
                                     <button onclick="editItem({{ json_encode($item) }})" class="p-2 hover:bg-slate-50 rounded-lg text-slate-400 hover:text-blue-500 transition-colors">
                                         <i class="fas fa-pen text-[10px]"></i>
                                     </button>
-                                    <form action="{{ route('admin.menus.destroy', $item) }}" method="POST" onsubmit="return confirm('Excluir este item?')">
+                                    <form id="delete-form-{{ $item->id }}" action="{{ route('admin.menus.destroy', $item) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="p-2 hover:bg-rose-50 rounded-lg text-slate-400 hover:text-rose-500 transition-colors">
+                                        <button type="button" onclick="confirmDelete({{ $item->id }})" class="p-2 hover:bg-rose-50 rounded-lg text-slate-400 hover:text-rose-500 transition-colors">
                                             <i class="fas fa-trash text-[10px]"></i>
                                         </button>
                                     </form>
@@ -107,8 +108,8 @@
 
 @push('modals')
 <!-- Modal Novo Item -->
-<div id="itemModal" class="hidden fixed inset-0 bg-primary/40 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-reveal-up">
+<div id="itemModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+    <div class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-lg m-auto overflow-hidden animate-reveal-up border border-white/20 flex flex-col">
         <div class="p-8 border-b border-slate-100 flex justify-between items-center">
             <h3 id="itemModalTitle" class="text-xl font-black text-slate-800 uppercase tracking-tight">Novo Item de Menu</h3>
             <button onclick="closeModal('itemModal')" class="text-slate-400 hover:text-slate-800"><i class="fas fa-times"></i></button>
@@ -165,8 +166,8 @@
 </div>
 
 <!-- Modal Nova/Editar Categoria -->
-<div id="categoryModal" class="hidden fixed inset-0 bg-primary/40 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-reveal-up">
+<div id="categoryModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+    <div class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-lg m-auto overflow-hidden animate-reveal-up border border-white/20 flex flex-col">
         <div class="p-8 border-b border-slate-100 flex justify-between items-center">
             <h3 id="categoryModalTitle" class="text-xl font-black text-slate-800 uppercase tracking-tight">Nova Categoria</h3>
             <button onclick="closeModal('categoryModal')" class="text-slate-400 hover:text-slate-800"><i class="fas fa-times"></i></button>
@@ -192,7 +193,34 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    function initSortable() {
+        if (typeof Sortable === 'undefined') return;
+
+        // Inicializar Sortable para o Grid de Categorias (Reordenar Categorias)
+        const categoriesGrid = document.querySelector('.categories-grid');
+        if (categoriesGrid) {
+            new Sortable(categoriesGrid, {
+                animation: 300,
+                handle: '.category-handle',
+                ghostClass: 'opacity-20',
+                onEnd: async (evt) => {
+                    const categoryIds = Array.from(categoriesGrid.children)
+                                             .map(el => el.dataset.categoryId)
+                                             .filter(id => id);
+                    
+                    try {
+                        await window.axios.post('{{ route('admin.menus.categories.reorder') }}', {
+                            order: categoryIds
+                        });
+                        
+                        showToast('Ordem das categorias atualizada!');
+                    } catch (error) {
+                        showError('Erro ao salvar ordem das categorias.');
+                    }
+                }
+            });
+        }
+
         // Inicializar Sortable para cada lista de itens
         document.querySelectorAll('.sortable-list').forEach(el => {
             new Sortable(el, {
@@ -208,16 +236,7 @@
                                          .map(li => li.dataset.id)
                                          .filter(id => id);
 
-                    if (!window.axios) {
-                        console.error('Axios não encontrado. Verifique a instalação.');
-                        return;
-                    }
-
-                    // Configurar token CSRF manualmente se necessário
-                    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-                    if (token) {
-                        window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token;
-                    }
+                    if (!window.axios) return;
 
                     try {
                         const response = await window.axios.post('{{ route('admin.menus.reorder') }}', {
@@ -226,30 +245,40 @@
                             order: itemIds
                         });
                         
-                        Swal.fire({
-                            toast: true,
-                            position: 'top-end',
-                            icon: 'success',
-                            title: response.data.message,
-                            showConfirmButton: false,
-                            timer: 3000,
-                            background: '#1e293b',
-                            color: '#fff'
-                        });
+                        showToast(response.data.message);
                     } catch (error) {
-                        console.error(error);
-                        const msg = error.response?.data?.message || 'Não foi possível salvar a nova ordem.';
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Erro!',
-                            text: msg,
-                            confirmButtonColor: '#0ea5e9'
-                        });
+                        showError('Não foi possível salvar a nova ordem.');
                     }
                 }
             });
         });
-    });
+    }
+
+    function showToast(message) {
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: message,
+            showConfirmButton: false,
+            timer: 3000,
+            background: '#1e293b',
+            color: '#fff'
+        });
+    }
+
+    function showError(message) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Erro!',
+            text: message,
+            confirmButtonColor: '#0ea5e9'
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', initSortable);
+    document.addEventListener('htmx:afterSettle', initSortable);
+
 
     function editCategory(id, name) {
         const form = document.getElementById('categoryForm');
@@ -308,6 +337,31 @@
                 document.getElementById('itemSubmitBtn').innerText = 'CRIAR ITEM AGORA';
             }
         }
+    }
+
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Excluir este item?',
+            text: "Esta ação não pode ser desfeita!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#e11d48',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'SIM, EXCLUIR!',
+            cancelButtonText: 'CANCELAR',
+            background: '#ffffff',
+            customClass: {
+                title: 'text-slate-800 font-black uppercase tracking-tight',
+                popup: 'rounded-[32px] border border-slate-100 shadow-2xl',
+                confirmButton: 'btn-neo bg-rose-500 text-white hover:bg-rose-600 px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] mx-2',
+                cancelButton: 'btn-neo bg-slate-100 text-slate-500 hover:bg-slate-200 px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] mx-2'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(`delete-form-${id}`).submit();
+            }
+        });
     }
 </script>
 @endpush

@@ -63,21 +63,21 @@
                             {{ $closure->locked_at ? $closure->locked_at->format('d/m/Y H:i') : '-' }}
                         </td>
                         <td class="text-center">
-                            <div class="flex items-center justify-center gap-2">
+                            <div class="flex items-center justify-center gap-2" onclick="event.stopPropagation()">
                                 @if($closure->status !== 'open')
-                                <form action="{{ route('admin.finance.closures.update', $closure->id) }}" method="POST">
+                                <form action="{{ route('admin.finance.closures.update', $closure->id) }}" method="POST" class="inline">
                                     @csrf
                                     @method('PUT')
-                                    <button type="submit" class="btn-action bg-slate-50 text-slate-500 hover:bg-accent hover:text-white" title="Reabrir Período">
-                                        <i class="fas fa-unlock-keyhole"></i>
+                                    <button type="submit" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 hover:bg-accent hover:text-white flex items-center justify-center transition-all shadow-sm group/btn" title="Reabrir Período">
+                                        <i class="fas fa-unlock-keyhole text-[10px]"></i>
                                     </button>
                                 </form>
                                 @endif
-                                <form action="{{ route('admin.finance.closures.destroy', $closure->id) }}" method="POST" onsubmit="return confirm('Excluir este registro de fechamento?')">
+                                <form action="{{ route('admin.finance.closures.destroy', $closure->id) }}" method="POST" onsubmit="return confirm('Excluir este registro de fechamento?')" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn-action bg-slate-50 text-slate-500 hover:bg-rose-500 hover:text-white">
-                                        <i class="fas fa-trash"></i>
+                                    <button type="submit" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-all shadow-sm group/btn" title="Excluir">
+                                        <i class="fas fa-trash text-[10px]"></i>
                                     </button>
                                 </form>
                             </div>
@@ -93,10 +93,12 @@
         </div>
     </div>
 </div>
+@endsection
 
+@push('modals')
 <!-- Modal Novo Fechamento -->
-<div id="closureModal" class="hidden fixed inset-0 bg-primary/40 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-reveal-up">
+<div id="closureModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+    <div class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-md m-auto overflow-hidden animate-reveal-up border border-white/20 flex flex-col">
         <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
             <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">Novo Fechamento</h3>
             <button onclick="closeFinanceModal('closureModal')" class="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-all">
@@ -137,7 +139,9 @@
         </form>
     </div>
 </div>
+@endpush
 
+@push('scripts')
 <script>
     function openFinanceModal(id) {
         $(`#${id}`).removeClass('hidden').addClass('flex');
@@ -158,4 +162,4 @@
         }
     }
 </script>
-@endsection
+@endpush

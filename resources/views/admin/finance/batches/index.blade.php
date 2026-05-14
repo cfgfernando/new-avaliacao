@@ -59,15 +59,15 @@
                                 {{ $batch->status === 'confirmed' ? 'Conferido' : ($batch->status === 'divergent' ? 'Divergente' : 'Pendente') }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 text-center" onclick="event.stopPropagation()">
-                            <div class="flex items-center justify-center gap-2">
-                                <button onclick="viewBatch({{ $batch->id }})" class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-blue-500 transition-colors shadow-sm border border-transparent hover:border-slate-100" title="Conferir">
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex items-center justify-center gap-2" onclick="event.stopPropagation()">
+                                <button onclick="viewBatch({{ $batch->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 hover:bg-blue-500 hover:text-white flex items-center justify-center transition-all shadow-sm group/btn" title="Conferir">
                                     <i class="fas fa-list-check text-[10px]"></i>
                                 </button>
-                                <button onclick="editBatch({{ $batch->id }})" class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-accent transition-colors shadow-sm border border-transparent hover:border-slate-100" title="Editar">
+                                <button onclick="editBatch({{ $batch->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 hover:bg-accent hover:text-white flex items-center justify-center transition-all shadow-sm group/btn" title="Editar">
                                     <i class="fas fa-pen text-[10px]"></i>
                                 </button>
-                                <button onclick="deleteBatch({{ $batch->id }})" class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-rose-500 transition-colors shadow-sm border border-transparent hover:border-slate-100" title="Excluir">
+                                <button onclick="deleteBatch({{ $batch->id }})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-all shadow-sm group/btn" title="Excluir">
                                     <i class="fas fa-trash text-[10px]"></i>
                                 </button>
                             </div>
@@ -82,8 +82,8 @@
 
 @push('modals')
 <!-- Modal Elite V8 -->
-<div id="batchModal" class="hidden fixed inset-0 bg-primary/40 backdrop-blur-sm z-[999] items-center justify-center p-6">
-    <div class="bg-white w-full max-w-lg animate-reveal-up overflow-hidden shadow-2xl border border-white/20 rounded-[2rem] flex flex-col">
+<div id="batchModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+    <div class="bg-white w-full max-w-lg m-auto animate-reveal-up overflow-hidden shadow-2xl border border-white/20 rounded-[2rem] flex flex-col">
         
         <!-- Header -->
         <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
@@ -153,35 +153,72 @@
         $(`#${id}`).removeClass('hidden').addClass('flex');
         $('body').addClass('overflow-hidden');
     }
+
     function closeFinanceModal(id) {
         $(`#${id}`).addClass('hidden').removeClass('flex');
         $('body').removeClass('overflow-hidden');
         $('#batchForm')[0].reset();
+        $('#batchForm').attr('action', '{{ route('admin.finance.batches.store') }}');
+        $('#batchFormMethod').val('POST');
         $('#batchForm input, #batchForm select').prop('disabled', false);
         $('button[type="submit"]').removeClass('hidden').html('<i class="fas fa-check-circle mr-2"></i> Confirmar Registro');
-        $('#batchFormMethod').val('POST');
+        $('#batchModalTitle').text('Registro de Malote');
     }
 
-    function editBatch(id) {
+    async function editBatch(id) {
         openFinanceModal('batchModal');
         $('#batchModalTitle').text('Gestão de Malote: #' + id);
         $('#batchForm').attr('action', `/admin/finance/batches/${id}`);
         $('#batchFormMethod').val('PUT');
         $('button[type="submit"]').html('<i class="fas fa-save mr-2"></i> Salvar Alterações');
+
+        try {
+            const response = await fetch(`/admin/finance/batches/${id}`);
+            const data = await response.json();
+
+            $('input[name="code"]').val(data.code);
+            $('input[name="declared_amount"]').val(new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(data.declared_amount));
+            $('select[name="status"]').val(data.status);
+            
+            if (typeof $.fn.mask === 'function') {
+                $('.mask-money').mask('#.##0,00', {reverse: true});
+            }
+        } catch (error) {
+            console.error('Erro ao carregar dados do malote:', error);
+        }
     }
 
     function viewBatch(id) {
-        editBatch(id);
-        $('#batchModalTitle').text('Auditoria de Malote: #' + id);
-        $('#batchForm input, #batchForm select').prop('disabled', true);
-        $('button[type="submit"]').addClass('hidden');
+        editBatch(id).then(() => {
+            $('#batchModalTitle').text('Auditoria de Malote: #' + id);
+            $('#batchForm input, #batchForm select').prop('disabled', true);
+            $('button[type="submit"]').addClass('hidden');
+        });
     }
 
-    function deleteBatch(id) {
+    async function deleteBatch(id) {
         if(confirm('ALERTA CRÍTICO: Deseja realmente excluir este registro de malote? Esta operação é irreversível e deixará um log de auditoria.')) {
-            // Implement AJAX delete or form submit
+            try {
+                const response = await fetch(`/admin/finance/batches/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                });
+                const result = await response.json();
+                if (result.success) {
+                    location.reload();
+                } else {
+                    alert(result.message || 'Erro ao excluir.');
+                }
+            } catch (error) {
+                console.error('Erro ao excluir malote:', error);
+                alert('Erro de conexão ao tentar excluir.');
+            }
         }
     }
+
 </script>
 @endpush
 

@@ -34,6 +34,7 @@ class TransactionController extends Controller
             'amount' => 'required|string',
             'description' => 'required|string|max:255',
             'financial_account_id' => 'required|exists:financial_accounts,id',
+            'destination_account_id' => 'required_if:type,transfer|nullable|exists:financial_accounts,id',
             'cost_center_id' => 'nullable|exists:cost_centers,id',
             'chart_of_account_id' => 'required|exists:chart_of_accounts,id',
             'transaction_date' => 'required|date'

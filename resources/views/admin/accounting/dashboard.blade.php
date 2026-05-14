@@ -191,8 +191,8 @@
 
 @push('modals')
 <!-- Modal Elite V8 -->
-<div id="manualEntryModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[999] items-center justify-center p-6 no-print">
-    <div class="bg-white w-full max-w-4xl animate-reveal-up overflow-hidden shadow-2xl border border-slate-100 rounded-[2.5rem] flex flex-col max-h-[90vh]">
+<div id="manualEntryModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 sm:p-6 no-print overflow-y-auto custom-scrollbar">
+    <div class="bg-white w-full max-w-3xl m-auto animate-reveal-up overflow-hidden shadow-2xl border border-slate-100 rounded-[2.5rem] flex flex-col">
         
         <!-- Header -->
         <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">

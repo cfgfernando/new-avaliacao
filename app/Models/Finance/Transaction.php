@@ -10,15 +10,11 @@ class Transaction extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected static function booted()
-    {
-        static::created(function ($transaction) {
-            app(\App\Services\Finance\AccountingService::class)->journalize($transaction);
-        });
-    }
+    // Journalization moved to TransactionObserver
 
     protected $fillable = [
         'financial_account_id',
+        'destination_account_id',
         'chart_of_account_id',
         'cost_center_id',
         'type',
@@ -31,7 +27,13 @@ class Transaction extends Model
         'weekly_report_id',
         'member_id',
         'supplier_id',
+        'reconciled_at',
+        'bank_transaction_id',
+        'approved_by',
+        'approved_at',
+        'rejection_reason',
     ];
+
 
     protected $casts = [
         'amount' => 'decimal:2',
@@ -42,6 +44,11 @@ class Transaction extends Model
     public function financialAccount()
     {
         return $this->belongsTo(FinancialAccount::class, 'financial_account_id');
+    }
+
+    public function destinationAccount()
+    {
+        return $this->belongsTo(FinancialAccount::class, 'destination_account_id');
     }
 
     public function chartOfAccount()
