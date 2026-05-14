@@ -50,10 +50,22 @@
                         <h3 class="font-black text-slate-800 uppercase tracking-wider text-sm">{{ $category->name }}</h3>
                     </div>
 
-                    <div class="flex gap-2">
-                        <button onclick="editCategory({{ $category->id }}, '{{ $category->name }}')" class="p-2 hover:bg-white rounded-lg transition-colors text-slate-400 hover:text-blue-500">
-                            <i class="fas fa-edit text-xs"></i>
-                        </button>
+                    <div class="flex items-center gap-3">
+                        <!-- Numeric Order Input -->
+                        <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-slate-100 shadow-sm">
+                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Ordem</span>
+                            <input type="number" 
+                                   value="{{ $category->order }}" 
+                                   onchange="updateCategoryOrderByNumber({{ $category->id }}, this.value)"
+                                   class="w-12 bg-transparent text-center text-xs font-black text-primary focus:outline-none"
+                            >
+                        </div>
+
+                        <div class="flex gap-1 border-l border-slate-200 pl-3">
+                            <button onclick="editCategory({{ $category->id }}, '{{ $category->name }}', {{ $category->order }})" class="p-2 hover:bg-white rounded-lg transition-colors text-slate-400 hover:text-blue-500">
+                                <i class="fas fa-edit text-xs"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 
@@ -179,6 +191,10 @@
                 <label class="block text-[10px] font-black text-primary-light uppercase tracking-[0.2em] mb-2 px-1">Nome da Categoria</label>
                 <input type="text" name="name" id="categoryName" required class="input-neo" placeholder="Ex: Gestão Financeira">
             </div>
+            <div>
+                <label class="block text-[10px] font-black text-primary-light uppercase tracking-[0.2em] mb-2 px-1">Ordem de Exibição</label>
+                <input type="number" name="order" id="categoryOrder" required class="input-neo" placeholder="Ex: 1">
+            </div>
             <div class="pt-4">
                 <button type="submit" id="categorySubmitBtn" class="btn-neo bg-slate-800 text-white w-full py-4 text-sm">CRIAR CATEGORIA</button>
             </div>
@@ -276,15 +292,29 @@
         });
     }
 
+    async function updateCategoryOrderByNumber(id, newOrder) {
+        try {
+            await window.axios.post('{{ route('admin.menus.categories.reorder-single') }}', {
+                id: id,
+                order: newOrder
+            });
+            showToast('Ordem atualizada! Recarregando...');
+            setTimeout(() => location.reload(), 1000);
+        } catch (error) {
+            showError('Erro ao atualizar ordem.');
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', initSortable);
     document.addEventListener('htmx:afterSettle', initSortable);
 
 
-    function editCategory(id, name) {
+    function editCategory(id, name, order) {
         const form = document.getElementById('categoryForm');
         form.action = `/admin/menus/categories/${id}`;
         document.getElementById('categoryMethod').value = 'PUT';
         document.getElementById('categoryName').value = name;
+        document.getElementById('categoryOrder').value = order || 0;
         document.getElementById('categoryModalTitle').innerText = 'Editar Categoria';
         document.getElementById('categorySubmitBtn').innerText = 'SALVAR ALTERAÇÕES';
         openModal('categoryModal');

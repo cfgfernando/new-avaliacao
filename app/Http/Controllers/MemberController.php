@@ -43,6 +43,27 @@ class MemberController extends Controller
         return response()->json($members);
     }
 
+    /**
+     * Busca de usuários que NÃO são membros ainda (para vincular no Create).
+     */
+    public function searchUsers(Request $request)
+    {
+        $term = $request->q;
+        if (strlen($term) < 2) return response()->json([]);
+
+        $users = User::query()
+            ->whereDoesntHave('member')
+            ->where(function($q) use ($term) {
+                $q->where('name', 'like', "%{$term}%")
+                  ->orWhere('email', 'like', "%{$term}%");
+            })
+            ->limit(10)
+            ->get()
+            ->map(fn($u) => ['id' => $u->id, 'text' => "{$u->name} ({$u->email})"]);
+
+        return response()->json($users);
+    }
+
     // =========================================================================
     // INDEX
     // =========================================================================
@@ -83,12 +104,19 @@ class MemberController extends Controller
             ->paginate(20)
             ->withQueryString();
 
-        // Para o filtro de células no frontend (escopo RBAC)
         $accessibleCells = Cell::whereIn('id', $user->accessibleCellIds())
             ->orderBy('name')
             ->pluck('name', 'id');
 
-        return view('members.index', compact('members', 'accessibleCells'));
+        $stats = [
+            'active'       => Member::where('status', 'Active')->count(),
+            'inactive'     => Member::where('status', 'Inactive')->count(),
+            'baptized'     => Member::whereNotNull('baptism_date')->count(),
+            'withDisciples'=> Member::has('disciples')->count(),
+        ];
+
+        return view('members.index', compact('members', 'accessibleCells', 'stats'));
+
     }
 
     // =========================================================================

@@ -42,15 +42,34 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // ----------------------------------------------------------
+    // MÓDULO OPERACIONAL
+    // ----------------------------------------------------------
+    Route::get('operacional/dashboard', [\App\Http\Controllers\OperacionalController::class, 'dashboard'])->name('operacional.dashboard');
+    Route::get('radar', [\App\Http\Controllers\OperacionalController::class, 'radar'])->name('operacional.radar');
+    Route::post('radar/{visitor}/contact', [\App\Http\Controllers\OperacionalController::class, 'registerContact'])->name('operacional.radar.contact');
+
+    // ----------------------------------------------------------
     // GESTÃO DE CÉLULAS
     // ----------------------------------------------------------
     Route::resource('cells', CellController::class);
 
+
     // ----------------------------------------------------------
     // GESTÃO DE MEMBROS
     // ----------------------------------------------------------
+    Route::get('members/search-users', [MemberController::class, 'searchUsers'])->name('admin.members.search-users');
     Route::get('members/search', [MemberController::class, 'search'])->name('admin.members.search');
     Route::resource('members', MemberController::class);
+
+    // ----------------------------------------------------------
+    // GESTÃO DE VISITANTES
+    // ----------------------------------------------------------
+    Route::get('visitors/{visitor}/consolidate', [\App\Http\Controllers\VisitorController::class, 'consolidate'])->name('visitors.consolidate');
+    Route::post('visitors/{visitor}/consolidate', [\App\Http\Controllers\VisitorController::class, 'consolidateStore'])->name('visitors.consolidate.store');
+    Route::post('visitors/{visitor}/contact', [\App\Http\Controllers\VisitorController::class, 'contact'])->name('visitors.contact');
+    Route::post('visitors/{visitor}/convert', [\App\Http\Controllers\VisitorController::class, 'convert'])->name('visitors.convert');
+    Route::resource('visitors', \App\Http\Controllers\VisitorController::class);
+
 
     // ----------------------------------------------------------
     // MODULO FINANCEIRO (Admin + Tesoureiro)
@@ -135,6 +154,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Categorias de Menu
         Route::post('menus/categories', [\App\Http\Controllers\Admin\MenuController::class, 'storeCategory'])->name('admin.menus.categories.store');
         Route::post('menus/categories/reorder', [\App\Http\Controllers\Admin\MenuController::class, 'reorderCategories'])->name('admin.menus.categories.reorder');
+        Route::post('menus/categories/reorder-single', [\App\Http\Controllers\Admin\MenuController::class, 'reorderSingleCategory'])->name('admin.menus.categories.reorder-single');
+
         Route::put('menus/categories/{category}', [\App\Http\Controllers\Admin\MenuController::class, 'updateCategory'])->name('admin.menus.categories.update');
 
 

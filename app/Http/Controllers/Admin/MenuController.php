@@ -25,22 +25,59 @@ class MenuController extends Controller
     }
 
     /**
-     * Cria uma nova categoria.
+     * Reordena uma única categoria por número.
+     */
+    public function reorderSingleCategory(Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'id' => 'required|exists:menu_categories,id',
+                'order' => 'required|integer|min:1',
+            ]);
+
+            $category = MenuCategory::findOrFail($request->id);
+            $newOrder = $request->order;
+
+            // Se a ordem mudou, precisamos ajustar as outras
+            if ($category->order != $newOrder) {
+                // Pega todas as outras ordenadas
+                $categories = MenuCategory::where('id', '!=', $category->id)
+                    ->orderBy('order')
+                    ->get();
+
+                $i = 1;
+                foreach ($categories as $cat) {
+                    if ($i == $newOrder) $i++; // Pula a nova posição
+                    $cat->update(['order' => $i]);
+                    $i++;
+                }
+
+                $category->update(['order' => $newOrder]);
+            }
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Adiciona uma nova categoria.
      */
     public function storeCategory(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
+            'order' => 'nullable|integer'
         ]);
 
-        $maxOrder = MenuCategory::max('order') ?? 0;
-        $validated['order'] = $maxOrder + 1;
+        MenuCategory::create([
+            'name' => $request->name,
+            'order' => $request->order ?? (MenuCategory::max('order') + 1),
+            'is_active' => true
+        ]);
 
-        $category = MenuCategory::create($validated);
-
-        AuditService::log('CREATE_MENU_CATEGORY', $category->toArray());
-
-        return back()->with('success', 'Categoria criada com sucesso!');
+        return redirect()->back()->with('success', 'Categoria criada com sucesso!');
     }
 
     /**
@@ -139,6 +176,7 @@ class MenuController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'order' => 'nullable|integer'
         ]);
 
         $category->update($validated);
@@ -147,6 +185,7 @@ class MenuController extends Controller
 
         return back()->with('success', 'Categoria atualizada!');
     }
+
 
     /**
      * Remove um item de menu.
