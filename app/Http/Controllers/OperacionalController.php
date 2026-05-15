@@ -113,6 +113,8 @@ class OperacionalController extends Controller
         ]);
 
         return response()->json(['success' => true, 'message' => 'Contato registrado com sucesso!']);
+    }
+
     /**
      * Visualização do Organograma (Estrutura Hierárquica).
      */
@@ -124,6 +126,8 @@ class OperacionalController extends Controller
             ->get();
 
         return view('operacional.hierarchy', compact('networks'));
+    }
+
     /**
      * Consolidação Mensal (Relatório de Fechamento).
      */

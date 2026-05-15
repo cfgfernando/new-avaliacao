@@ -17,6 +17,7 @@ use App\Http\Controllers\Finance\CostCenterController;
 use App\Http\Controllers\Finance\ClosingController;
 use App\Http\Controllers\Finance\ReconciliationController;
 use App\Http\Controllers\Accounting\PDFReportController;
+use App\Http\Controllers\OperacionalController;
 use Illuminate\Support\Facades\Route;
 
 

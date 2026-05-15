@@ -102,76 +102,78 @@
     </div>
 
     {{-- ===== TABELA DE MEMBROS ===== --}}
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="card-neo !p-0 overflow-hidden shadow-xl shadow-slate-200/50">
         <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead class="bg-gray-50">
+            <table class="w-full text-left">
+                <thead>
                     <tr>
-                        <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-widest">Membro</th>
-                        <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-widest">Célula</th>
-                        <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-widest text-center">Batismo</th>
-                        <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-widest text-center">Status</th>
-                        <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-widest text-right">Ações</th>
+                        <th class="px-8 py-5">MEMBRO</th>
+                        <th class="px-8 py-5">CÉLULA / LIDERANÇA</th>
+                        <th class="px-8 py-5 text-center">BATISMO</th>
+                        <th class="px-8 py-5 text-center">STATUS</th>
+                        <th class="px-8 py-5 text-right">AÇÕES</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-slate-50">
                     @forelse($members as $member)
-                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors group cursor-pointer"
+                    <tr class="group hover:bg-slate-50/80 transition-all duration-300 cursor-pointer"
                         onclick="window.location='{{ route('members.show', $member) }}'">
-                        <td class="px-6 py-5">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 font-black text-sm shrink-0">
+                        <td class="px-8 py-6">
+                            <div class="flex items-center gap-5">
+                                <div class="w-12 h-12 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-slate-800 font-black text-lg shrink-0 group-hover:scale-110 transition-transform duration-500">
                                     {{ strtoupper(substr($member->user->name, 0, 1)) }}
                                 </div>
                                 <div>
-                                    <p class="text-sm font-bold text-gray-800 leading-tight">{{ $member->user->name }}</p>
-                                    <p class="text-xs text-gray-400 mt-0.5">{{ $member->user->email }}</p>
+                                    <p class="text-sm font-black text-slate-800 leading-tight uppercase tracking-tight group-hover:text-primary transition-colors">{{ $member->user->name }}</p>
+                                    <p class="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">{{ $member->user->email }}</p>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-5">
+                        <td class="px-8 py-6">
                             @if($member->user->cell)
-                            <p class="text-xs font-bold text-gray-700 uppercase tracking-tight">{{ $member->user->cell->name }}</p>
-                            <p class="text-[10px] text-gray-400 mt-0.5">{{ $member->user->cell->leader->name ?? '—' }}</p>
+                                <p class="text-[10px] font-black text-slate-700 uppercase tracking-widest">{{ $member->user->cell->name }}</p>
+                                <p class="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-widest flex items-center gap-1">
+                                    <i class="fas fa-user-tie text-[8px]"></i> {{ $member->user->cell->leader->name ?? '—' }}
+                                </p>
                             @else
-                            <span class="text-[10px] text-gray-300 uppercase tracking-widest font-bold">Sem célula</span>
+                                <span class="text-[9px] text-slate-300 uppercase tracking-[0.2em] font-black">Sem célula atribuída</span>
                             @endif
                         </td>
-                        <td class="px-6 py-5 text-center">
+                        <td class="px-8 py-6 text-center">
                             @if($member->baptism_date)
-                                <div class="flex flex-col items-center">
-                                    <span class="bg-blue-50 text-blue-600 font-medium text-xs px-2.5 py-0.5 rounded-full border border-blue-200">
-                                        <i class="fas fa-droplet text-[9px]"></i> Batizado
+                                <div class="inline-flex flex-col items-center">
+                                    <span class="bg-blue-50 text-blue-600 font-black text-[9px] px-3 py-1 rounded-full border border-blue-100 uppercase tracking-widest">
+                                        <i class="fas fa-droplet text-[8px] mr-1"></i> Batizado
                                     </span>
-                                    <span class="text-[9px] text-gray-400 mt-1">{{ $member->baptism_date->format('d/m/Y') }}</span>
+                                    <span class="text-[9px] font-black text-slate-400 mt-2 tracking-widest">{{ $member->baptism_date->format('d/m/Y') }}</span>
                                 </div>
                             @else
-                                <span class="text-[9px] text-gray-300 font-bold uppercase tracking-widest">—</span>
+                                <span class="text-[9px] text-slate-200 font-black uppercase tracking-[0.3em]">Não batizado</span>
                             @endif
                         </td>
-                        <td class="px-6 py-5 text-center">
+                        <td class="px-8 py-6 text-center">
                             @php
-                                $statusConfig = match($member->status) {
-                                    'Active'      => ['bg-green-50 text-green-600 border-green-200', 'Ativo'],
-                                    'Inactive'    => ['bg-gray-100 text-gray-500 border-gray-200', 'Inativo'],
-                                    'Transferred' => ['bg-blue-50 text-blue-600 border-blue-200', 'Transferido'],
-                                    'Deceased'    => ['bg-red-50 text-red-500 border-red-200', 'Falecido'],
-                                    default       => ['bg-gray-100 text-gray-500 border-gray-200', $member->status],
+                                $statusStyle = match($member->status) {
+                                    'Active'      => 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                                    'Inactive'    => 'bg-slate-100 text-slate-500 border-slate-200',
+                                    'Transferred' => 'bg-blue-50 text-blue-600 border-blue-100',
+                                    'Deceased'    => 'bg-rose-50 text-rose-500 border-rose-100',
+                                    default       => 'bg-slate-100 text-slate-500 border-slate-200',
                                 };
                             @endphp
-                            <span class="font-medium text-xs px-2.5 py-0.5 rounded-full border {{ $statusConfig[0] }}">
-                                {{ $statusConfig[1] }}
+                            <span class="font-black text-[9px] px-3 py-1 rounded-full border uppercase tracking-widest {{ $statusStyle }}">
+                                {{ $member->status }}
                             </span>
                         </td>
-                        <td class="px-6 py-5 text-right">
-                            <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                        <td class="px-8 py-6 text-right">
+                            <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0"
                                  onclick="event.stopPropagation()">
                                 <a href="{{ route('members.show', $member) }}"
-                                   class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:bg-amber-500 hover:text-white hover:border-amber-500 transition-all">
+                                   class="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-white hover:border-slate-800 hover:-translate-y-1 transition-all shadow-sm">
                                     <i class="fas fa-eye text-xs"></i>
                                 </a>
                                 <a href="{{ route('members.edit', $member) }}"
-                                   class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:bg-blue-500 hover:text-white hover:border-blue-500 transition-all">
+                                   class="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:bg-blue-500 hover:text-white hover:border-blue-500 hover:-translate-y-1 transition-all shadow-sm">
                                     <i class="fas fa-pen text-xs"></i>
                                 </a>
                             </div>
@@ -179,16 +181,19 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-8 py-20 text-center">
-                            <div class="flex flex-col items-center gap-4">
-                                <div class="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center text-gray-200">
-                                    <i class="fas fa-user-slash text-3xl"></i>
+                        <td colspan="5" class="px-8 py-24 text-center">
+                            <div class="flex flex-col items-center gap-5">
+                                <div class="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center text-slate-200 border border-slate-100">
+                                    <i class="fas fa-user-slash text-4xl"></i>
                                 </div>
-                                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Nenhum membro encontrado.</p>
+                                <div>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Base de dados vazia</p>
+                                    <p class="text-xs text-slate-400 mt-1">Nenhum membro corresponde aos filtros aplicados.</p>
+                                </div>
                                 @can('create', App\Models\Member::class)
                                 <a href="{{ route('members.create') }}"
-                                   class="text-[9px] font-black text-amber-500 uppercase tracking-widest flex items-center gap-1 hover:gap-2 transition-all">
-                                    Cadastrar o primeiro <i class="fas fa-arrow-right"></i>
+                                   class="btn-neo bg-slate-800 text-white text-[9px] font-black uppercase tracking-widest px-6 py-3 flex items-center gap-2 mt-2">
+                                    <i class="fas fa-plus"></i> Cadastrar Novo
                                 </a>
                                 @endcan
                             </div>
@@ -199,7 +204,7 @@
             </table>
         </div>
         @if($members->hasPages())
-        <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+        <div class="px-8 py-6 bg-slate-50/50 border-t border-slate-100">
             {{ $members->links() }}
         </div>
         @endif

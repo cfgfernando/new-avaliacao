@@ -8,137 +8,167 @@
     {{-- BREADCRUMB --}}
     <div class="flex items-center justify-between">
         <a href="{{ route('visitors.index') }}"
-           class="flex items-center gap-2 text-[9px] font-black text-slate-400 hover:text-primary uppercase tracking-widest transition-colors">
-            <i class="fas fa-arrow-left"></i> Visitantes
+           class="flex items-center gap-2 text-[10px] font-black text-slate-400 hover:text-primary uppercase tracking-[0.2em] transition-all">
+            <i class="fas fa-arrow-left text-[8px]"></i> Visitantes
         </a>
-        <a href="{{ route('visitors.edit', $visitor) }}"
-           class="btn-neo bg-white border border-slate-200 text-slate-600 text-[9px] font-black uppercase tracking-widest px-4 py-2 flex items-center gap-2 hover:border-primary hover:text-primary transition-all">
-            <i class="fas fa-pen"></i> Editar
-        </a>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('visitors.edit', $visitor) }}"
+               class="btn-neo bg-white border border-slate-200 text-slate-600 text-[10px] font-black uppercase tracking-widest px-6 py-3 flex items-center gap-2 hover:border-slate-400 transition-all shadow-sm">
+                <i class="fas fa-pen text-[10px]"></i> EDITAR PERFIL
+            </a>
+        </div>
     </div>
 
     {{-- PROFILE HERO --}}
     @php
         $statusColors = [
-            'New'        => ['from-blue-800 to-blue-700',   'bg-blue-400/20 text-blue-300 border-blue-400/30'],
-            'Returning'  => ['from-amber-800 to-amber-700', 'bg-amber-400/20 text-amber-300 border-amber-400/30'],
-            'Interested' => ['from-orange-800 to-orange-700','bg-orange-400/20 text-orange-300 border-orange-400/30'],
-            'Converted'  => ['from-green-800 to-green-700', 'bg-green-400/20 text-green-300 border-green-400/30'],
-            'Inactive'   => ['from-slate-700 to-slate-600', 'bg-slate-400/20 text-slate-300 border-slate-400/30'],
+            'New'        => ['from-blue-600 to-blue-800',   'bg-white/20 text-white border-white/30'],
+            'Returning'  => ['from-amber-500 to-amber-700', 'bg-white/20 text-white border-white/30'],
+            'Interested' => ['from-orange-500 to-orange-700','bg-white/20 text-white border-white/30'],
+            'Converted'  => ['from-emerald-600 to-emerald-800', 'bg-white/20 text-white border-white/30'],
+            'Inactive'   => ['from-slate-700 to-slate-900', 'bg-white/20 text-white border-white/30'],
         ];
-        $sc = $statusColors[$visitor->status] ?? ['from-slate-800 to-slate-700', 'bg-slate-400/20 text-slate-300 border-slate-400/30'];
+        $sc = $statusColors[$visitor->status] ?? ['from-slate-800 to-slate-950', 'bg-white/20 text-white border-white/30'];
         $isUrgent = !in_array($visitor->status, ['Converted', 'Inactive'])
             && ($visitor->last_contact_at === null || $visitor->last_contact_at->lt(now()->subHours(48)));
     @endphp
 
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="bg-gradient-to-r {{ $sc[0] }} p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
-            <div class="w-20 h-20 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-white font-black text-3xl shrink-0">
-                {{ strtoupper(substr($visitor->name, 0, 1)) }}
-            </div>
-            <div class="flex-1">
-                <div class="flex flex-wrap items-center gap-3 mb-2">
-                    <h1 class="text-xl font-black text-white uppercase tracking-tight">{{ $visitor->name }}</h1>
-                    <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-full border {{ $sc[1] }}">
-                        {{ $visitor->status_label }}
-                    </span>
-                    @if($isUrgent)
-                    <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-full bg-rose-400/20 text-rose-300 border border-rose-400/30 animate-pulse">
-                        <i class="fas fa-triangle-exclamation text-[7px]"></i> Radar 48h
-                    </span>
-                    @endif
+    <div class="card-neo !p-0 border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden">
+        <div class="bg-gradient-to-br {{ $sc[0] }} p-12 relative overflow-hidden">
+            {{-- Abstract Background Elements --}}
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 w-48 h-48 bg-black/5 rounded-full -ml-24 -mb-24 blur-2xl"></div>
+            
+            <div class="relative flex flex-col md:flex-row items-start md:items-center gap-8">
+                <div class="w-28 h-28 rounded-[2.5rem] bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white font-black text-4xl shadow-2xl shrink-0">
+                    {{ strtoupper(substr($visitor->name, 0, 1)) }}
                 </div>
-                <div class="flex flex-wrap gap-5 text-white/60 text-xs font-bold">
-                    @if($visitor->phone)
-                        <a href="tel:{{ $visitor->phone }}" class="flex items-center gap-1.5 hover:text-white/90 transition-colors">
-                            <i class="fas fa-phone text-white/30"></i> {{ $visitor->phone }}
-                        </a>
-                    @endif
-                    @if($visitor->email)
-                        <span class="flex items-center gap-1.5"><i class="fas fa-envelope text-white/30"></i> {{ $visitor->email }}</span>
-                    @endif
-                    @if($visitor->assignedCell)
-                        <span class="flex items-center gap-1.5"><i class="fas fa-church text-white/30"></i> {{ $visitor->assignedCell->name }}</span>
-                    @endif
-                    <span class="flex items-center gap-1.5"><i class="fas fa-calendar text-white/30"></i> Cadastrado {{ $visitor->created_at->format('d/m/Y') }}</span>
+                <div class="flex-1 space-y-4">
+                    <div class="flex flex-wrap items-center gap-4">
+                        <h1 class="text-4xl font-black text-white uppercase tracking-tighter">{{ $visitor->name }}</h1>
+                        <span class="text-[9px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full border {{ $sc[1] }} backdrop-blur-sm shadow-sm">
+                            {{ $visitor->status_label }}
+                        </span>
+                        @if($isUrgent)
+                        <span class="text-[9px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full bg-rose-500 text-white border border-rose-400 shadow-lg shadow-rose-500/40 animate-pulse">
+                            <i class="fas fa-satellite-dish text-[10px] mr-1"></i> RADAR ATIVO
+                        </span>
+                        @endif
+                    </div>
+                    <div class="flex flex-wrap gap-x-8 gap-y-4">
+                        @if($visitor->phone)
+                            <a href="tel:{{ $visitor->phone }}" class="flex items-center gap-2.5 text-white/80 hover:text-white transition-all group">
+                                <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-all">
+                                    <i class="fas fa-phone text-[10px] text-white/40 group-hover:text-white/70"></i>
+                                </div>
+                                <span class="text-[11px] font-black uppercase tracking-widest">{{ $visitor->phone }}</span>
+                            </a>
+                        @endif
+                        @if($visitor->assignedCell)
+                            <div class="flex items-center gap-2.5 text-white/80">
+                                <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
+                                    <i class="fas fa-users text-[10px] text-white/40"></i>
+                                </div>
+                                <span class="text-[11px] font-black uppercase tracking-widest">{{ $visitor->assignedCell->name }}</span>
+                            </div>
+                        @endif
+                        <div class="flex items-center gap-2.5 text-white/80">
+                            <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
+                                <i class="fas fa-calendar-alt text-[10px] text-white/40"></i>
+                            </div>
+                            <span class="text-[11px] font-black uppercase tracking-widest">INGRESSO EM {{ $visitor->created_at->format('d/m/Y') }}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        {{-- KPI strip --}}
-        <div class="grid grid-cols-3 divide-x divide-gray-100">
-            <div class="px-6 py-5 text-center">
-                <p class="text-sm font-black text-gray-800 tracking-tight">
-                    {{ $visitor->last_contact_at ? $visitor->last_contact_at->format('d/m/Y') : '—' }}
+        {{-- KPI STRIP --}}
+        <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-50">
+            <div class="px-10 py-8 group hover:bg-slate-50 transition-colors">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Última Abordagem</p>
+                <p class="text-xl font-black text-slate-800 tracking-tight group-hover:text-primary transition-colors">
+                    {{ $visitor->last_contact_at ? $visitor->last_contact_at->format('d/m/Y') : 'PENDENTE' }}
                 </p>
-                <p class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest mt-1">Último Contato</p>
             </div>
-            <div class="px-6 py-5 text-center">
-                <p class="text-sm font-black {{ $isUrgent ? 'text-rose-500' : 'text-gray-800' }} tracking-tight">
-                    {{ $visitor->last_contact_at ? $visitor->last_contact_at->diffForHumans() : 'Nunca' }}
+            <div class="px-10 py-8 group hover:bg-slate-50 transition-colors">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Janela de Contato</p>
+                <p class="text-xl font-black {{ $isUrgent ? 'text-rose-500 animate-pulse' : 'text-slate-800' }} tracking-tight group-hover:scale-105 transition-all">
+                    {{ $visitor->last_contact_at ? $visitor->last_contact_at->diffForHumans() : 'NUNCA' }}
                 </p>
-                <p class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest mt-1">Há quanto tempo</p>
             </div>
-            <div class="px-6 py-5 text-center">
-                <p class="text-sm font-black text-gray-800 tracking-tight">
-                    {{ $visitor->contactedBy->name ?? '—' }}
+            <div class="px-10 py-8 group hover:bg-slate-50 transition-colors">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Responsável Atual</p>
+                <p class="text-xl font-black text-slate-800 tracking-tight">
+                    {{ $visitor->contactedBy->name ?? 'A DEFINIR' }}
                 </p>
-                <p class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest mt-1">Contactado por</p>
             </div>
         </div>
     </div>
 
     {{-- CONTENT --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
         {{-- DETALHES --}}
-        <div class="lg:col-span-2">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest pb-4 mb-4 border-b border-gray-100">
-                    Informações do Visitante
+        <div class="lg:col-span-2 space-y-8">
+            <div class="card-neo border-slate-100 p-10 shadow-xl shadow-slate-200/40">
+                <h3 class="text-[10px] font-black text-slate-800 uppercase tracking-[0.3em] pb-6 mb-8 border-b border-slate-50 flex items-center gap-3">
+                    <i class="fas fa-info-circle text-primary"></i> Dossiê do Visitante
                 </h3>
-                <div class="grid grid-cols-2 gap-6">
-                    <div>
-                        <p class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Status Atual</p>
-                        <span class="font-medium text-xs px-2.5 py-1 rounded-full border
-                            {{ match($visitor->status) {
-                                'New' => 'bg-blue-50 text-blue-600 border-blue-200',
-                                'Returning' => 'bg-amber-50 text-amber-600 border-amber-200',
-                                'Interested' => 'bg-orange-50 text-orange-600 border-orange-200',
-                                'Converted' => 'bg-green-50 text-green-600 border-green-200',
-                                default => 'bg-gray-100 text-gray-500 border-gray-200',
-                            } }}">
-                            {{ $visitor->status_label }}
-                        </span>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+                    <div class="space-y-2">
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Estágio de Conversão</p>
+                        <div class="flex items-center gap-3">
+                            <span class="font-black text-[10px] px-4 py-1.5 rounded-full border uppercase tracking-widest
+                                {{ match($visitor->status) {
+                                    'New' => 'bg-blue-50 text-blue-600 border-blue-100 shadow-sm shadow-blue-100',
+                                    'Returning' => 'bg-amber-50 text-amber-600 border-amber-100 shadow-sm shadow-amber-100',
+                                    'Interested' => 'bg-orange-50 text-orange-600 border-orange-100 shadow-sm shadow-orange-100',
+                                    'Converted' => 'bg-emerald-50 text-emerald-600 border-emerald-100 shadow-sm shadow-emerald-100',
+                                    default => 'bg-slate-100 text-slate-500 border-slate-200',
+                                } }}">
+                                {{ $visitor->status_label }}
+                            </span>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Como nos conheceu</p>
-                        <p class="text-sm font-bold text-gray-700">{{ $visitor->how_did_you_know ?? '—' }}</p>
+
+                    <div class="space-y-2">
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Ponto de Contato</p>
+                        <p class="text-sm font-black text-slate-800 uppercase tracking-tight">{{ $visitor->how_did_you_know ?? 'NÃO INFORMADO' }}</p>
                     </div>
-                    <div>
-                        <p class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Célula Responsável</p>
-                        <p class="text-sm font-bold text-gray-700">{{ $visitor->assignedCell->name ?? '—' }}</p>
+
+                    <div class="space-y-2">
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Célula de Acolhimento</p>
+                        <p class="text-sm font-black text-slate-800 uppercase tracking-tight">{{ $visitor->assignedCell->name ?? 'PENDENTE DE ATRIBUIÇÃO' }}</p>
                     </div>
-                    <div>
-                        <p class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Cadastrado em</p>
-                        <p class="text-sm font-bold text-gray-700">{{ $visitor->created_at->format('d/m/Y H:i') }}</p>
+
+                    <div class="space-y-2">
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Primeiro Contato em</p>
+                        <p class="text-sm font-black text-slate-800 uppercase tracking-tight">{{ $visitor->created_at->format('d/m/Y \à\s H:i') }}</p>
                     </div>
                 </div>
 
                 @if($visitor->notes)
-                <div class="mt-6 pt-4 border-t border-gray-100">
-                    <p class="text-[9px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Observações</p>
-                    <p class="text-sm text-gray-600 leading-relaxed bg-gray-50 rounded-xl p-4">{{ $visitor->notes }}</p>
+                <div class="mt-12 pt-10 border-t border-slate-50">
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-4">Relatório Inicial / Observações</p>
+                    <div class="bg-slate-50/80 rounded-3xl p-8 border border-slate-100 italic text-slate-600 text-sm leading-relaxed relative">
+                        <i class="fas fa-quote-left absolute top-4 left-4 text-slate-200 text-2xl"></i>
+                        {{ $visitor->notes }}
+                    </div>
                 </div>
                 @endif
             </div>
         </div>
 
-        {{-- AÇÕES --}}
-        <div class="space-y-4">
-            {{-- Progresso do Funil --}}
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-                <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Progresso no Funil</p>
+        {{-- SIDEBAR --}}
+        <div class="space-y-8">
+            {{-- Linha do Tempo do Funil --}}
+            <div class="card-neo border-slate-100 p-8 shadow-xl shadow-slate-200/40">
+                <p class="text-[10px] font-black text-slate-800 uppercase tracking-[0.2em] mb-8 flex items-center gap-2">
+                    <i class="fas fa-filter text-primary"></i> Estágio Atual
+                </p>
+                
                 @php
                     $stages = ['New' => 1, 'Returning' => 2, 'Interested' => 3, 'Converted' => 4, 'Inactive' => 0];
                     $currentStage = $stages[$visitor->status] ?? 0;
@@ -149,61 +179,71 @@
                         ['key' => 'Converted',  'label' => 'Convertido',  'icon' => 'fa-check-circle'],
                     ];
                 @endphp
-                <div class="space-y-2">
+
+                <div class="space-y-6 relative">
+                    <div class="absolute left-[13px] top-0 bottom-0 w-px bg-slate-100"></div>
+                    
                     @foreach($funnelStages as $i => $stage)
                     @php
                         $stageNum = $i + 1;
                         $isDone = $currentStage >= $stageNum;
                         $isCurrent = $currentStage === $stageNum;
                     @endphp
-                    <div class="flex items-center gap-3">
-                        <div class="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black shrink-0
-                            {{ $isDone ? 'bg-green-500 text-white' : ($isCurrent ? 'bg-amber-400 text-white' : 'bg-gray-100 text-gray-400') }}">
+                    <div class="flex items-start gap-5 relative z-10">
+                        <div class="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 transition-all duration-500
+                            {{ $isDone ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200 scale-110' : ($isCurrent ? 'bg-amber-400 text-white shadow-lg shadow-amber-200 animate-bounce' : 'bg-white border border-slate-100 text-slate-300') }}">
                             <i class="fas {{ $isDone && !$isCurrent ? 'fa-check' : $stage['icon'] }} text-[9px]"></i>
                         </div>
-                        <span class="text-xs font-bold {{ $isDone ? 'text-gray-700' : 'text-gray-400' }}">{{ $stage['label'] }}</span>
-                        @if($isCurrent)
-                            <span class="ml-auto text-[8px] font-black text-amber-500 uppercase tracking-widest">Atual</span>
-                        @endif
+                        <div class="flex-1">
+                            <span class="text-[11px] font-black uppercase tracking-widest {{ $isDone ? 'text-slate-800' : 'text-slate-300' }}">{{ $stage['label'] }}</span>
+                            @if($isCurrent)
+                                <div class="mt-1 h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+                                    <div class="bg-amber-400 h-full w-2/3 animate-pulse"></div>
+                                </div>
+                            @endif
+                        </div>
                     </div>
-                    @if(!$loop->last)
-                        <div class="ml-3.5 h-3 w-px bg-gray-100"></div>
-                    @endif
                     @endforeach
                 </div>
             </div>
 
-            {{-- Ações --}}
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 space-y-3">
-                <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest">Ações</p>
+            {{-- Operações Rápidas --}}
+            <div class="card-neo border-slate-100 p-8 shadow-xl shadow-slate-200/40 space-y-4">
+                <p class="text-[10px] font-black text-slate-800 uppercase tracking-[0.2em] mb-6">Operações Rápidas</p>
 
                 @if(!in_array($visitor->status, ['Converted', 'Inactive']))
                 <button onclick="openContactModal()"
-                        class="w-full btn-neo bg-[#f59e0b] text-white text-[9px] font-black uppercase tracking-widest px-4 py-2.5 flex items-center gap-2 justify-center hover:bg-[#d97706] transition-colors">
-                    <i class="fas fa-phone-volume"></i> Registrar Contato
+                        class="w-full btn-neo bg-slate-800 text-white text-[10px] font-black uppercase tracking-widest px-6 py-4 flex items-center gap-3 justify-center hover:bg-slate-900 shadow-xl shadow-slate-200 transition-all">
+                    <i class="fas fa-phone-volume text-sm"></i> REGISTRAR ABORDAGEM
                 </button>
                 @endif
 
                 @if($visitor->status === 'Interested' || $visitor->status === 'Returning')
-                <a href="{{ route('visitors.consolidate', $visitor) }}"
-                   class="w-full btn-neo bg-green-500 text-white text-[9px] font-black uppercase tracking-widest px-4 py-2.5 flex items-center gap-2 justify-center hover:bg-green-600 transition-colors">
-                    <i class="fas fa-handshake"></i> Consolidar como Membro
-                </a>
+                <form action="{{ route('visitors.convert', $visitor) }}" method="POST">
+                    @csrf
+                    <button type="submit"
+                            onclick="return confirm('Deseja converter este visitante em membro agora?')"
+                            class="w-full btn-neo bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest px-6 py-4 flex items-center gap-3 justify-center hover:bg-emerald-700 shadow-xl shadow-emerald-200 transition-all">
+                        <i class="fas fa-user-check text-sm"></i> EFETIVAR MEMBRESIA
+                    </button>
+                </form>
                 @endif
 
                 <a href="{{ route('visitors.edit', $visitor) }}"
-                   class="w-full btn-neo bg-white border border-gray-200 text-gray-600 text-[9px] font-black uppercase tracking-widest px-4 py-2.5 flex items-center gap-2 justify-center hover:border-gray-400 transition-all">
-                    <i class="fas fa-pen"></i> Editar Dados
+                   class="w-full btn-neo bg-white border border-slate-200 text-slate-400 text-[10px] font-black uppercase tracking-widest px-6 py-4 flex items-center gap-3 justify-center hover:border-slate-400 transition-all">
+                    <i class="fas fa-sliders-h"></i> CONFIGURAÇÕES
                 </a>
 
-                <form action="{{ route('visitors.destroy', $visitor) }}" method="POST">
-                    @csrf @method('DELETE')
-                    <button type="submit"
-                            onclick="return confirm('Remover este visitante?')"
-                            class="w-full btn-neo bg-red-50 border border-red-100 text-red-400 hover:bg-red-500 hover:text-white text-[9px] font-black uppercase tracking-widest px-4 py-2.5 flex items-center gap-2 justify-center transition-all">
-                        <i class="fas fa-trash"></i> Remover
-                    </button>
-                </form>
+                <div class="pt-4 border-t border-slate-50">
+                    <form action="{{ route('visitors.destroy', $visitor) }}" method="POST">
+                        @csrf @method('DELETE')
+                        <button type="submit"
+                                onclick="return confirm('ATENÇÃO: Esta ação é irreversível. Deseja excluir este registro?')"
+                                class="w-full text-[9px] font-black text-rose-300 hover:text-rose-500 uppercase tracking-[0.2em] transition-all py-2">
+                            EXCLUIR REGISTRO DO SISTEMA
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -211,36 +251,36 @@
 </div>
 
 {{-- MODAL CONTATO --}}
-<div id="contactModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-        <div class="p-6 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+<div id="contactModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 transition-all duration-500">
+    <div class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-lg overflow-hidden animate-reveal-up border border-slate-100">
+        <div class="px-10 py-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
             <div>
-                <h3 class="font-black text-gray-800 uppercase tracking-tight text-sm">Registrar Contato</h3>
-                <p class="text-[10px] text-gray-400 font-semibold mt-0.5">{{ $visitor->name }}</p>
+                <h3 class="font-black text-slate-800 uppercase tracking-tight text-lg">Registrar Acompanhamento</h3>
+                <p class="text-[10px] text-accent font-black uppercase tracking-[0.2em] mt-1.5">{{ $visitor->name }}</p>
             </div>
-            <button onclick="closeModal()" class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-all">
+            <button onclick="closeModal()" class="text-slate-300 hover:text-slate-600 transition-all w-12 h-12 flex items-center justify-center rounded-2xl hover:bg-white hover:shadow-sm border border-transparent hover:border-slate-100">
                 <i class="fas fa-times text-sm"></i>
             </button>
         </div>
-        <form action="{{ route('visitors.contact', $visitor) }}" method="POST" class="p-6 space-y-5" id="contactForm">
+        <form action="{{ route('visitors.contact', $visitor) }}" method="POST" class="p-10 space-y-8" id="contactForm">
             @csrf
-            <div>
-                <label class="block text-[9px] font-semibold text-gray-500 uppercase tracking-widest mb-2">Atualizar Status</label>
-                <select name="status" class="input-neo py-2.5">
-                    <option value="New"        {{ $visitor->status === 'New' ? 'selected' : '' }}>Novo</option>
-                    <option value="Returning"  {{ $visitor->status === 'Returning' ? 'selected' : '' }}>Retornou</option>
-                    <option value="Interested" {{ $visitor->status === 'Interested' ? 'selected' : '' }}>Interessado</option>
-                    <option value="Converted"  {{ $visitor->status === 'Converted' ? 'selected' : '' }}>Convertido</option>
-                    <option value="Inactive"   {{ $visitor->status === 'Inactive' ? 'selected' : '' }}>Inativo</option>
+            <div class="space-y-3">
+                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Novo Estágio</label>
+                <select name="status" class="input-neo py-4">
+                    <option value="New"        {{ $visitor->status === 'New' ? 'selected' : '' }}>Novo (Sem Alteração)</option>
+                    <option value="Returning"  {{ $visitor->status === 'Returning' ? 'selected' : '' }}>Retornou (Veio mais de 1x)</option>
+                    <option value="Interested" {{ $visitor->status === 'Interested' ? 'selected' : '' }}>Interessado (Pronto para conversão)</option>
+                    <option value="Converted"  {{ $visitor->status === 'Converted' ? 'selected' : '' }}>Convertido (Já se tornou membro)</option>
+                    <option value="Inactive"   {{ $visitor->status === 'Inactive' ? 'selected' : '' }}>Inativo (Perda de contato)</option>
                 </select>
             </div>
-            <div>
-                <label class="block text-[9px] font-semibold text-gray-500 uppercase tracking-widest mb-2">Observações</label>
-                <textarea name="notes" rows="3" class="input-neo py-3" placeholder="Resultado do contato..."></textarea>
+            <div class="space-y-3">
+                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Relatório da Interação</label>
+                <textarea name="notes" rows="4" class="input-neo py-4" placeholder="Descreva brevemente como foi a abordagem..."></textarea>
             </div>
             <button type="submit"
-                    class="w-full btn-neo bg-[#f59e0b] text-white py-3 text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#d97706] transition-colors">
-                <i class="fas fa-check"></i> Salvar Contato
+                    class="btn-neo bg-slate-800 text-white w-full py-5 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-slate-900 shadow-xl shadow-slate-200 transition-all">
+                <i class="fas fa-check-circle text-sm"></i> SALVAR REGISTRO
             </button>
         </form>
     </div>

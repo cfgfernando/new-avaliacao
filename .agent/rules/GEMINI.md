@@ -270,4 +270,8 @@ When user's prompt is NOT in English:
 - **Audits**: `ux_audit.py`, `mobile_audit.py`, `lighthouse_audit.py`, `seo_checker.py`
 - **Test**: `playwright_runner.py`, `test_runner.py`
 
+### tradução
+
+- **TRADUZIR TODAS AS RESPOSTAS DO CHAT PARA PORTUGUES BRASIL**
+
 ---

@@ -36,7 +36,7 @@ class MemberController extends Controller
             ->map(function($member) {
                 return [
                     'id' => $member->id,
-                    'name' => $member->user->name
+                    'text' => $member->user->name
                 ];
             });
 
