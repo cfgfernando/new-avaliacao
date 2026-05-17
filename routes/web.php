@@ -54,6 +54,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ----------------------------------------------------------
     // GESTÃO DE CÉLULAS
     // ----------------------------------------------------------
+    Route::get('api/cells/{cell}/members', [CellController::class, 'members'])->name('api.cells.members');
     Route::resource('cells', CellController::class);
 
 

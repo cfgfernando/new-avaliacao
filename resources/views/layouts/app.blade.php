@@ -14,6 +14,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Scripts -->
+    <!-- Alpine.js Cloak -->
+    <style>
+        [x-cloak] { display: none !important; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+    </style>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
@@ -157,10 +163,15 @@
         }
     </style>
 </head>
-<body class="font-sans antialiased bg-background text-slate-800" hx-boost="true">
+<body class="font-sans antialiased bg-background text-slate-800">
     <!-- SPA Progress Bar -->
-    <div class="htmx-indicator fixed top-0 left-0 w-full h-1 bg-accent z-[9999] transition-all duration-500 origin-left scale-x-0" id="spa-progress"></div>
-    <style>.htmx-request#spa-progress { @apply scale-x-100; }</style>
+    <div class="htmx-indicator fixed top-0 left-0 w-full h-1 bg-accent z-[9999] transition-all duration-200 origin-left scale-x-0" id="spa-progress"></div>
+    <style>
+        .htmx-request#spa-progress { transform: scaleX(1); opacity: 1; }
+        .htmx-request.nav-link-neo { opacity: 0.7; pointer-events: none; }
+        /* Garantir que cliques no ícone ou texto não falhem */
+        .nav-link-neo * { pointer-events: none; }
+    </style>
 
     <div class="flex min-h-screen overflow-hidden">
         <!-- SIDEBAR -->
@@ -181,7 +192,8 @@
                  hx-select="#main-content" 
                  hx-swap="innerHTML transition:true"
                  hx-push-url="true"
-                 hx-indicator="#spa-progress">
+                 hx-indicator="#spa-progress"
+                 hx-boost="false">
                 @if(isset($menuCategories) && $menuCategories->count() > 0)
                     @foreach($menuCategories as $category)
                         @php
@@ -307,7 +319,7 @@
 
             <!-- PAGE CONTENT -->
             <div id="main-content" class="p-10 max-w-[1600px] mx-auto w-full transition-opacity duration-300"
-                 hx-target="#main-content" hx-select="#main-content" hx-swap="innerHTML transition:true">
+                 hx-target="#main-content" hx-select="#main-content" hx-swap="innerHTML transition:true" hx-boost="true">
                 @yield('content')
                 {{ $slot ?? '' }}
             </div>
@@ -327,8 +339,11 @@
                 sidebarNav.scrollTop = savedScrollPos;
             }
 
-            // Salvar posição ao clicar em qualquer link da sidebar
+            // Salvar posição e feedback instantâneo ao clicar
             $('#sidebar-nav a').on('click', function() {
+                $('#sidebar-nav a').removeClass('active');
+                $(this).addClass('active');
+                
                 if (sidebarNav) {
                     localStorage.setItem('sidebarScrollPos', sidebarNav.scrollTop);
                 }
@@ -340,7 +355,20 @@
             });
 
             // Re-inicialização após navegação SPA (HTMX)
-            document.addEventListener('htmx:afterOnLoad', function(evt) {
+            document.addEventListener('htmx:afterSwap', function(evt) {
+                // Re-processar elementos HTMX no novo conteúdo
+                htmx.process(evt.detail.elt);
+
+                // Re-inicializar Alpine.js para componentes dinâmicos
+                if (window.Alpine) {
+                    if (typeof window.Alpine.initTree === 'function') {
+                        window.Alpine.initTree(evt.detail.elt);
+                    } else {
+                        // Fallback se initTree não estiver disponível
+                        window.Alpine.discoverUninitializedComponents();
+                    }
+                }
+
                 // Re-inicializar Máscaras
                 $('.mask-money').mask('#.##0,00', {reverse: true});
                 $('.mask-phone').mask('(00) 00000-0000');

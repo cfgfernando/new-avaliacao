@@ -183,7 +183,7 @@
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="text-xs font-black text-slate-800 uppercase tracking-tight truncate">{{ $report->cell->name }}</p>
-                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{{ $report->report_date->format('d/m/Y') }}</p>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{{ $report->meeting_date?->format('d/m/Y') }}</p>
                     </div>
                     <div class="text-right shrink-0">
                         <p class="text-xs font-black text-emerald-600">R$ {{ number_format($report->total_offer, 2, ',', '.') }}</p>
@@ -225,7 +225,7 @@
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="text-xs font-black text-slate-800 uppercase tracking-tight truncate">{{ $report->cell->name }}</p>
-                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{{ $report->report_date->format('d/m/Y') }}</p>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{{ $report->meeting_date?->format('d/m/Y') }}</p>
                     </div>
                     <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg shrink-0
                         {{ $report->status === 'Conciliated' ? 'bg-emerald-50 text-emerald-600' : 

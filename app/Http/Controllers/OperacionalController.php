@@ -31,20 +31,20 @@ class OperacionalController extends Controller
             })->count();
 
         // Oferta do mês corrente
-        $offerThisMonth = WeeklyReport::whereMonth('report_date', now()->month)
-            ->whereYear('report_date', now()->year)
+        $offerThisMonth = WeeklyReport::whereMonth('meeting_date', now()->month)
+            ->whereYear('meeting_date', now()->year)
             ->sum(\Illuminate\Support\Facades\DB::raw('offer_pix + offer_cash'));
 
         // Relatórios aguardando conciliação
         $pendingReports = WeeklyReport::with(['cell', 'submittedBy'])
             ->where('status', 'Submitted')
-            ->orderByDesc('report_date')
+            ->orderByDesc('meeting_date')
             ->take(8)
             ->get();
 
         // Relatórios recentes (últimos 10)
         $recentReports = WeeklyReport::with(['cell', 'submittedBy'])
-            ->orderByDesc('report_date')
+            ->orderByDesc('meeting_date')
             ->take(10)
             ->get();
 
@@ -57,7 +57,7 @@ class OperacionalController extends Controller
 
         // Células sem relatório nesta semana
         $startOfWeek = now()->startOfWeek();
-        $cellsWithReportThisWeek = WeeklyReport::where('report_date', '>=', $startOfWeek)
+        $cellsWithReportThisWeek = WeeklyReport::where('meeting_date', '>=', $startOfWeek)
             ->pluck('cell_id')
             ->unique();
         $cellsMissingReport = Cell::where('active', true)
@@ -146,13 +146,13 @@ class OperacionalController extends Controller
             'members_total'  => Member::where('status', 'Active')->count(),
             'members_new'    => Member::whereMonth('created_at', $month)->whereYear('created_at', $year)->count(),
             'visitors_new'   => Visitor::whereMonth('created_at', $month)->whereYear('created_at', $year)->count(),
-            'offers_total'   => WeeklyReport::whereMonth('report_date', $month)->whereYear('report_date', $year)->sum('total_offering'),
+            'offers_total'   => WeeklyReport::whereMonth('meeting_date', $month)->whereYear('meeting_date', $year)->sum(DB::raw('offer_pix + offer_cash')),
         ];
 
         // Dados Mês Anterior (para comparação)
         $prevStats = [
             'members_new'    => Member::whereMonth('created_at', $prevDate->month)->whereYear('created_at', $prevDate->year)->count(),
-            'offers_total'   => WeeklyReport::whereMonth('report_date', $prevDate->month)->whereYear('report_date', $prevDate->year)->sum('total_offering'),
+            'offers_total'   => WeeklyReport::whereMonth('meeting_date', $prevDate->month)->whereYear('meeting_date', $prevDate->year)->sum(DB::raw('offer_pix + offer_cash')),
         ];
 
         return view('operacional.consolidation', compact('stats', 'prevStats', 'date'));

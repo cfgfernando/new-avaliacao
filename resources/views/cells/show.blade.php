@@ -129,7 +129,7 @@
             <div class="card-neo !p-0 overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
                     <p class="text-[10px] font-black text-slate-700 uppercase tracking-widest">Último Malote</p>
-                    <p class="text-[9px] text-slate-400 font-bold mt-0.5">{{ $cell->latestReport->report_date->format('d/m/Y') }}</p>
+                    <p class="text-[9px] text-slate-400 font-bold mt-0.5">{{ $cell->latestReport->meeting_date->format('d/m/Y') }}</p>
                 </div>
                 <div class="px-6 py-4 space-y-2">
                     <div class="flex justify-between text-[9px] font-black uppercase tracking-widest">

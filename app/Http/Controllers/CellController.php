@@ -144,4 +144,12 @@ class CellController extends Controller
             ->route('cells.index')
             ->with('success', "Célula \"{$name}\" removida.");
     }
+
+    /**
+     * Retorna membros da célula (para API utilitária)
+     */
+    public function members(Cell $cell): \Illuminate\Http\JsonResponse
+    {
+        return response()->json($cell->members()->select(['id', 'name'])->orderBy('name')->get());
+    }
 }

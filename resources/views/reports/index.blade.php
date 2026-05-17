@@ -12,7 +12,7 @@
             <h1 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Relatórios Semanais</h1>
             <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Gestão de Malotes por Célula</p>
         </div>
-        <a href="{{ route('reports.create') }}" class="btn-neo bg-primary text-white text-[10px] font-black uppercase tracking-widest px-6 py-3 flex items-center gap-2 self-start md:self-auto">
+        <a href="{{ route('reports.create') }}" hx-boost="false" class="btn-neo bg-primary text-white text-[10px] font-black uppercase tracking-widest px-6 py-3 flex items-center gap-2 self-start md:self-auto">
             <i class="fas fa-file-circle-plus"></i> Gerar Malote
         </a>
     </div>
@@ -77,7 +77,7 @@
                                 <div>
                                     <p class="text-xs font-black text-slate-800 uppercase tracking-tight">{{ $report->cell->name }}</p>
                                     <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">
-                                        {{ $report->report_date->format('D, d M Y') }}
+                                        {{ $report->meeting_date?->format('D, d M Y') }}
                                     </p>
                                 </div>
                             </div>
@@ -88,7 +88,7 @@
                                     {{ $report->total_presence }}
                                 </span>
                                 <span class="text-[8px] font-black text-primary-light uppercase tracking-widest">
-                                    {{ $report->present_members }}m + {{ $report->visitors }}v + {{ $report->children }}c
+                                    {{ $report->present_members }}m + {{ $report->visitors }}v + {{ $report->children }}c + {{ $report->other_cell_visitors }}o
                                 </span>
                             </div>
                         </td>
@@ -109,19 +109,32 @@
                             </span>
                         </td>
                         <td class="px-6 py-5 text-right">
-                            <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <a href="{{ route('reports.show', $report) }}" class="w-8 h-8 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary transition-all">
+                            <div class="flex items-center justify-end gap-2 transition-all">
+                                {{-- Ver Detalhes --}}
+                                <a href="{{ route('reports.show', $report) }}" hx-boost="false" class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-500 hover:text-primary hover:border-primary hover:bg-white transition-all shadow-sm" title="Ver Detalhes">
                                     <i class="fas fa-eye text-xs"></i>
                                 </a>
+
+                                {{-- Editar (Apenas Draft) --}}
                                 @if($report->status === 'Draft')
-                                <a href="{{ route('reports.edit', $report) }}" class="w-8 h-8 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-blue-500 hover:border-blue-300 transition-all">
-                                    <i class="fas fa-pen text-xs"></i>
+                                <a href="{{ route('reports.edit', $report) }}" hx-boost="false" class="w-9 h-9 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-500 hover:bg-blue-500 hover:text-white transition-all shadow-sm" title="Editar">
+                                    <i class="fas fa-pen text-[10px]"></i>
                                 </a>
+
+                                {{-- Enviar Malote (Draft -> Submitted) --}}
+                                <form action="{{ route('reports.submit', $report) }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="w-9 h-9 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 hover:bg-amber-500 hover:text-white transition-all shadow-sm" title="Enviar Malote">
+                                        <i class="fas fa-paper-plane text-[10px]"></i>
+                                    </button>
+                                </form>
                                 @endif
+
+                                {{-- Conciliar (Apenas Submitted e Admin/Tesoureiro) --}}
                                 @if($report->status === 'Submitted' && (auth()->user()->isAdmin() || auth()->user()->isTreasurer()))
                                 <form action="{{ route('reports.conciliate', $report) }}" method="POST" class="inline">
                                     @csrf
-                                    <button type="submit" class="w-8 h-8 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-500 hover:bg-emerald-500 hover:text-white transition-all" title="Conciliar">
+                                    <button type="submit" class="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-500 hover:bg-emerald-500 hover:text-white transition-all shadow-sm" title="Conciliar">
                                         <i class="fas fa-check-double text-xs"></i>
                                     </button>
                                 </form>

@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 
@@ -20,13 +19,19 @@ class WeeklyReport extends Model implements Auditable
 
     protected $fillable = [
         'cell_id',
-        'report_date',
+        'meeting_date',
+        'word_theme',
+        'meeting_location',
+        'committed_members',
         'present_members',
         'visitors',
         'children',
-        'mda_count',
+        'other_cell_visitors',
+        'house_of_peace',
+        'mdas_done',
+        'kg_of_love',
+        'reconciliations',
         'conversions',
-        'kg_social',
         'offer_pix',
         'offer_cash',
         'status',
@@ -34,49 +39,41 @@ class WeeklyReport extends Model implements Auditable
         'submitted_at',
         'conciliated_by',
         'conciliated_at',
-        'observations',
+        'notes',
+        'present_member_ids',
+        'visitor_names',
     ];
 
     protected $casts = [
-        'report_date'     => 'date',
-        'submitted_at'    => 'datetime',
-        'conciliated_at'  => 'datetime',
-        'offer_pix'       => 'decimal:2',
-        'offer_cash'      => 'decimal:2',
-        'kg_social'       => 'decimal:2',
+        'meeting_date'       => 'date',
+        'submitted_at'       => 'datetime',
+        'conciliated_at'     => 'datetime',
+        'offer_pix'          => 'decimal:2',
+        'offer_cash'         => 'decimal:2',
+        'kg_of_love'         => 'decimal:2',
+        'present_member_ids' => 'array',
+        'visitor_names'      => 'array',
     ];
 
     // =========================================================================
     // RELACIONAMENTOS
     // =========================================================================
 
-    /**
-     * Célula autora do relatório.
-     */
     public function cell(): BelongsTo
     {
         return $this->belongsTo(Cell::class, 'cell_id');
     }
 
-    /**
-     * Usuário que submeteu o relatório.
-     */
     public function submittedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'submitted_by');
     }
 
-    /**
-     * Tesoureiro que conciliou o relatório.
-     */
     public function conciliatedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'conciliated_by');
     }
 
-    /**
-     * Lançamentos contábeis gerados a partir deste relatório (polimórfico).
-     */
     public function journalEntries(): MorphMany
     {
         return $this->morphMany(JournalEntry::class, 'source');
@@ -103,7 +100,7 @@ class WeeklyReport extends Model implements Auditable
 
     public function scopeForPeriod($query, string $start, string $end): mixed
     {
-        return $query->whereBetween('report_date', [$start, $end]);
+        return $query->whereBetween('meeting_date', [$start, $end]);
     }
 
     // =========================================================================
@@ -117,7 +114,7 @@ class WeeklyReport extends Model implements Auditable
 
     public function getTotalPresenceAttribute(): int
     {
-        return $this->present_members + $this->visitors + $this->children;
+        return (int) $this->present_members + (int) $this->visitors + (int) $this->children + (int) $this->other_cell_visitors;
     }
 
     public function getStatusLabelAttribute(): string

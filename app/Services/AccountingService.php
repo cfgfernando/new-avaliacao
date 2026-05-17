@@ -35,8 +35,8 @@ class AccountingService
             // 2. Criar o Cabeçalho (JournalEntry)
             $entry = JournalEntry::create([
                 'reference'       => 'CELL-' . $report->id . '-' . now()->format('YmdHis'),
-                'entry_date'      => $report->report_date,
-                'description'     => "Oferta Célula: {$report->cell->name} - Ref: {$report->report_date->format('d/m/Y')}",
+                'entry_date'      => $report->meeting_date,
+                'description'     => "Oferta Célula: {$report->cell->name} - Ref: {$report->meeting_date->format('d/m/Y')}",
                 'source_type'     => WeeklyReport::class,
                 'source_id'       => $report->id,
                 'created_by'      => $user->id,

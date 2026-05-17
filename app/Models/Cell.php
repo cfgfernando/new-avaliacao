@@ -81,7 +81,7 @@ class Cell extends Model
      */
     public function latestReport(): HasOne
     {
-        return $this->hasOne(WeeklyReport::class, 'cell_id')->latestOfMany('report_date');
+        return $this->hasOne(WeeklyReport::class, 'cell_id')->latestOfMany('meeting_date');
     }
 
     /**

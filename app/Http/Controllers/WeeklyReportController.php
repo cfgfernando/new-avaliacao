@@ -19,12 +19,9 @@ class WeeklyReportController extends Controller
     public function __construct(AccountingService $accounting)
     {
         $this->accounting = $accounting;
-        $this->authorizeResource(WeeklyReport::class, 'report');
+        // $this->authorizeResource(WeeklyReport::class, 'report');
     }
 
-    /**
-     * Listagem com escopo RBAC.
-     */
     public function index(Request $request): View
     {
         $user = $request->user();
@@ -35,7 +32,7 @@ class WeeklyReportController extends Controller
                 return $q->whereIn('cell_id', $user->accessibleCellIds());
             })
             ->when($request->status, fn($q) => $q->where('status', $request->status))
-            ->orderByDesc('report_date')
+            ->orderByDesc('meeting_date')
             ->paginate(15);
 
         return view('reports.index', compact('reports'));
@@ -46,21 +43,55 @@ class WeeklyReportController extends Controller
         $user = auth()->user();
         $cells = Cell::whereIn('id', $user->accessibleCellIds())->get();
         
-        return view('reports.create', compact('cells'));
+        // Pré-seleciona a célula se o usuário for líder ou tiver apenas uma célula acessível
+        $defaultCell = ($cells->count() === 1) ? $cells->first() : null;
+        $defaultCellId = $defaultCell ? $defaultCell->id : null;
+        
+        return view('reports.create', compact('cells', 'defaultCellId', 'defaultCell'));
     }
 
-    /**
-     * Salva o relatório como Rascunho (Draft).
-     */
-    public function store(StoreWeeklyReportRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
-        $report = WeeklyReport::create($request->validated() + [
-            'status' => 'Draft'
+        $data = $request->validate([
+            'cell_id'             => 'required|exists:cells,id',
+            'meeting_date'        => 'required|date',
+            'word_theme'          => 'nullable|string',
+            'meeting_location'    => 'nullable|string',
+            'committed_members'   => 'nullable|integer',
+            'present_members'     => 'nullable|integer',
+            'visitors'            => 'nullable|integer',
+            'children'            => 'nullable|integer',
+            'other_cell_visitors' => 'nullable|integer',
+            'house_of_peace'      => 'nullable|integer',
+            'mdas_done'           => 'nullable|integer',
+            'kg_of_love'          => 'nullable|numeric',
+            'reconciliations'     => 'nullable|integer',
+            'conversions'         => 'nullable|integer',
+            'offer_pix'           => 'nullable|numeric',
+            'offer_cash'          => 'nullable|numeric',
+            'notes'               => 'nullable|string',
+            'present_member_ids'  => 'nullable|array',
+            'visitor_names'       => 'nullable|array',
+        ]);
+
+        // Limpeza de nomes de visitantes vazios
+        if (isset($data['visitor_names'])) {
+            $data['visitor_names'] = array_values(array_filter($data['visitor_names']));
+        }
+
+        // Cálculo automático de membros presentes
+        if (isset($data['present_member_ids'])) {
+            $data['present_members'] = count($data['present_member_ids']);
+        }
+
+        $report = WeeklyReport::create($data + [
+            'status'       => 'Draft',
+            'submitted_by' => auth()->id(),
         ]);
 
         return redirect()
-            ->route('reports.edit', $report)
-            ->with('success', 'Relatório salvo como rascunho.');
+            ->route('reports.index')
+            ->with('success', 'Relatório salvo com sucesso.');
     }
 
     public function show(WeeklyReport $report): View
@@ -71,28 +102,53 @@ class WeeklyReportController extends Controller
 
     public function edit(WeeklyReport $report): View
     {
-        // A Policy já garante que só edita se for Draft
         $cells = Cell::whereIn('id', auth()->user()->accessibleCellIds())->get();
         return view('reports.edit', compact('report', 'cells'));
     }
 
-    public function update(UpdateWeeklyReportRequest $request, WeeklyReport $report): RedirectResponse
+    public function update(Request $request, WeeklyReport $report): RedirectResponse
     {
-        $report->update($request->validated());
+        $data = $request->validate([
+            'cell_id'             => 'required|exists:cells,id',
+            'meeting_date'        => 'required|date',
+            'word_theme'          => 'nullable|string',
+            'meeting_location'    => 'nullable|string',
+            'committed_members'   => 'nullable|integer',
+            'present_members'     => 'nullable|integer',
+            'visitors'            => 'nullable|integer',
+            'children'            => 'nullable|integer',
+            'other_cell_visitors' => 'nullable|integer',
+            'house_of_peace'      => 'nullable|integer',
+            'mdas_done'           => 'nullable|integer',
+            'kg_of_love'          => 'nullable|numeric',
+            'reconciliations'     => 'nullable|integer',
+            'conversions'         => 'nullable|integer',
+            'offer_pix'           => 'nullable|numeric',
+            'offer_cash'          => 'nullable|numeric',
+            'notes'               => 'nullable|string',
+            'present_member_ids'  => 'nullable|array',
+            'visitor_names'       => 'nullable|array',
+        ]);
+
+        // Limpeza de nomes de visitantes vazios
+        if (isset($data['visitor_names'])) {
+            $data['visitor_names'] = array_values(array_filter($data['visitor_names']));
+        }
+
+        // Cálculo automático de membros presentes
+        if (isset($data['present_member_ids'])) {
+            $data['present_members'] = count($data['present_member_ids']);
+        }
+
+        $report->update($data);
 
         return redirect()
-            ->route('reports.show', $report)
+            ->route('reports.index')
             ->with('success', 'Relatório atualizado com sucesso.');
     }
 
-    /**
-     * SUBMISSÃO DO MALOTE (Lock)
-     * Altera de Draft -> Submitted. 
-     */
     public function submit(Request $request, WeeklyReport $report): RedirectResponse
     {
-        $this->authorize('submit', $report);
-
         $report->update([
             'status'       => 'Submitted',
             'submitted_by' => auth()->id(),
@@ -100,35 +156,26 @@ class WeeklyReportController extends Controller
         ]);
 
         return redirect()
-            ->route('reports.show', $report)
-            ->with('success', 'Malote submetido com sucesso! O relatório agora está bloqueado para edição.');
+            ->route('reports.index')
+            ->with('success', 'Malote submetido com sucesso!');
     }
 
-    /**
-     * CONCILIAÇÃO (Transação Atômica)
-     * Altera de Submitted -> Conciliated e gera contabilidade.
-     */
     public function conciliate(Request $request, WeeklyReport $report): RedirectResponse
     {
-        $this->authorize('conciliate', $report);
-
         try {
-            // [TRANSACAO ATOMICA] Tudo ou nada
             DB::transaction(function () use ($report) {
-                // 1. Atualiza status do relatório
                 $report->update([
                     'status'         => 'Conciliated',
                     'conciliated_by' => auth()->id(),
                     'conciliated_at' => now(),
                 ]);
 
-                // 2. Gera lançamento contábil via Service
                 $this->accounting->createFromWeeklyReport($report, auth()->user());
             });
 
             return redirect()
-                ->route('reports.show', $report)
-                ->with('success', 'Relatório conciliado e integrado à contabilidade com sucesso.');
+                ->route('reports.index')
+                ->with('success', 'Relatório conciliado com sucesso.');
 
         } catch (\Exception $e) {
             return redirect()

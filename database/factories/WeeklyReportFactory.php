@@ -15,7 +15,7 @@ class WeeklyReportFactory extends Factory
     {
         return [
             'cell_id' => Cell::factory(),
-            'report_date' => $this->faker->dateTimeBetween('-1 year', 'now')->format('Y-m-d'),
+            'meeting_date' => $this->faker->dateTimeBetween('-1 year', 'now')->format('Y-m-d'),
             'present_members' => $this->faker->numberBetween(5, 20),
             'visitors' => $this->faker->numberBetween(0, 5),
             'children' => $this->faker->numberBetween(0, 5),
