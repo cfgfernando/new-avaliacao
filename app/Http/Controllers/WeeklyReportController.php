@@ -134,18 +134,19 @@ class WeeklyReportController extends Controller
 
     public function pdf(WeeklyReport $report)
     {
-        $report->load(['cell', 'submittedBy', 'conciliatedBy']);
+        $report->load(['cell.leader', 'submittedBy', 'conciliatedBy']);
 
         $memberIds = is_array($report->present_member_ids) ? $report->present_member_ids : json_decode($report->present_member_ids, true) ?? [];
-        $presentMembers = \App\Models\Member::whereIn('id', $memberIds)->get();
+        $allCellMembers = $report->cell->members()->with('user')->get();
+        $visitorsList = is_array($report->visitor_names) ? $report->visitor_names : json_decode($report->visitor_names, true) ?? [];
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.pdf', [
-            'report'         => $report,
-            'presentMembers' => $presentMembers,
-            'generated_at'   => now()->format('d/m/Y H:i'),
+        return view('reports.pdf', [
+            'report'          => $report,
+            'allCellMembers'  => $allCellMembers,
+            'memberIds'       => $memberIds,
+            'visitorsList'    => $visitorsList,
+            'generated_at'    => now()->format('d/m/Y H:i'),
         ]);
-
-        return $pdf->setPaper('a4')->stream("Malote_{$report->cell->name}_{$report->meeting_date->format('d-m-Y')}.pdf");
     }
 
     public function edit(WeeklyReport $report): View
@@ -277,15 +278,27 @@ class WeeklyReportController extends Controller
         $reportsCount = $reports->count();
         $averagePresence = $reportsCount > 0 ? round($totalPresence / $reportsCount, 1) : 0;
 
-        // Tenta pegar a célula selecionada
+        // Tenta pegar a célula selecionada de forma segura e em conformidade com RBAC
         $selectedCell = null;
         if ($request->cell_id) {
             $selectedCell = \App\Models\Cell::with('leader')->find($request->cell_id);
-        } elseif (!$user->isAdmin() && !$user->isTreasurer() && $user->cell) {
-            $selectedCell = $user->cell;
+            // Segurança: Se não for administrador/tesoureiro, garante que tem acesso à célula selecionada
+            if (!$user->isAdmin() && !$user->isTreasurer()) {
+                if ($selectedCell && !$user->accessibleCellIds()->contains($selectedCell->id)) {
+                    $selectedCell = null;
+                }
+            }
         }
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.monthly-pdf', [
+        // Se nenhuma célula foi selecionada e o usuário tem acesso a exatamente uma célula (ex: Líder), atribui ela automaticamente
+        if (!$selectedCell && !$user->isAdmin() && !$user->isTreasurer()) {
+            $accessibleIds = $user->accessibleCellIds();
+            if ($accessibleIds->count() === 1) {
+                $selectedCell = \App\Models\Cell::with('leader')->find($accessibleIds->first());
+            }
+        }
+
+        return view('reports.monthly-pdf', [
             'reports' => $reports,
             'totalOffer' => $totalOffer,
             'offerPix' => $offerPix,
@@ -305,7 +318,5 @@ class WeeklyReportController extends Controller
             'filters' => $request->only(['status', 'date_from', 'date_to', 'search']),
             'generated_at' => now()->format('d/m/Y H:i'),
         ]);
-
-        return $pdf->setPaper('a4', 'landscape')->stream("Consolidado_Malotes_" . now()->format('d-m-Y') . ".pdf");
     }
 }

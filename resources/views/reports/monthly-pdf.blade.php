@@ -2,406 +2,441 @@
 <html lang="pt-BR">
 <head>
     <meta charset="utf-8"/>
-    <title>Consolidado Mensal de Malotes & Célula</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Relatório Mensal de Malotes - MDA Church</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#1C2434",
+                        "accent": "#FF9C00",
+                        "outline": "#E2E8F0",
+                        "surface": "#FFFFFF",
+                        "surface-dim": "#F8FAFC",
+                        "on-surface": "#1C2434",
+                        "on-surface-variant": "#64748B",
+                        "semantic-blue": "#3B82F6",
+                        "semantic-green": "#10B981",
+                        "semantic-purple": "#8B5CF6"
+                    },
+                    "fontFamily": {
+                        "sans": ["Libre Franklin", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
     <style>
+        /* Configurações de página físicas para A4 Retrato */
         @page {
-            margin: 1.2cm;
+            size: A4 portrait;
+            margin: 15mm 15mm !important;
         }
-        body {
-            background-color: #ffffff;
-            font-family: 'Helvetica', 'Arial', sans-serif;
-            font-size: 9pt;
-            color: #1c2434;
-            line-height: 1.4;
-            margin: 0;
-            padding: 0;
+        
+        /* Regras exclusivas para visualização na Tela (Preview do ERP) */
+        @media screen {
+            body {
+                background-color: #f1f5f9 !important;
+                padding: 2rem !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+            }
+            .a4-page {
+                width: 210mm !important;
+                height: 297mm !important;
+                min-height: 297mm !important;
+                max-height: 297mm !important;
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+                border: 1px solid #e2e8f0 !important;
+                background-color: white !important;
+                margin: auto !important;
+                flex-shrink: 0 !important;
+                padding: 15mm !important;
+                box-sizing: border-box !important;
+                position: relative !important;
+            }
         }
-        .header-table {
+
+        /* Regras exclusivas para Impressão Física / Geração de PDF */
+        @media print {
+            .no-print { display: none !important; }
+            html, body {
+                background-color: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                overflow: hidden !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .a4-page {
+                width: 100% !important;
+                height: 100% !important;
+                min-height: 100% !important;
+                max-height: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important; /* Margem controlada pela @page */
+                border: none !important;
+                box-shadow: none !important;
+                box-sizing: border-box !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+                page-break-after: avoid !important;
+                page-break-before: avoid !important;
+                page-break-inside: avoid !important;
+                flex-shrink: 0 !important;
+                position: relative !important;
+            }
+            .inner-container {
+                height: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+                box-sizing: border-box !important;
+                position: relative !important;
+            }
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Libre Franklin', sans-serif; }
+        .inner-container {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        /* Estilo da Tabela com Bordas Seguras e Legibilidade de Impressão */
+        table.mda-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 12px;
         }
-        .logo-box {
-            width: 50px;
-            height: 50px;
-            background-color: #1c2434;
-            border-radius: 8px;
-            text-align: center;
+        table.mda-table th {
+            background-color: #f8fafc !important;
+            color: #475569 !important;
+            text-transform: uppercase;
+            font-size: 9px;
+            font-weight: 800;
+            border: 1px solid #cbd5e1 !important;
+            border-bottom: 2px solid #94a3b8 !important;
+            padding: 8px 10px;
+        }
+        table.mda-table td {
+            border: 1px solid #cbd5e1 !important;
+            padding: 8px 10px;
             vertical-align: middle;
-            color: #f59e0b;
-            font-weight: 700;
-            font-size: 20pt;
-            line-height: 50px;
         }
-        .title {
-            font-size: 16pt;
-            font-weight: 700;
-            color: #1c2434;
-            text-transform: uppercase;
-            letter-spacing: -0.5px;
-            margin: 0;
+        table.mda-table tr {
+            page-break-inside: avoid !important;
         }
-        .subtitle {
-            font-size: 8.5pt;
-            color: #8a99af;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 2px 0 0 0;
-            font-weight: 600;
-        }
-        .accent-bar {
-            width: 100%;
-            height: 4px;
-            background-color: #f59e0b;
-            margin-bottom: 15px;
+        table.mda-table tr.total-row td {
+            border-top: 2px solid #1c2434 !important;
+            border-bottom: 2px solid #1c2434 !important;
+            background-color: rgba(28, 36, 52, 0.05) !important;
+            font-weight: bold;
         }
         
-        /* Stats Grid */
-        .stats-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
-        }
-        .stats-card {
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            background-color: #f8fafc;
-            padding: 10px 15px;
-            text-align: center;
-        }
-        .stats-label {
-            font-size: 7.5pt;
-            font-weight: 600;
-            color: #8a99af;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-        .stats-val {
-            font-size: 14pt;
-            font-weight: 700;
-            color: #1c2434;
-        }
-        .stats-val-accent {
-            color: #f59e0b;
-        }
-        
-        /* Tables */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        .data-table th {
-            background-color: #f1f5f9;
-            color: #1c2434;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 7.5pt;
-            padding: 8px 10px;
-            border-bottom: 2px solid #cbd5e1;
-            text-align: left;
-        }
-        .data-table td {
-            padding: 8px 10px;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 8.5pt;
-            color: #334155;
-        }
-        .data-table tr:nth-child(even) {
-            background-color: #f8fafc;
-        }
-        
-        .status-badge {
-            font-size: 7.5pt;
-            font-weight: 600;
-            text-transform: uppercase;
-            padding: 2px 8px;
-            border-radius: 9999px;
-            display: inline-block;
-        }
-        .status-conciliated {
-            color: #065f46;
-            background-color: #d1fae5;
-        }
-        .status-submitted {
-            color: #1e3a8a;
-            background-color: #dbeafe;
-        }
-        .status-draft {
-            color: #9a3412;
-            background-color: #ffedd5;
-        }
-        
-        /* Two Column Layout */
-        .layout-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        .layout-table td {
-            vertical-align: top;
-        }
-        
-        .panel {
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 12px;
-            background-color: #ffffff;
-        }
-        .panel-title {
-            font-size: 9pt;
-            font-weight: 700;
-            color: #1c2434;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 5px;
-        }
-        .panel-row {
-            width: 100%;
-            border-bottom: 1px solid #f1f5f9;
-            padding: 5px 0;
-            font-size: 8.5pt;
-        }
-        
-        /* Footer signatures */
-        .footer-signatures {
-            margin-top: 40px;
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .signature-line {
-            border-top: 1px solid #1c2434;
-            text-align: center;
-            font-size: 8pt;
-            padding-top: 5px;
-            color: #1c2434;
-        }
-        .footer-text {
-            text-align: center;
-            font-size: 7.5pt;
-            color: #8a99af;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 8px;
-            margin-top: 30px;
+        .signatures-container {
+            page-break-inside: avoid !important;
         }
     </style>
 </head>
-<body>
+<body class="text-on-surface bg-gray-100 flex flex-col items-center">
 
-    <!-- Header Section -->
-    <table class="header-table" cellpadding="0" cellspacing="0">
-        <tr>
-            <td width="65">
-                <div class="logo-box">M</div>
-            </td>
-            <td valign="middle">
-                <h1 class="title">Gestão MDA • Consolidação de Malotes</h1>
-                <p class="subtitle">
-                    @if($selectedCell)
-                        Célula: {{ $selectedCell->name }} • Líder: {{ $selectedCell->leader?->name ?? 'Não Informado' }}
-                    @else
-                        Relatório Consolidado de Malotes — Todas as Células da Rede
-                    @endif
-                </p>
-            </td>
-            <td align="right" valign="middle">
-                <p style="font-size: 8pt; color: #8a99af; font-weight: 600; margin: 0; text-transform: uppercase;">
-                    Gerado em: {{ $generated_at }}
-                </p>
-            </td>
-        </tr>
-    </table>
-    
-    <!-- Accent Line -->
-    <div class="accent-bar"></div>
+<!-- UI Controls (Non-Printable) -->
+<div class="no-print w-full max-w-[210mm] flex justify-between mb-6 mt-4 items-center">
+    <div class="flex items-center gap-3">
+        <a class="flex items-center justify-center p-2.5 rounded-full bg-white text-primary border border-outline hover:bg-slate-50 transition-all shadow-sm" href="{{ route('reports.index') }}">
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+        </a>
+        <h1 class="text-primary font-black text-lg uppercase tracking-tight">Visualização Consolidada</h1>
+    </div>
+    <div class="flex gap-2">
+        <button class="flex items-center gap-2 px-6 py-2.5 bg-primary text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-opacity-95 transition-all shadow-md shadow-primary/20" onclick="window.print()">
+            <span class="material-symbols-outlined text-[16px]">print</span>
+            <span>Imprimir Relatório</span>
+        </button>
+    </div>
+</div>
 
-    <!-- Stats Cards Grid -->
-    <table class="stats-table">
-        <tr>
-            <td width="24%" style="padding-right: 1%;">
-                <div class="stats-card">
-                    <div class="stats-label">Total Arrecadado</div>
-                    <div class="stats-val stats-val-accent">R$ {{ number_format($totalOffer, 2, ',', '.') }}</div>
-                </div>
-            </td>
-            <td width="24%" style="padding-right: 1%;">
-                <div class="stats-card">
-                    <div class="stats-label">Total PIX / Dinheiro</div>
-                    <div class="stats-val" style="font-size: 11pt; padding-top: 3px;">
-                        PIX: R$ {{ number_format($offerPix, 2, ',', '.') }}<br/>
-                        DIN: R$ {{ number_format($offerCash, 2, ',', '.') }}
+<!-- A4 Document Container -->
+<div class="a4-page w-[210mm] bg-white shadow-2xl overflow-hidden flex flex-col p-[15mm] relative box-border m-auto shrink-0">
+    <!-- Inner content container that stretches dynamically -->
+    <div class="inner-container">
+        
+        <div>
+            <!-- Header / Branding -->
+            <div class="flex justify-between items-start border-b-2 border-primary pb-4 mb-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-primary flex items-center justify-center rounded-xl text-accent">
+                        <span class="material-symbols-outlined text-[32px] fill-icon">church</span>
+                    </div>
+                    <div>
+                        <p class="text-[9px] font-black text-on-surface-variant uppercase tracking-[0.2em]">MDA Church</p>
+                        <h1 class="text-lg font-black text-primary uppercase tracking-tight leading-tight">Relatório Mensal de Malotes</h1>
+                        <p class="text-[9px] text-on-surface-variant font-bold uppercase mt-0.5 tracking-wider">Fechamento Consolidado Geral</p>
                     </div>
                 </div>
-            </td>
-            <td width="18%" style="padding-right: 1%;">
-                <div class="stats-card">
-                    <div class="stats-label">Total de Malotes</div>
-                    <div class="stats-val">{{ $reportsCount }}</div>
+                <div class="text-right flex flex-col items-end gap-1">
+                    <div class="inline-block bg-accent/10 border border-accent/20 text-accent px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider mb-0.5">
+                        Consolidado Mensal
+                    </div>
+                    <p class="text-[10px] text-on-surface-variant font-bold tracking-widest uppercase">
+                        DOC ID: #MDA-{{ now()->format('Y') }}-{{ str_pad($reportsCount, 3, '0', STR_PAD_LEFT) }}
+                    </p>
+                    @php
+                        $monthYearLabel = '';
+                        if (request('date_from') && request('date_to')) {
+                            $from = \Carbon\Carbon::parse(request('date_from'));
+                            $to = \Carbon\Carbon::parse(request('date_to'));
+                            if ($from->format('Y-m') === $to->format('Y-m')) {
+                                $monthYearLabel = $from->translatedFormat('F \/ Y');
+                            } else {
+                                $monthYearLabel = $from->format('d/m/Y') . ' - ' . $to->format('d/m/Y');
+                            }
+                        } elseif (request('date_from')) {
+                            $monthYearLabel = 'A partir de ' . \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y');
+                        } else {
+                            $monthYearLabel = now()->translatedFormat('F \/ Y');
+                        }
+                        $monthYearLabel = ucwords($monthYearLabel);
+                    @endphp
+                    <p class="text-sm font-black text-primary uppercase tracking-tight">{{ $monthYearLabel }}</p>
                 </div>
-            </td>
-            <td width="18%" style="padding-right: 1%;">
-                <div class="stats-card">
-                    <div class="stats-label">Frequência Total</div>
-                    <div class="stats-val" style="color: #3b82f6;">{{ $totalPresence }} <span style="font-size: 7.5pt; color: #8a99af; font-weight: 400;">Part.</span></div>
-                </div>
-            </td>
-            <td width="16%">
-                <div class="stats-card">
-                    <div class="stats-label">Presença Média</div>
-                    <div class="stats-val" style="color: #10b981;">{{ $averagePresence }}</div>
-                </div>
-            </td>
-        </tr>
-    </table>
+            </div>
 
-    <!-- Main List of Malotes/Reports -->
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th width="10%">Data</th>
-                @if(!$selectedCell)
-                    <th width="18%">Célula</th>
-                @endif
-                <th width="20%">Tema da Palavra</th>
-                <th width="10%">Membros</th>
-                <th width="10%">Visitantes</th>
-                <th width="10%">Frequência</th>
-                <th width="10%">Oferta PIX</th>
-                <th width="10%">Oferta DIN</th>
-                <th width="12%">Total Geral</th>
-                <th width="10%">Situação</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($reports as $r)
-                <tr>
-                    <td>{{ $r->meeting_date?->format('d/m/Y') }}</td>
-                    @if(!$selectedCell)
-                        <td><strong>{{ $r->cell?->name }}</strong></td>
-                    @endif
-                    <td style="font-style: italic;">"{{ $r->word_theme ?? 'Não informado' }}"</td>
-                    <td>{{ $r->present_members }}</td>
-                    <td>{{ $r->visitors }}</td>
-                    <td><strong>{{ $r->total_presence }}</strong></td>
-                    <td>R$ {{ number_format($r->offer_pix, 2, ',', '.') }}</td>
-                    <td>R$ {{ number_format($r->offer_cash, 2, ',', '.') }}</td>
-                    <td style="color: #f59e0b; font-weight: bold;">R$ {{ number_format($r->total_offer, 2, ',', '.') }}</td>
-                    <td>
-                        @if($r->status === 'Conciliated')
-                            <span class="status-badge status-conciliated">Conciliado</span>
-                        @elseif($r->status === 'Submitted')
-                            <span class="status-badge status-submitted">Submetido</span>
-                        @else
-                            <span class="status-badge status-draft">Rascunho</span>
-                        @endif
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="{{ $selectedCell ? 9 : 10 }}" align="center" style="color: #8a99af; font-style: italic; padding: 20px 0;">
-                        Nenhum malote/relatório encontrado para os critérios selecionados.
-                    </td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
-
-    <!-- Summary panels (Miniterial Impact & Checklist) -->
-    <table class="layout-table">
-        <tr>
-            <td width="48%" style="padding-right: 4%;">
-                <div class="panel">
-                    <div class="panel-title">Resumo do Impacto Ministerial</div>
-                    <table width="100%" cellpadding="0" cellspacing="0">
-                        <tr class="panel-row">
-                            <td>Novas Decisões (Conversões):</td>
-                            <td align="right" style="font-weight: bold; color: #10b981;">{{ $conversions }}</td>
-                        </tr>
-                        <tr class="panel-row">
-                            <td>Reconciliações de Vidas:</td>
-                            <td align="right" style="font-weight: bold;">{{ $reconciliations }}</td>
-                        </tr>
-                        <tr class="panel-row">
-                            <td>Casas de Paz Abertas:</td>
-                            <td align="right" style="font-weight: bold;">{{ $houseOfPeace }}</td>
-                        </tr>
-                        <tr class="panel-row">
-                            <td>Discipulados Realizados (MDAs):</td>
-                            <td align="right" style="font-weight: bold;">{{ $mdasDone }}</td>
-                        </tr>
-                        <tr class="panel-row" style="border-bottom: 0;">
-                            <td>Quilo do Amor:</td>
-                            <td align="right" style="font-weight: bold;">{{ number_format($kgOfLove, 1) }} Kg</td>
-                        </tr>
-                    </table>
+            <!-- General Info Grid -->
+            <div class="grid grid-cols-4 gap-4 mb-6 pb-4 border-b border-outline">
+                <div>
+                    <p class="text-[8px] font-black text-on-surface-variant uppercase tracking-widest mb-0.5">Escopo do Relatório</p>
+                    <p class="text-[11px] font-bold text-primary truncate">
+                        {{ $selectedCell ? $selectedCell->name : 'Todas as Células (Rede)' }}
+                    </p>
                 </div>
-            </td>
-            
-            <td width="48%">
-                <div class="panel">
-                    <div class="panel-title">Auditoria e Conciliação</div>
-                    <table width="100%" cellpadding="0" cellspacing="0">
-                        <tr class="panel-row">
-                            <td>Malotes Conciliados:</td>
-                            <td align="right" style="font-weight: bold; color: #065f46;">
-                                {{ $reports->where('status', 'Conciliated')->count() }} / {{ $reportsCount }}
-                            </td>
-                        </tr>
-                        <tr class="panel-row">
-                            <td>Malotes Submetidos Pendentes:</td>
-                            <td align="right" style="font-weight: bold; color: #1e3a8a;">
-                                {{ $reports->where('status', 'Submitted')->count() }}
-                            </td>
-                        </tr>
-                        <tr class="panel-row">
-                            <td>Malotes em Rascunho (Não Submetidos):</td>
-                            <td align="right" style="font-weight: bold; color: #9a3412;">
-                                {{ $reports->where('status', 'Draft')->count() }}
-                            </td>
-                        </tr>
-                        <tr class="panel-row" style="border-bottom: 0;">
-                            <td>Status Geral do Fechamento:</td>
-                            <td align="right" style="font-weight: bold;">
-                                @if($reportsCount > 0 && $reports->where('status', 'Conciliated')->count() === $reportsCount)
-                                    FECHADO / CONCILIADO
-                                @else
-                                    EM ABERTO
+                <div>
+                    <p class="text-[8px] font-black text-on-surface-variant uppercase tracking-widest mb-0.5">Responsável / Célula</p>
+                    <p class="text-[11px] font-bold text-primary truncate">
+                        {{ $selectedCell?->leader?->name ?? 'Liderança Coletiva' }}
+                    </p>
+                </div>
+                <div>
+                    <p class="text-[8px] font-black text-on-surface-variant uppercase tracking-widest mb-0.5">Setor / Área</p>
+                    @php
+                        $sectorAreaLabel = 'Todos';
+                        if ($selectedCell) {
+                            $sector = $selectedCell->node?->name ?? 'N/A';
+                            $area = $selectedCell->node?->parent?->name ?? 'N/A';
+                            $sectorAreaLabel = "$sector \/ $area";
+                        } elseif (request('sector_id')) {
+                            $sec = \App\Models\HierarchyNode::find(request('sector_id'));
+                            $sectorAreaLabel = ($sec?->name ?? 'N/A') . ' \/ ' . ($sec?->parent?->name ?? 'Todos');
+                        } elseif (request('area_id')) {
+                            $ar = \App\Models\HierarchyNode::find(request('area_id'));
+                            $sectorAreaLabel = 'Todos \/ ' . ($ar?->name ?? 'N/A');
+                        }
+                    @endphp
+                    <p class="text-[11px] font-bold text-primary truncate">{{ $sectorAreaLabel }}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[8px] font-black text-on-surface-variant uppercase tracking-widest mb-0.5">Emissão do Relatório</p>
+                    <p class="text-[11px] font-bold text-primary">{{ now()->format('d/m/Y \à\s H:i') }}</p>
+                </div>
+            </div>
+
+            <!-- Executive Summary Cards -->
+            <div class="grid grid-cols-3 gap-4 mb-6">
+                {{-- Card 1: Frequência --}}
+                <div class="p-4 border border-outline rounded-xl bg-surface flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[8px] font-black text-on-surface-variant uppercase tracking-widest">Participantes & Freq.</span>
+                            <span class="material-symbols-outlined text-[18px] text-semantic-blue">groups</span>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-2xl font-black text-primary tracking-tighter leading-none">{{ $totalPresence }}</span>
+                            <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md">Média: {{ $averagePresence }}</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-outline/50 flex justify-between text-[9px] font-bold text-on-surface-variant uppercase tracking-wider">
+                        <span>Membros: {{ $presentMembers }}</span>
+                        <span>Vis.: {{ $visitors }}</span>
+                    </div>
+                </div>
+
+                {{-- Card 2: Impacto Ministerial --}}
+                <div class="p-4 border border-outline rounded-xl bg-surface flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[8px] font-black text-on-surface-variant uppercase tracking-widest">Impacto Ministerial</span>
+                            <span class="material-symbols-outlined text-[18px] text-semantic-purple">volunteer_activism</span>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-[10px]">
+                                <span class="text-on-surface-variant font-bold">Novas Decisões:</span>
+                                <span class="font-extrabold text-accent">{{ $conversions }}</span>
+                            </div>
+                            <div class="flex justify-between text-[10px]">
+                                <span class="text-on-surface-variant font-bold">Casas de Paz / MDAs:</span>
+                                <span class="font-extrabold text-accent">{{ $houseOfPeace }} / {{ $mdasDone }}</span>
+                            </div>
+                            <div class="flex justify-between text-[10px]">
+                                <span class="text-on-surface-variant font-bold">Quilo do Amor:</span>
+                                <span class="font-extrabold text-accent">{{ number_format($kgOfLove, 1) }} Kg</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Card 3: Consolidado Financeiro --}}
+                <div class="p-4 border border-outline rounded-xl bg-surface flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[8px] font-black text-on-surface-variant uppercase tracking-widest">Consolidado Financeiro</span>
+                            <span class="material-symbols-outlined text-[18px] text-accent">payments</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-2xl font-black text-emerald-600 tracking-tighter leading-none">R$ {{ number_format($totalOffer, 2, ',', '.') }}</span>
+                            <span class="text-[8px] text-on-surface-variant font-bold uppercase mt-1">Total de {{ $reportsCount }} malotes</span>
+                        </div>
+                    </div>
+                    @php
+                        $pixPercent = $totalOffer > 0 ? round(($offerPix / $totalOffer) * 100) : 0;
+                        $cashPercent = $totalOffer > 0 ? round(($offerCash / $totalOffer) * 100) : 0;
+                    @endphp
+                    <div class="mt-4 pt-3 border-t border-outline/50 flex justify-between text-[9px] font-bold text-on-surface-variant uppercase tracking-wider">
+                        <span class="text-sky-500">PIX: {{ $pixPercent }}%</span>
+                        <span>Dinheiro: {{ $cashPercent }}%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Breakdown Table -->
+            <div class="space-y-3 mb-6">
+                <h3 class="text-[9px] font-black text-primary uppercase tracking-widest mb-1">Detalhamento dos Lançamentos Coletados</h3>
+                <div class="bg-surface shadow-sm rounded-xl overflow-hidden">
+                    <table class="mda-table">
+                        <thead>
+                            <tr>
+                                <th class="text-left">Período / Data</th>
+                                @if(!$selectedCell)
+                                    <th class="text-left">Célula / Local</th>
                                 @endif
-                            </td>
-                        </tr>
+                                <th class="text-left">Tema da Palavra</th>
+                                <th class="text-center">Freq.</th>
+                                <th class="text-right">Oferta Bruta</th>
+                                <th class="text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($reports as $index => $r)
+                                <tr class="{{ $index % 2 === 1 ? 'bg-surface-dim/40' : '' }}">
+                                    <td class="text-[11px] font-bold text-primary">
+                                        {{ $r->meeting_date?->format('d/m/Y') }}
+                                        <p class="text-[8px] text-on-surface-variant font-bold uppercase mt-0.5">Semana {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</p>
+                                    </td>
+                                    @if(!$selectedCell)
+                                        <td class="text-[11px] font-extrabold text-primary">
+                                            {{ $r->cell?->name }}
+                                            <p class="text-[8px] text-on-surface-variant font-semibold mt-0.5 truncate max-w-[130px]">{{ $r->cell?->leader?->name ?? 'N/I' }}</p>
+                                        </td>
+                                    @endif
+                                    <td class="text-[11px] text-on-surface-variant italic truncate max-w-[160px]">
+                                        "{{ $r->word_theme ?? 'Tema não informado' }}"
+                                    </td>
+                                    <td class="text-center text-[11px] font-bold text-primary">
+                                        {{ $r->total_presence }}
+                                        <p class="text-[8px] text-on-surface-variant font-bold mt-0.5">{{ $r->present_members }}M | {{ $r->visitors }}V | {{ $r->children }}C</p>
+                                    </td>
+                                    <td class="text-right text-[11px] font-extrabold text-emerald-600">
+                                        R$ {{ number_format($r->total_offer, 2, ',', '.') }}
+                                        <p class="text-[8px] text-on-surface-variant font-medium mt-0.5">PIX {{ number_format($r->offer_pix, 2, ',', '.') }} | Din {{ number_format($r->offer_cash, 2, ',', '.') }}</p>
+                                    </td>
+                                    <td class="text-center">
+                                        @php
+                                            $badgeStyle = match($r->status) {
+                                                'Conciliated' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                                                'Submitted'   => 'bg-amber-50 text-amber-600 border-amber-100',
+                                                default       => 'bg-slate-100 text-slate-600 border-slate-200',
+                                            };
+                                            $badgeText = match($r->status) {
+                                                'Conciliated' => 'LIDO',
+                                                'Submitted'   => 'ENVIADO',
+                                                default       => 'RASCUNHO',
+                                            };
+                                        @endphp
+                                        <span class="px-2 py-0.5 text-[8px] font-black rounded-full border {{ $badgeStyle }}">
+                                            {{ $badgeText }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="{{ $selectedCell ? 5 : 6 }}" class="p-8 text-center text-on-surface-variant italic text-[11px]">
+                                        Nenhum malote encontrado no período selecionado.
+                                    </td>
+                                </tr>
+                            @endforelse
+
+                            @if($reports->isNotEmpty())
+                                <tr class="total-row font-bold">
+                                    <td class="text-[10px] font-black uppercase text-primary">Totais Consolidados</td>
+                                    @if(!$selectedCell)
+                                        <td></td>
+                                    @endif
+                                    <td></td>
+                                    <td class="text-center text-[11px] font-black text-primary">
+                                        {{ $totalPresence }}
+                                        <p class="text-[8px] text-on-surface-variant font-bold mt-0.5">Total Geral</p>
+                                    </td>
+                                    <td class="text-right text-[11px] font-black text-emerald-600">
+                                        R$ {{ number_format($totalOffer, 2, ',', '.') }}
+                                        <p class="text-[8px] text-on-surface-variant font-bold mt-0.5">PIX {{ number_format($offerPix, 2, ',', '.') }} | Din {{ number_format($offerCash, 2, ',', '.') }}</p>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            @endif
+                        </tbody>
                     </table>
                 </div>
-            </td>
-        </tr>
-    </table>
+            </div>
+        </div>
+        
+        <!-- Footer / Signatures -->
+        <div class="absolute bottom-[22mm] left-[15mm] right-[15mm] signatures-container">
+            <div class="grid grid-cols-2 gap-12">
+                <div class="text-center">
+                    <div class="border-b border-slate-300 mb-2"></div>
+                    <p class="text-[9px] text-on-surface font-black uppercase tracking-widest">
+                        Líder de Célula / Supervisor: {{ $selectedCell?->leader?->name ?? 'Liderança Responsável' }}
+                    </p>
+                </div>
+                <div class="text-center">
+                    <div class="border-b border-slate-300 mb-2"></div>
+                    <p class="text-[9px] text-on-surface font-black uppercase tracking-widest">Tesouraria Geral / Auditoria</p>
+                </div>
+            </div>
+        </div>
 
-    <!-- Footer Signatures -->
-    <table class="footer-signatures" cellpadding="0" cellspacing="0">
-        <tr>
-            <td width="30%">
-                <div class="signature-line">
-                    Líder da Célula / Responsável
-                </div>
-            </td>
-            <td width="5%"></td>
-            <td width="30%">
-                <div class="signature-line">
-                    Supervisor / Discipulador
-                </div>
-            </td>
-            <td width="5%"></td>
-            <td width="30%">
-                <div class="signature-line">
-                    Tesouraria Geral / Auditoria
-                </div>
-            </td>
-        </tr>
-    </table>
-
-    <div class="footer-text">
-        Relatório Consolidado de Malotes Semanal • Sistema ERP MDA Church • Em conformidade com as normas financeiras do conselho pastoral
+        <!-- Footer Meta Text (Stamp) -->
+        <div class="absolute bottom-[6mm] left-[15mm] right-[15mm] text-center">
+            <p class="text-[7.5px] text-on-surface-variant uppercase tracking-[0.25em] font-bold">
+                Documento Consolidado Emitido Digitalmente via ERP MDA Church • Autenticação de Auditoria Interna
+            </p>
+        </div>
+        
     </div>
+</div>
 
 </body>
 </html>
