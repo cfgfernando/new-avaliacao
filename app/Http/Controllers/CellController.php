@@ -131,18 +131,25 @@ class CellController extends Controller
             ->with('success', "Célula \"{$cell->name}\" atualizada com sucesso.");
     }
 
-    // =========================================================================
-    // DESTROY
-    // =========================================================================
-
     public function destroy(Cell $cell): RedirectResponse
     {
+        // Regra de negócio: Impedir a exclusão da célula se ela já possuir relatórios semanais ou despesas registradas
+        if ($cell->weeklyReports()->exists() || $cell->expenses()->exists()) {
+            return redirect()
+                ->back()
+                ->with('error', "Não é possível excluir a célula \"{$cell->name}\" porque ela possui relatórios semanais ou despesas registradas.");
+        }
+
         $name = $cell->name;
+
+        // Desvincular membros (usuários) antes de deletar a célula
+        User::where('cell_id', $cell->id)->update(['cell_id' => null]);
+
         $cell->delete();
 
         return redirect()
             ->route('cells.index')
-            ->with('success', "Célula \"{$name}\" removida.");
+            ->with('success', "Célula \"{$name}\" removida com sucesso.");
     }
 
     /**

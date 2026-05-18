@@ -16,7 +16,7 @@ class UpdateCellRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
+        $rules = [
             'name'         => ['sometimes', 'required', 'string', 'max:150'],
             'node_id'      => ['sometimes', 'required', 'integer', 'exists:hierarchy_nodes,id'],
             'leader_id'    => ['sometimes', 'nullable', 'integer', 'exists:users,id'],
@@ -31,6 +31,15 @@ class UpdateCellRequest extends FormRequest
             'city'         => ['sometimes', 'nullable', 'string', 'max:100'],
             'active'       => ['sometimes', 'boolean'],
         ];
+
+        // Se o usuário logado for Líder, remove a permissão de alterar campos estruturais
+        if ($this->user()?->isLeader()) {
+            unset($rules['name']);
+            unset($rules['node_id']);
+            unset($rules['leader_id']);
+        }
+
+        return $rules;
     }
 
     public function messages(): array
