@@ -6,6 +6,7 @@ use App\Http\Requests\StoreWeeklyReportRequest;
 use App\Http\Requests\UpdateWeeklyReportRequest;
 use App\Models\Cell;
 use App\Models\WeeklyReport;
+use App\Models\HierarchyNode;
 use App\Services\AccountingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -32,11 +33,42 @@ class WeeklyReportController extends Controller
                 return $q->whereIn('cell_id', $user->accessibleCellIds());
             })
             ->when($request->status, fn($q) => $q->where('status', $request->status))
+            ->when($request->cell_id, fn($q) => $q->where('cell_id', $request->cell_id))
+            ->when($request->sector_id, function ($q) use ($request) {
+                return $q->whereHas('cell', fn($cq) => $cq->where('node_id', $request->sector_id));
+            })
+            ->when($request->area_id, function ($q) use ($request) {
+                return $q->whereHas('cell.node', fn($nq) => $nq->where('parent_id', $request->area_id));
+            })
+            ->when($request->search, function ($q) use ($request) {
+                $term = $request->search;
+                $q->whereHas('cell', fn($cq) => $cq->where('name', 'like', "%{$term}%"))
+                  ->orWhereHas('submittedBy', fn($uq) => $uq->where('name', 'like', "%{$term}%"));
+            })
+            ->when($request->date_from, fn($q) => $q->whereDate('meeting_date', '>=', $request->date_from))
+            ->when($request->date_to,   fn($q) => $q->whereDate('meeting_date', '<=', $request->date_to))
             ->orderByDesc('meeting_date')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
-        return view('reports.index', compact('reports'));
+        // Lista de células, setores e áreas acessíveis para os filtros da visão de Admin/Supervisor
+        $accessibleCellIds = $user->accessibleCellIds();
+        $cellsList = Cell::whereIn('id', $accessibleCellIds)->active()->orderBy('name')->get();
+        
+        $accessibleSectorIds = $cellsList->pluck('node_id')->unique()->filter()->toArray();
+        $sectorsList = HierarchyNode::ofType('Sector')->whereIn('id', $accessibleSectorIds)->active()->orderBy('name')->get();
+        
+        $accessibleAreaIds = $sectorsList->pluck('parent_id')->unique()->filter()->toArray();
+        $areasList = HierarchyNode::ofType('Area')->whereIn('id', $accessibleAreaIds)->active()->orderBy('name')->get();
+
+        // Pré-carrega dados da célula para o líder
+        if ($user->isLeader()) {
+            $user->load('cell.members');
+        }
+
+        return view('reports.index', compact('reports', 'cellsList', 'sectorsList', 'areasList'));
     }
+
 
     public function create(): View
     {
@@ -98,6 +130,22 @@ class WeeklyReportController extends Controller
     {
         $report->load(['cell', 'submittedBy', 'conciliatedBy', 'journalEntries.lines.account']);
         return view('reports.show', compact('report'));
+    }
+
+    public function pdf(WeeklyReport $report)
+    {
+        $report->load(['cell', 'submittedBy', 'conciliatedBy']);
+
+        $memberIds = is_array($report->present_member_ids) ? $report->present_member_ids : json_decode($report->present_member_ids, true) ?? [];
+        $presentMembers = \App\Models\Member::whereIn('id', $memberIds)->get();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.pdf', [
+            'report'         => $report,
+            'presentMembers' => $presentMembers,
+            'generated_at'   => now()->format('d/m/Y H:i'),
+        ]);
+
+        return $pdf->setPaper('a4')->stream("Malote_{$report->cell->name}_{$report->meeting_date->format('d-m-Y')}.pdf");
     }
 
     public function edit(WeeklyReport $report): View
@@ -182,5 +230,82 @@ class WeeklyReportController extends Controller
                 ->back()
                 ->with('error', 'Falha na conciliação: ' . $e->getMessage());
         }
+    }
+
+    public function monthlyPdf(Request $request)
+    {
+        $user = $request->user();
+
+        $reports = WeeklyReport::query()
+            ->with(['cell', 'submittedBy'])
+            ->when(!$user->isAdmin() && !$user->isTreasurer(), function ($q) use ($user) {
+                return $q->whereIn('cell_id', $user->accessibleCellIds());
+            })
+            ->when($request->status, fn($q) => $q->where('status', $request->status))
+            ->when($request->cell_id, fn($q) => $q->where('cell_id', $request->cell_id))
+            ->when($request->sector_id, function ($q) use ($request) {
+                return $q->whereHas('cell', fn($cq) => $cq->where('node_id', $request->sector_id));
+            })
+            ->when($request->area_id, function ($q) use ($request) {
+                return $q->whereHas('cell.node', fn($nq) => $nq->where('parent_id', $request->area_id));
+            })
+            ->when($request->search, function ($q) use ($request) {
+                $term = $request->search;
+                $q->whereHas('cell', fn($cq) => $cq->where('name', 'like', "%{$term}%"))
+                  ->orWhereHas('submittedBy', fn($uq) => $uq->where('name', 'like', "%{$term}%"));
+            })
+            ->when($request->date_from, fn($q) => $q->whereDate('meeting_date', '>=', $request->date_from))
+            ->when($request->date_to,   fn($q) => $q->whereDate('meeting_date', '<=', $request->date_to))
+            ->orderBy('meeting_date')
+            ->get();
+
+        // Calcular agregados
+        $totalOffer = $reports->sum('total_offer');
+        $offerPix = $reports->sum('offer_pix');
+        $offerCash = $reports->sum('offer_cash');
+        $totalPresence = $reports->sum('total_presence');
+        $presentMembers = $reports->sum('present_members');
+        $visitors = $reports->sum('visitors');
+        $children = $reports->sum('children');
+        
+        $conversions = $reports->sum('conversions');
+        $reconciliations = $reports->sum('reconciliations');
+        $houseOfPeace = $reports->sum('house_of_peace');
+        $mdasDone = $reports->sum('mdas_done');
+        $kgOfLove = $reports->sum('kg_of_love');
+
+        $reportsCount = $reports->count();
+        $averagePresence = $reportsCount > 0 ? round($totalPresence / $reportsCount, 1) : 0;
+
+        // Tenta pegar a célula selecionada
+        $selectedCell = null;
+        if ($request->cell_id) {
+            $selectedCell = \App\Models\Cell::with('leader')->find($request->cell_id);
+        } elseif (!$user->isAdmin() && !$user->isTreasurer() && $user->cell) {
+            $selectedCell = $user->cell;
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.monthly-pdf', [
+            'reports' => $reports,
+            'totalOffer' => $totalOffer,
+            'offerPix' => $offerPix,
+            'offerCash' => $offerCash,
+            'totalPresence' => $totalPresence,
+            'presentMembers' => $presentMembers,
+            'visitors' => $visitors,
+            'children' => $children,
+            'conversions' => $conversions,
+            'reconciliations' => $reconciliations,
+            'houseOfPeace' => $houseOfPeace,
+            'mdasDone' => $mdasDone,
+            'kgOfLove' => $kgOfLove,
+            'reportsCount' => $reportsCount,
+            'averagePresence' => $averagePresence,
+            'selectedCell' => $selectedCell,
+            'filters' => $request->only(['status', 'date_from', 'date_to', 'search']),
+            'generated_at' => now()->format('d/m/Y H:i'),
+        ]);
+
+        return $pdf->setPaper('a4', 'landscape')->stream("Consolidado_Malotes_" . now()->format('d-m-Y') . ".pdf");
     }
 }

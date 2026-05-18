@@ -5,406 +5,511 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'MDA Church ERP') }}</title>
+    <title>{{ config('app.name', 'MDA Church ERP') }} — @yield('title', 'Dashboard')</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@800;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@100..900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+
+    <!-- Material Symbols (Stitch pattern) -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+    <!-- Font Awesome (legacy icons) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Scripts -->
-    <!-- Alpine.js Cloak -->
-    <style>
-        [x-cloak] { display: none !important; }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
-    </style>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Scripts CDN (ordem importa: jQuery primeiro) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    
-    <!-- DataTables -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
-
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+
+    <!-- Vite (depois do jQuery para Alpine não conflitar) -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- ╔══════════════════════════════════════════════════
+         ║ SIDEBAR TOGGLE — script inline puro no <head>
+         ║ DEVE ficar aqui para estar disponível ANTES
+         ║ que qualquer bundle Vite/Alpine processe a página
+         ╚══════════════════════════════════════════════════ -->
+    <script>
+        function openSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebar-overlay');
+            if (!sidebar || !overlay) return;
+            sidebar.style.transform = 'translateX(0)';
+            sidebar.setAttribute('data-open', '1');
+            overlay.style.display = 'block';
+            requestAnimationFrame(function() { overlay.style.opacity = '1'; });
+        }
+        function closeSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebar-overlay');
+            if (!sidebar || !overlay) return;
+            sidebar.style.transform = '';
+            sidebar.removeAttribute('data-open');
+            overlay.style.opacity = '0';
+            setTimeout(function() { overlay.style.display = 'none'; }, 300);
+        }
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            if (!sidebar) return;
+            if (sidebar.getAttribute('data-open') === '1') {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        }
+    </script>
+
+
     <style>
-        /* FORCED TECH DESIGN - ELITE V8 */
-        
-        /* 1. Grade e Bordas Suaves */
-        .card-neo table {
-            border-collapse: separate !important;
-            border-spacing: 0 !important;
-            width: 100% !important;
-            border: 1px solid #f1f5f9 !important; /* border-slate-100 */
-            border-radius: 16px !important;
-            overflow: hidden !important;
+        /* ─── BASE ─── */
+        * { -webkit-font-smoothing: antialiased; }
+        [x-cloak] { display: none !important; }
+        body { font-family: 'Libre Franklin', sans-serif; }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
 
-        .card-neo table th, 
-        .card-neo table td {
-            border-bottom: 1px solid #f8fafc !important;
-            border-right: 1px solid #f8fafc !important;
-            padding: 12px 20px !important;
+        /* ─── SCROLLBAR ─── */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+        /* ─── SIDEBAR ─── */
+        #sidebar {
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            width: 280px;
+            background: #1c2434;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            z-index: 60;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.15);
         }
 
-        .card-neo table thead th {
-            background-color: #f8fafc !important; /* bg-slate-50 */
-            color: #64748b !important; /* text-slate-500 */
-            font-weight: 700 !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.05em !important;
-            font-size: 10px !important;
+        @media (min-width: 1024px) {
+            #sidebar { transform: translateX(0); }
         }
 
-        /* 2. Linhas Zebra Suaves */
-        .card-neo table tbody tr:nth-child(even) {
-            background-color: #ffffff !important;
-        }
-        .card-neo table tbody tr:hover {
-            background-color: #f8fafc !important;
-        }
-        
-        .card-neo table tbody tr:hover {
-            background-color: #f1f5f9 !important;
-            cursor: pointer !important;
-            transition: all 0.2s ease !important;
+        #sidebar-overlay {
+            transition: opacity 0.3s ease;
         }
 
-        /* 3. Botões de Ação Maiores */
+        /* ─── NAV LINKS ─── */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 11px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.65);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+            margin-bottom: 2px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.9);
+        }
+
+        .nav-item.active {
+            background: #f59e0b;
+            color: white !important;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(245,158,11,0.35);
+        }
+
+        .nav-item.active .material-symbols-outlined,
+        .nav-item.active i {
+            color: white !important;
+        }
+
+        .nav-item-danger {
+            color: rgba(248,113,113,0.8) !important;
+        }
+
+        .nav-item-danger:hover {
+            background: rgba(248,113,113,0.1) !important;
+            color: #f87171 !important;
+        }
+
+        /* ─── TOPBAR ─── */
+        #topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: #1c2434;
+            color: white;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: left 0.3s ease;
+        }
+
+        @media (min-width: 1024px) {
+            #topbar { left: 280px; }
+        }
+
+        /* ─── MAIN CONTENT ─── */
+        #main-wrapper {
+            padding-top: 64px;
+            min-height: 100vh;
+        }
+
+        @media (min-width: 1024px) {
+            #main-wrapper { margin-left: 280px; }
+        }
+
+        /* ─── SPA PROGRESS ─── */
+        #spa-progress {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 3px;
+            background: #f59e0b;
+            z-index: 9999;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.2s ease;
+        }
+        .htmx-request #spa-progress { transform: scaleX(1); }
+        .htmx-request.nav-item { opacity: 0.6; pointer-events: none; }
+        .nav-item * { pointer-events: none; }
+
+        /* ─── CARDS & COMPONENTS ─── */
+        .card-neo {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .btn-neo {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .btn-neo:hover { transform: translateY(-1px); }
+        .btn-neo:active { transform: translateY(0); }
+
         .btn-action {
-            width: 44px !important;
-            height: 44px !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            border-radius: 12px !important;
-            transition: all 0.3s ease !important;
-            margin: 0 4px !important;
+            width: 40px; height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            transition: all 0.25s ease;
         }
-        
+
         .btn-action:hover {
-            transform: translateY(-3px) scale(1.1) !important;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
         }
 
-        .btn-action i {
-            font-size: 16px !important;
+        .input-neo {
+            width: 100%;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 0 14px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #1e293b;
+            transition: all 0.2s ease;
+            outline: none;
         }
 
-        /* Tipografia Financeira */
+        .input-neo:focus {
+            border-color: #f59e0b;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(245,158,11,0.12);
+        }
+
         .font-money {
             font-family: 'JetBrains Mono', monospace !important;
             font-weight: 800 !important;
         }
 
-        /* 4. FIDELIDADE DE IMPRESSÃO (A4/PDF) */
+        /* ─── PRINT ─── */
         @media print {
-            .sidebar-neo, .topbar-neo, .btn-neo, .no-print, button, form {
-                display: none !important;
-            }
-            
-            body {
-                background: white !important;
-                padding: 0 !important;
-            }
-
-            main {
-                margin: 0 !important;
-                padding: 0 !important;
-                width: 100% !important;
-            }
-
-            .card-neo {
-                border: none !important;
-                box-shadow: none !important;
-                background: white !important;
-                padding: 0 !important;
-            }
-
-            table {
-                width: 100% !important;
-                border: 1px solid #000 !important;
-            }
-
-            th, td {
-                border: 1px solid #ddd !important;
-                color: black !important;
-                font-size: 10px !important;
-                padding: 8px !important;
-            }
-
-            .print-header {
-                display: block !important;
-                text-align: center;
-                margin-bottom: 30px;
-                border-bottom: 2px solid #000;
-                padding-bottom: 10px;
-            }
-
-            .print-footer {
-                display: block !important;
-                position: fixed;
-                bottom: 0;
-                width: 100%;
-                text-align: center;
-                font-size: 8px;
-                border-top: 1px solid #ddd;
-                padding-top: 5px;
-            }
+            #sidebar, #topbar, .btn-neo, .no-print, button, form { display: none !important; }
+            body { background: white !important; }
+            #main-wrapper { margin: 0 !important; padding: 0 !important; }
+            .card-neo { border: none !important; box-shadow: none !important; }
         }
 
-        .print-header, .print-footer {
-            display: none;
-        }
+        .print-header, .print-footer { display: none; }
     </style>
 </head>
-<body class="font-sans antialiased bg-background text-slate-800">
+<body class="bg-[#f1f5f9] text-slate-800">
+
     <!-- SPA Progress Bar -->
-    <div class="htmx-indicator fixed top-0 left-0 w-full h-1 bg-accent z-[9999] transition-all duration-200 origin-left scale-x-0" id="spa-progress"></div>
-    <style>
-        .htmx-request#spa-progress { transform: scaleX(1); opacity: 1; }
-        .htmx-request.nav-link-neo { opacity: 0.7; pointer-events: none; }
-        /* Garantir que cliques no ícone ou texto não falhem */
-        .nav-link-neo * { pointer-events: none; }
-    </style>
+    <div id="spa-progress"></div>
 
-    <div class="flex min-h-screen overflow-hidden">
-        <!-- SIDEBAR -->
-        <aside id="sidebar" class="sidebar-neo shrink-0 -translate-x-full lg:translate-x-0">
-            <div class="flex items-center gap-5 px-10 py-12">
-                <div class="w-12 h-12 bg-gradient-to-br from-accent to-accent-hover rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg shadow-accent/20">
-                    <i class="fas fa-church"></i>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-xl font-black tracking-tighter text-white uppercase leading-none">MDA Church</span>
-                    <span class="text-[9px] font-black tracking-[0.4em] text-accent mt-1 uppercase">Enterprise</span>
-                </div>
+    <!-- ═══════════════════════════════════════
+         SIDEBAR OVERLAY (mobile)
+    ═══════════════════════════════════════ -->
+    <div id="sidebar-overlay"
+         style="display:none; opacity:0; transition: opacity 0.3s ease;"
+         class="fixed inset-0 bg-black/50 z-[59]"
+         onclick="closeSidebar()"></div>
+
+    <!-- ═══════════════════════════════════════
+         SIDEBAR
+    ═══════════════════════════════════════ -->
+    <aside id="sidebar">
+
+        <!-- Logo -->
+        <div class="px-8 py-8 flex items-center gap-4 shrink-0">
+            <div class="w-12 h-12 bg-[#f59e0b] rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/30">
+                <span class="material-symbols-outlined text-white text-[28px]"
+                      style="font-variation-settings:'FILL' 1,'wght' 600">church</span>
             </div>
+            <div class="flex flex-col">
+                <span class="text-[17px] font-black text-white tracking-tight leading-tight uppercase">MDA Church</span>
+                <span class="text-[9px] font-black text-[#f59e0b] tracking-[0.25em] uppercase mt-0.5">Enterprise</span>
+            </div>
+        </div>
 
-            <nav id="sidebar-nav" 
-                 class="mt-4 px-2 space-y-1.5 overflow-y-auto max-h-[calc(100vh-350px)] custom-scrollbar"
-                 hx-target="#main-content" 
-                 hx-select="#main-content" 
-                 hx-swap="innerHTML transition:true"
-                 hx-push-url="true"
-                 hx-indicator="#spa-progress"
-                 hx-boost="false">
-                @if(isset($menuCategories) && $menuCategories->count() > 0)
-                    @foreach($menuCategories as $category)
-                        @php
-                            $catColor = match($category->name) {
-                                'CONTROLE DE CRISE' => 'text-rose-500',
-                                'INTELIGÊNCIA CONTÁBIL' => 'text-slate-400',
-                                'MÓDULO FINANCEIRO' => 'text-slate-400',
-                                'ADMINISTRAÇÃO' => 'text-slate-400',
-                                default => 'text-slate-400'
-                            };
-                        @endphp
-                        <div class="text-[10px] font-black {{ $catColor }} uppercase tracking-[0.3em] px-8 mb-4 mt-8 opacity-80">{{ $category->name }}</div>
-                        
-                        @foreach($category->items as $item)
-                            @if($item->is_active && (!$item->is_admin_only || (Auth::user() && Auth::user()->role === 'Admin')))
-                                <a href="{{ str_starts_with($item->url, 'http') ? $item->url : url($item->url) }}" 
-                                   class="nav-link-neo {{ request()->is(trim($item->url, '/')) ? 'active' : '' }} {{ $category->name === 'CONTROLE DE CRISE' ? '!text-rose-400 group' : '' }}">
-                                    <i class="{{ $item->icon ?: 'fas fa-link' }} w-5 {{ $category->name === 'CONTROLE DE CRISE' ? 'group-hover:animate-pulse' : '' }}"></i>
-                                    <span>{{ $item->title }}</span>
-                                    @if($item->title === 'Zona de Risco')
-                                        <span class="ml-auto w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)] animate-ping"></span>
-                                    @endif
-                                </a>
-                            @endif
-                        @endforeach
+        <!-- Nav -->
+        <nav id="sidebar-nav"
+             class="flex-1 px-4 pb-4 overflow-y-auto custom-scrollbar space-y-0.5"
+             hx-target="#main-content"
+             hx-select="#main-content"
+             hx-swap="innerHTML transition:true"
+             hx-push-url="true"
+             hx-indicator="#spa-progress"
+             hx-boost="false">
+
+            @if(isset($menuCategories) && $menuCategories->count() > 0)
+                @foreach($menuCategories as $category)
+                    @php
+                        $isAlert = $category->name === 'CONTROLE DE CRISE';
+                        $catColor = $isAlert ? 'text-rose-400' : 'text-slate-500';
+                    @endphp
+                    <p class="px-4 pt-6 pb-3 text-[10px] font-black {{ $catColor }} uppercase tracking-[0.25em] opacity-80">
+                        {{ $category->name }}
+                    </p>
+
+                    @foreach($category->items as $item)
+                        @if($item->is_active && (!$item->is_admin_only || (Auth::user() && Auth::user()->role === 'Admin')))
+                            @php
+                                $isActive = request()->is(trim($item->url, '/'));
+                                $isDanger = $category->name === 'CONTROLE DE CRISE';
+                            @endphp
+                            <a href="{{ str_starts_with($item->url, 'http') ? $item->url : url($item->url) }}"
+                               class="nav-item {{ $isActive ? 'active' : '' }} {{ $isDanger && !$isActive ? 'nav-item-danger' : '' }}">
+                                <i class="{{ $item->icon ?: 'fas fa-link' }} w-5 text-[15px]"></i>
+                                <span>{{ $item->title }}</span>
+                                @if($item->title === 'Zona de Risco')
+                                    <span class="ml-auto w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                                @endif
+                            </a>
+                        @endif
                     @endforeach
-                @else
-                    <div class="text-[10px] font-black text-primary-light uppercase tracking-[0.3em] px-8 mb-6 opacity-50">Navegação Principal</div>
-                    
-                    <a href="{{ route('dashboard') }}" class="nav-link-neo {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                        <i class="fas fa-th-large w-5"></i>
-                        <span>Dashboard</span>
-                    </a>
-                @endif
+                @endforeach
+            @else
+                <p class="px-4 pt-6 pb-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.25em]">Navegação Principal</p>
+                <a href="{{ route('dashboard') }}"
+                   class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <span class="material-symbols-outlined text-[20px]">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+            @endif
 
-                @if(Auth::user() && Auth::user()->role === 'Admin')
-                    <div class="pt-10 text-[10px] font-black text-rose-400 uppercase tracking-[0.3em] px-8 mb-6 opacity-80">Administração</div>
+            @if(Auth::user() && Auth::user()->role === 'Admin')
+                <p class="px-4 pt-6 pb-3 text-[10px] font-black text-rose-400 uppercase tracking-[0.25em]">Administração</p>
 
-                    <a href="{{ route('admin.menus.index') }}" class="nav-link-neo {{ request()->routeIs('admin.menus.*') ? 'active' : '' }}">
-                        <i class="fas fa-bars-staggered w-5"></i>
-                        <span>Gerenciar Menus</span>
-                    </a>
+                <a href="{{ route('admin.menus.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.menus.*') ? 'active' : '' }} {{ !request()->routeIs('admin.menus.*') ? 'nav-item-danger' : '' }}">
+                    <i class="fas fa-bars-staggered w-5 text-[14px]"></i>
+                    <span>Gerenciar Menus</span>
+                </a>
+                <a href="{{ route('admin.users.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }} {{ !request()->routeIs('admin.users.*') ? 'nav-item-danger' : '' }}">
+                    <i class="fas fa-users w-5 text-[14px]"></i>
+                    <span>Usuários</span>
+                </a>
+                <a href="{{ route('admin.roles.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.roles.*') ? 'active' : '' }} {{ !request()->routeIs('admin.roles.*') ? 'nav-item-danger' : '' }}">
+                    <i class="fas fa-shield-alt w-5 text-[14px]"></i>
+                    <span>Perfis (Roles)</span>
+                </a>
+                <a href="{{ route('admin.permissions.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.permissions.*') ? 'active' : '' }} {{ !request()->routeIs('admin.permissions.*') ? 'nav-item-danger' : '' }}">
+                    <i class="fas fa-key w-5 text-[14px]"></i>
+                    <span>Permissões</span>
+                </a>
+                <a href="{{ route('admin.logs.index') }}"
+                   class="nav-item {{ request()->routeIs('admin.logs.*') ? 'active' : '' }} {{ !request()->routeIs('admin.logs.*') ? 'nav-item-danger' : '' }}">
+                    <i class="fas fa-fingerprint w-5 text-[14px]"></i>
+                    <span>Logs de Sistema</span>
+                </a>
+            @endif
 
-                    <a href="{{ route('admin.users.index') }}" class="nav-link-neo {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
-                        <i class="fas fa-users w-5"></i>
-                        <span>Usuários</span>
-                    </a>
-
-                    <a href="{{ route('admin.roles.index') }}" class="nav-link-neo {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}">
-                        <i class="fas fa-shield-alt w-5"></i>
-                        <span>Perfis (Roles)</span>
-                    </a>
-
-                    <a href="{{ route('admin.permissions.index') }}" class="nav-link-neo {{ request()->routeIs('admin.permissions.*') ? 'active' : '' }}">
-                        <i class="fas fa-key w-5"></i>
-                        <span>Permissões</span>
-                    </a>
-
-                    <a href="{{ route('admin.logs.index') }}" class="nav-link-neo {{ request()->routeIs('admin.logs.*') ? 'active' : '' }}">
-                        <i class="fas fa-fingerprint w-5"></i>
-                        <span>Logs de Sistema</span>
-                    </a>
-                @endif
-
-                <form method="POST" action="{{ route('logout') }}" class="pt-10 px-4">
+            <!-- Logout -->
+            <div class="pt-4 px-2">
+                <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="w-full flex items-center gap-4 px-6 py-4 text-rose-400 font-bold text-xs uppercase tracking-widest hover:bg-rose-500/10 hover:text-rose-500 hover:translate-x-1 rounded-xl transition-all duration-300 group">
-                        <i class="fas fa-power-off group-hover:rotate-90 group-hover:scale-110 transition-transform"></i>
+                    <button type="submit"
+                            class="nav-item w-full nav-item-danger">
+                        <i class="fas fa-power-off w-5 text-[14px]"></i>
                         <span>Encerrar Sessão</span>
                     </button>
                 </form>
-            </nav>
-            
-            <!-- Sidebar Footer Info -->
-            <div class="absolute bottom-10 left-0 w-full px-10">
-                <div class="p-5 bg-white/5 rounded-2xl border border-white/5">
-                    <p class="text-[10px] font-bold text-primary-light uppercase tracking-widest">Versão 2.5.0</p>
-                    <p class="text-[9px] text-primary-light/50 mt-1">Status: Conectado</p>
+            </div>
+        </nav>
+
+        <!-- Footer -->
+        <div class="px-6 pb-6 shrink-0">
+            <div class="p-4 bg-white/5 rounded-xl border border-white/8">
+                <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Versão 2.5.0</p>
+                <div class="flex items-center gap-2 mt-1">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <p class="text-[10px] text-white/40">Status: Conectado</p>
                 </div>
             </div>
-        </aside>
+        </div>
+    </aside>
 
-        <!-- MAIN CONTENT AREA -->
-        <main class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
-            <!-- HEADER / TOPBAR (GLASS) -->
-            <header class="topbar-neo">
-                <div class="flex items-center gap-6">
-                    <button id="toggle-sidebar" class="lg:hidden text-primary-dark text-xl p-3 hover:bg-gray-100 rounded-xl transition-all">
-                        <i class="fas fa-bars-staggered"></i>
-                    </button>
-                    <div class="flex flex-col">
-                        <h1 class="text-2xl font-black text-primary-dark tracking-tight uppercase">@yield('title', 'Dashboard')</h1>
-                        <div class="flex items-center gap-2 text-[10px] text-primary-light font-bold uppercase tracking-widest">
-                            <span class="text-accent">Workspace</span>
-                            <i class="fas fa-chevron-right text-[8px] opacity-30"></i>
-                            <span>Visão Geral</span>
-                        </div>
-                    </div>
-                </div>
+    <!-- ═══════════════════════════════════════
+         TOPBAR
+    ═══════════════════════════════════════ -->
+    <header id="topbar">
+        <!-- Mobile menu button -->
+        <button class="lg:hidden p-2 rounded-xl hover:bg-white/10 transition-colors flex items-center justify-center"
+                onclick="toggleSidebar()" id="toggle-sidebar">
+            <span class="material-symbols-outlined text-white text-[24px]">menu</span>
+        </button>
 
-                <div class="flex items-center gap-8">
-                    <!-- Search -->
-                    <div class="hidden md:flex items-center bg-slate-100/50 px-5 py-2.5 rounded-xl border border-slate-200/60 focus-within:border-accent focus-within:bg-white focus-within:shadow-xl focus-within:shadow-accent/10 group transition-all duration-500 hover:bg-white">
-                        <i class="fas fa-search text-slate-400 group-focus-within:text-accent transition-colors"></i>
-                        <input type="text" placeholder="Pesquisar no sistema..." class="bg-transparent border-none focus:ring-0 text-xs font-bold w-72 ml-3 placeholder:text-slate-400 text-primary-dark">
-                    </div>
-
-                    <!-- User Profile -->
-                    <div class="flex items-center gap-4 pl-8 border-l border-slate-200">
-                        <div class="text-right hidden sm:block">
-                            <p class="text-sm font-black text-primary-dark leading-none tracking-tight">{{ Auth::user()->name ?? 'Administrador' }}</p>
-                            <p class="text-[10px] font-bold text-accent mt-1.5 uppercase tracking-widest">Master</p>
-                        </div>
-                        <div class="relative group">
-                            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 border border-slate-300 flex items-center justify-center text-primary-dark font-black shadow-sm group-hover:shadow-lg group-hover:-translate-y-0.5 transition-all duration-300 cursor-pointer">
-                                {{ substr(Auth::user()->name ?? 'A', 0, 1) }}
-                            </div>
-                            <div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full shadow-sm group-hover:scale-110 transition-transform"></div>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <!-- PAGE CONTENT -->
-            <div id="main-content" class="p-10 max-w-[1600px] mx-auto w-full transition-opacity duration-300"
-                 hx-target="#main-content" hx-select="#main-content" hx-swap="innerHTML transition:true" hx-boost="true">
-                @yield('content')
-                {{ $slot ?? '' }}
+        <!-- Page title -->
+        <div class="flex flex-col">
+            <h1 class="text-[18px] font-black text-white tracking-tight leading-tight uppercase">
+                @yield('title', 'Dashboard')
+            </h1>
+            <div class="hidden sm:flex items-center gap-2 text-[10px] text-white/40 font-bold uppercase tracking-widest">
+                <span class="text-[#f59e0b]">MDA Church</span>
+                <span>›</span>
+                <span>@yield('title', 'Dashboard')</span>
             </div>
-        </main>
+        </div>
+
+        <div class="ml-auto flex items-center gap-4">
+            <!-- Search (desktop) -->
+            <div class="hidden md:flex items-center gap-3 bg-white/8 border border-white/10 rounded-xl px-4 py-2
+                        focus-within:bg-white/15 focus-within:border-[#f59e0b]/50 transition-all duration-300">
+                <span class="material-symbols-outlined text-white/40 text-[18px]">search</span>
+                <input type="text"
+                       placeholder="Pesquisar no sistema..."
+                       class="bg-transparent border-none outline-none focus:ring-0 text-[12px] font-medium w-52 placeholder:text-white/30 text-white">
+            </div>
+
+            <!-- User -->
+            <div class="flex items-center gap-3 pl-4 border-l border-white/10">
+                <div class="text-right hidden sm:block">
+                    <p class="text-[13px] font-black text-white leading-none">{{ Auth::user()->name ?? 'Administrador' }}</p>
+                    <p class="text-[9px] font-bold text-[#f59e0b] mt-1 uppercase tracking-widest">{{ Auth::user()->role_label ?? 'Master' }}</p>
+                </div>
+                <div class="relative">
+                    <div class="w-10 h-10 rounded-xl bg-[#f59e0b] flex items-center justify-center text-white font-black text-sm shadow-lg shadow-amber-500/30 cursor-pointer">
+                        {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 2)) }}
+                    </div>
+                    <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-400 border-2 border-[#1c2434] rounded-full"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════
+         MAIN CONTENT
+    ═══════════════════════════════════════ -->
+    <div id="main-wrapper">
+        <div id="main-content"
+             class="p-6 md:p-10 max-w-[1600px] mx-auto w-full transition-opacity duration-300"
+             hx-target="#main-content"
+             hx-select="#main-content"
+             hx-swap="innerHTML transition:true"
+             hx-boost="true">
+            @yield('content')
+            {{ $slot ?? '' }}
+        </div>
     </div>
 
     @stack('modals')
     @stack('scripts')
+
     <script>
-        $(document).ready(function() {
-            // Persistência de Scroll da Sidebar
-            const sidebarNav = document.getElementById('sidebar-nav');
-            
-            // Restaurar posição salva ao carregar
-            const savedScrollPos = localStorage.getItem('sidebarScrollPos');
-            if (savedScrollPos && sidebarNav) {
-                sidebarNav.scrollTop = savedScrollPos;
+    $(document).ready(function () {
+        // Persistência de scroll da sidebar
+        var sidebarNav = document.getElementById('sidebar-nav');
+        var savedPos = localStorage.getItem('sidebarScrollPos');
+        if (savedPos && sidebarNav) sidebarNav.scrollTop = savedPos;
+
+        // Links da sidebar
+        $('#sidebar-nav a').on('click', function () {
+            $('#sidebar-nav a').removeClass('active');
+            $(this).addClass('active');
+            if (sidebarNav) localStorage.setItem('sidebarScrollPos', sidebarNav.scrollTop);
+            if (window.innerWidth < 1024) closeSidebar();
+        });
+
+        // Máscaras
+        $('.mask-money').mask('#.##0,00', {reverse: true});
+        $('.mask-phone').mask('(00) 00000-0000');
+        $('.mask-cpf').mask('000.000.000-00');
+
+        // HTMX after swap
+        document.addEventListener('htmx:afterSwap', function (evt) {
+            htmx.process(evt.detail.elt);
+
+            if (window.Alpine && typeof window.Alpine.initTree === 'function') {
+                window.Alpine.initTree(evt.detail.elt);
             }
 
-            // Salvar posição e feedback instantâneo ao clicar
-            $('#sidebar-nav a').on('click', function() {
-                $('#sidebar-nav a').removeClass('active');
-                $(this).addClass('active');
-                
-                if (sidebarNav) {
-                    localStorage.setItem('sidebarScrollPos', sidebarNav.scrollTop);
-                }
-            });
-
-            // Sidebar Toggle for Mobile
-            $('#toggle-sidebar').on('click', function() {
-                $('#sidebar').toggleClass('-translate-x-full');
-            });
-
-            // Re-inicialização após navegação SPA (HTMX)
-            document.addEventListener('htmx:afterSwap', function(evt) {
-                // Re-processar elementos HTMX no novo conteúdo
-                htmx.process(evt.detail.elt);
-
-                // Re-inicializar Alpine.js para componentes dinâmicos
-                if (window.Alpine) {
-                    if (typeof window.Alpine.initTree === 'function') {
-                        window.Alpine.initTree(evt.detail.elt);
-                    } else {
-                        // Fallback se initTree não estiver disponível
-                        window.Alpine.discoverUninitializedComponents();
-                    }
-                }
-
-                // Re-inicializar Máscaras
-                $('.mask-money').mask('#.##0,00', {reverse: true});
-                $('.mask-phone').mask('(00) 00000-0000');
-                $('.mask-cpf').mask('000.000.000-00');
-                
-                // Fechar sidebar no mobile se estiver aberta
-                if (window.innerWidth < 1024) {
-                    $('#sidebar').addClass('-translate-x-full');
-                }
-
-                // Scroll para o topo
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-
-                // Sincronizar classes ativas no menu
-                const currentPath = window.location.pathname;
-                $('#sidebar-nav a').removeClass('active');
-                $(`#sidebar-nav a`).each(function() {
-                    const href = $(this).attr('href');
-                    if (href && (href === currentPath || href === window.location.origin + currentPath)) {
-                        $(this).addClass('active');
-                    }
-                });
-            });
-
-            // Input masking examples
             $('.mask-money').mask('#.##0,00', {reverse: true});
             $('.mask-phone').mask('(00) 00000-0000');
             $('.mask-cpf').mask('000.000.000-00');
 
-            // Fluid UI Interactions
-            $('input, select').on('focus', function() {
-                $(this).closest('.input-group').find('i').addClass('text-accent scale-110');
-            }).on('blur', function() {
-                $(this).closest('.input-group').find('i').removeClass('text-accent scale-110');
+            if (window.innerWidth < 1024) closeSidebar();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            var currentPath = window.location.pathname;
+            $('#sidebar-nav a').removeClass('active');
+            $('#sidebar-nav a').each(function () {
+                var href = $(this).attr('href');
+                if (href && (href === currentPath || href === window.location.origin + currentPath)) {
+                    $(this).addClass('active');
+                }
             });
         });
+    });
     </script>
 </body>
 </html>

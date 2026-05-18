@@ -150,6 +150,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ----------------------------------------------------------
     // RELATÓRIOS SEMANAIS (Malotes)
     // ----------------------------------------------------------
+    Route::get('reports/export/monthly-pdf', [WeeklyReportController::class, 'monthlyPdf'])->name('reports.monthly-pdf');
+    Route::get('reports/{report}/pdf', [WeeklyReportController::class, 'pdf'])->name('reports.pdf');
     Route::resource('reports', WeeklyReportController::class);
     Route::post('reports/{report}/submit', [WeeklyReportController::class, 'submit'])->name('reports.submit');
     Route::post('reports/{report}/conciliate', [WeeklyReportController::class, 'conciliate'])->name('reports.conciliate');

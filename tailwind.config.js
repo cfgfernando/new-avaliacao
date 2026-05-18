@@ -13,8 +13,7 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Inter', ...defaultTheme.fontFamily.sans],
-                display: ['Montserrat', ...defaultTheme.fontFamily.sans],
+                sans: ['Libre Franklin', ...defaultTheme.fontFamily.sans],
             },
             colors: {
                 primary: {
