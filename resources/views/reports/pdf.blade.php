@@ -2,15 +2,16 @@
 <html lang="pt-BR">
 <head>
     <meta charset="utf-8"/>
-    <title>Relatório Semanal de Célula & Malote</title>
+    <title>Relatório de Malote Semanal - MDA Church</title>
     <style>
         @page {
             margin: 1.2cm;
+            size: a4 portrait;
         }
         body {
             background-color: #ffffff;
             font-family: 'Helvetica', 'Arial', sans-serif;
-            font-size: 10pt;
+            font-size: 9pt;
             color: #171c1f;
             line-height: 1.4;
             margin: 0;
@@ -19,171 +20,242 @@
         .header-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
         }
         .logo-box {
-            width: 55px;
-            height: 55px;
+            width: 45px;
+            height: 45px;
             background-color: #1c2434;
             border-radius: 8px;
             text-align: center;
             vertical-align: middle;
-            color: #F59E0B;
+            color: #ffffff;
             font-weight: 700;
-            font-size: 22pt;
-            line-height: 55px;
-        }
-        .title {
             font-size: 18pt;
+            line-height: 45px;
+        }
+        .logo-text-title {
+            font-size: 15pt;
             font-weight: 700;
-            color: #060e1e;
+            color: #1c2434;
             text-transform: uppercase;
             letter-spacing: -0.5px;
             margin: 0;
         }
-        .subtitle {
-            font-size: 9.5pt;
+        .logo-text-subtitle {
+            font-size: 8.5pt;
             color: #45474c;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 2px 0 0 0;
             font-weight: 600;
+            margin: 2px 0 0 0;
         }
         .status-badge {
-            font-size: 8pt;
-            font-weight: 600;
-            color: #45474c;
+            font-size: 7.5pt;
+            font-weight: bold;
             text-transform: uppercase;
-            padding: 4px 12px;
-            background-color: rgba(220, 226, 247, 0.3);
-            border: 1px solid #c6c6cd;
+            padding: 3px 10px;
             border-radius: 9999px;
             display: inline-block;
+            letter-spacing: 0.5px;
         }
-        .status-badge-conciliated {
-            color: #065f46;
-            background-color: #d1fae5;
-            border-color: #a7f3d0;
+        .status-conciliated {
+            color: #10B981;
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
-        .status-badge-draft {
-            color: #9a3412;
-            background-color: #ffedd5;
-            border-color: #fed7aa;
+        .status-submitted {
+            color: #3B82F6;
+            background-color: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        .status-draft {
+            color: #ba1a1a;
+            background-color: rgba(186, 26, 26, 0.1);
+            border: 1px solid rgba(186, 26, 26, 0.2);
         }
         .accent-bar {
             width: 100%;
-            height: 4px;
-            background-color: #F59E0B;
+            height: 3px;
+            background-color: #1c2434;
             margin-bottom: 20px;
         }
-        
-        .main-layout {
+        .info-bar-table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 20px;
         }
-        .main-layout > tr > td {
+        .info-bar-cell {
+            background-color: #f0f4f8;
+            border: 1px solid #dfe3e7;
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+        .info-label {
+            display: block;
+            font-size: 6.5pt;
+            font-weight: 700;
+            color: #45474c;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+        .info-value {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #1c2434;
+        }
+        .main-layout-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .main-layout-table td {
             vertical-align: top;
         }
-        
-        .card {
-            border: 1px solid #c6c6cd;
+        .panel-financial {
+            background-color: #f6fafe;
+            border: 1px solid #dfe3e7;
             border-radius: 8px;
-            background-color: #ffffff;
-            padding: 18px;
-            margin-bottom: 18px;
+            padding: 15px;
+            margin-right: 10px;
         }
-        
-        .card-title {
-            font-size: 10pt;
+        .panel-impact {
+            background-color: #ffffff;
+            border: 1px solid #dfe3e7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-left: 10px;
+        }
+        .panel-title {
+            font-size: 9pt;
             font-weight: 700;
-            color: #060e1e;
+            color: #1c2434;
             text-transform: uppercase;
             margin-bottom: 12px;
+            border-bottom: 1px solid #dfe3e7;
             padding-bottom: 6px;
-            border-bottom: 1px solid rgba(198, 198, 205, 0.3);
         }
-        
-        .label {
+        .financial-total-label {
             font-size: 7.5pt;
-            font-weight: 600;
+            font-weight: 700;
             color: #45474c;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
-        .value-headline {
-            font-size: 13pt;
-            font-weight: 600;
-            color: #060e1e;
-            margin: 0;
-        }
-        .value-text {
-            font-size: 10pt;
-            color: #060e1e;
-            margin: 0;
-        }
-        
-        .freq-grid {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 12px;
-        }
-        .freq-box {
-            background-color: #eaeef2;
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-        }
-        .freq-num {
-            font-size: 18pt;
+        .financial-total-val {
+            font-size: 20pt;
             font-weight: 700;
-            line-height: 1.1;
-        }
-        
-        .row-item {
-            width: 100%;
-            border-bottom: 1px solid rgba(198, 198, 205, 0.3);
-            padding: 8px 0;
-        }
-        .row-item-last {
-            width: 100%;
-            padding: 8px 0;
-        }
-        
-        .finance-total-box {
-            background-color: #f6fafe;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            border-radius: 8px;
-            padding: 12px;
-            text-align: center;
-            margin-top: 15px;
-        }
-        
-        .footer-block {
-            position: absolute;
-            bottom: -15px;
-            left: 0;
-            right: 0;
-            width: 100%;
-        }
-        .signatures-table {
-            width: 100%;
-            border-collapse: collapse;
+            color: #1c2434;
             margin-bottom: 15px;
         }
-        .signature-line {
-            border-top: 1px solid #060e1e;
-            text-align: center;
-            font-size: 9pt;
-            color: #171c1f;
-            padding-top: 5px;
+        .financial-sub-box {
+            background-color: #ffffff;
+            border: 1px solid #c6c6cd;
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
         }
-        .footer-text {
+        .financial-sub-label {
+            font-size: 6.5pt;
+            font-weight: 700;
+            color: #45474c;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .financial-sub-val {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #1c2434;
+        }
+        .impact-item-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 6px;
+        }
+        .impact-item-cell {
+            background-color: #f6fafe;
+            border: 1px solid #dfe3e7;
+            border-radius: 6px;
+            padding: 8px 10px;
+        }
+        .impact-label {
+            font-size: 8pt;
+            font-weight: 600;
+            color: #171c1f;
+        }
+        .impact-val {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #1c2434;
+            text-align: right;
+        }
+        .section-title {
+            font-size: 9.5pt;
+            font-weight: 700;
+            color: #1c2434;
+            text-transform: uppercase;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .attendance-table th {
+            background-color: #eaeef2;
+            color: #1c2434;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 7.5pt;
+            padding: 8px 12px;
+            border-top: 1px solid #c6c6cd;
+            border-bottom: 1px solid #c6c6cd;
+            text-align: left;
+        }
+        .attendance-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #dfe3e7;
+            font-size: 8.5pt;
+            color: #171c1f;
+        }
+        .badge-present {
+            font-size: 7.5pt;
+            font-weight: bold;
+            color: #10B981;
+            background-color: rgba(16, 185, 129, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+        .footer-signatures {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+        .signature-line-box {
+            border-top: 1px solid #1c2434;
             text-align: center;
+            font-size: 8.5pt;
+            padding-top: 6px;
+        }
+        .footer-metadata-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-top: 1px solid #dfe3e7;
+            margin-top: 30px;
+            padding-top: 8px;
+        }
+        .footer-text-left {
             font-size: 7.5pt;
             color: #45474c;
-            border-top: 1px solid rgba(198, 198, 205, 0.3);
-            padding-top: 6px;
+            text-align: left;
+        }
+        .footer-text-right {
+            font-size: 8pt;
+            font-weight: 700;
+            color: #1c2434;
+            text-align: right;
         }
     </style>
 </head>
@@ -192,21 +264,24 @@
     <!-- Header Section -->
     <table class="header-table" cellpadding="0" cellspacing="0">
         <tr>
-            <td width="70">
+            <td width="55">
                 <div class="logo-box">M</div>
             </td>
-            <td valign="middle">
-                <h1 class="title">Gestão MDA</h1>
-                <p class="subtitle">Relatório Semanal de Célula & Malote</p>
+            <td style="padding-left: 10px;" valign="middle">
+                <h1 class="logo-text-title">MDA Church Enterprise</h1>
+                <p class="logo-text-subtitle">Relatório de Malote Semanal</p>
             </td>
             <td align="right" valign="middle">
                 @if($report->status === 'Conciliated')
-                    <span class="status-badge status-badge-conciliated">Conciliado</span>
+                    <span class="status-badge status-conciliated">Validado</span>
                 @elseif($report->status === 'Submitted')
-                    <span class="status-badge">Submetido</span>
+                    <span class="status-badge status-submitted">Submetido</span>
                 @else
-                    <span class="status-badge status-badge-draft">Rascunho</span>
+                    <span class="status-badge status-draft">Rascunho</span>
                 @endif
+                <p style="font-size: 7.5pt; font-family: monospace; color: #45474c; margin: 4px 0 0 0;">
+                    ID: #ML-{{ $report->meeting_date?->format('Y') }}-{{ str_pad($report->id, 3, '0', STR_PAD_LEFT) }}
+                </p>
             </td>
         </tr>
     </table>
@@ -214,248 +289,187 @@
     <!-- Accent Line -->
     <div class="accent-bar"></div>
 
-    <!-- Summary Content Grid (2 Columns) -->
-    <table class="main-layout" cellpadding="0" cellspacing="0">
+    <!-- Info Grid Bar Table -->
+    <table class="info-bar-table" cellpadding="0" cellspacing="8">
         <tr>
-            <!-- Left Column (58%) -->
-            <td width="57%">
-                
-                <!-- Informações Gerais -->
-                <div class="card">
-                    <div class="card-title">
-                        <svg style="width: 14px; height: 14px; fill: #060e1e; vertical-align: middle; margin-right: 4px;" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-                        </svg>
-                        Informações Gerais
-                    </div>
-                    
-                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 12px;">
-                        <tr>
-                            <td width="50%">
-                                <p class="label">Célula</p>
-                                <p class="value-headline" style="color: #060e1e;">{{ $report->cell->name }}</p>
-                            </td>
-                            <td width="50%">
-                                <p class="label">Data da Reunião</p>
-                                <p class="value-headline" style="color: #060e1e;">{{ $report->meeting_date?->format('d/m/Y') }}</p>
-                            </td>
-                        </tr>
-                    </table>
-                    
-                    <div style="margin-bottom: 12px;">
-                        <p class="label">Tema da Palavra</p>
-                        <p class="value-text" style="color: #F59E0B; font-style: italic; font-weight: 600;">"{{ $report->word_theme ?? 'Não informado' }}"</p>
-                    </div>
-                    
-                    <div>
-                        <p class="label">Local da Reunião</p>
-                        <p class="value-text">{{ $report->meeting_location ?? 'Não informado' }}</p>
-                    </div>
+            <td width="25%">
+                <div class="info-bar-cell">
+                    <span class="info-label">Célula</span>
+                    <span class="info-value">{{ $report->cell->name }}</span>
                 </div>
-
-                <!-- Frequência da Reunião -->
-                <div class="card">
-                    <div class="card-title">
-                        <svg style="width: 14px; height: 14px; fill: #060e1e; vertical-align: middle; margin-right: 4px;" viewBox="0 0 24 24">
-                            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 1.34 5 3s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V20h14v-3.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V20h6v-3.5c0-2.33-4.67-3.5-7-3.5z"/>
-                        </svg>
-                        Frequência da Reunião
-                    </div>
-                    
-                    <table class="freq-grid" cellpadding="0" cellspacing="4">
-                        <tr>
-                            <td width="33%">
-                                <div class="freq-box">
-                                    <p class="freq-num" style="color: #3B82F6;">{{ $report->present_members }}</p>
-                                    <p class="label" style="font-size: 6.5pt; margin-top: 2px;">Membros</p>
-                                </div>
-                            </td>
-                            <td width="33%">
-                                <div class="freq-box">
-                                    <p class="freq-num" style="color: #F59E0B;">{{ $report->visitors }}</p>
-                                    <p class="label" style="font-size: 6.5pt; margin-top: 2px;">Visitantes</p>
-                                </div>
-                            </td>
-                            <td width="33%">
-                                <div class="freq-box">
-                                    <p class="freq-num" style="color: #060e1e;">{{ $report->total_presence }}</p>
-                                    <p class="label" style="font-size: 6.5pt; margin-top: 2px;">Total Geral</p>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                    
-                    <table width="100%" cellpadding="0" cellspacing="0" class="row-item">
-                        <tr>
-                            <td class="value-text">Crianças presentes:</td>
-                            <td align="right" class="value-headline" style="font-size: 11pt;">{{ $report->children ?? 0 }}</td>
-                        </tr>
-                    </table>
-                    
-                    <table width="100%" cellpadding="0" cellspacing="0" class="row-item-last">
-                        <tr>
-                            <td class="value-text">Visitantes de outras células:</td>
-                            <td align="right" class="value-headline" style="font-size: 11pt;">{{ $report->other_cell_visitors ?? 0 }}</td>
-                        </tr>
-                    </table>
-                </div>
-
             </td>
-            
-            <!-- Spacer Column (3%) -->
-            <td width="3%"></td>
-            
-            <!-- Right Column (40%) -->
-            <td width="40%">
-                
-                <!-- Financeiro e Ofertas -->
-                <div class="card" style="border: 2px solid #F59E0B;">
-                    <div class="card-title" style="color: #F59E0B; border-bottom: 1px solid rgba(245, 158, 11, 0.3);">
-                        <svg style="width: 14px; height: 14px; fill: #F59E0B; vertical-align: middle; margin-right: 4px;" viewBox="0 0 24 24">
-                            <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2-.9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
-                        </svg>
-                        Financeiro e Ofertas
-                    </div>
-                    
-                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 10px;">
-                        <tr class="row-item">
-                            <td class="value-text">Ofertas via PIX:</td>
-                            <td align="right" class="value-headline" style="font-size: 11pt;">R$ {{ number_format($report->offer_pix ?? 0, 2, ',', '.') }}</td>
-                        </tr>
-                        <tr class="row-item-last">
-                            <td class="value-text" style="padding-top: 8px;">Ofertas em Espécie:</td>
-                            <td align="right" class="value-headline" style="font-size: 11pt; padding-top: 8px;">R$ {{ number_format($report->offer_cash ?? 0, 2, ',', '.') }}</td>
-                        </tr>
-                    </table>
-                    
-                    <div class="finance-total-box">
-                        <p class="label" style="color: #F59E0B; font-size: 7.5pt; margin-bottom: 2px;">Total do Malote Semanal</p>
-                        <p class="value-headline" style="font-size: 18pt; color: #F59E0B; font-weight: 700;">R$ {{ number_format($report->total_offer, 2, ',', '.') }}</p>
-                    </div>
+            <td width="25%">
+                <div class="info-bar-cell">
+                    <span class="info-label">Líder</span>
+                    <span class="info-value">{{ $report->cell->leader?->name ?? 'Não Informado' }}</span>
                 </div>
-
-                <!-- Impacto Ministerial -->
-                <div class="card">
-                    <div class="card-title">
-                        <svg style="width: 14px; height: 14px; fill: #060e1e; vertical-align: middle; margin-right: 4px;" viewBox="0 0 24 24">
-                            <path d="M14.06 9.02L15.62 10.58L16.29 9.91L15.23 8.85L16.29 7.79L18.41 9.91L16.29 12.03L15.23 10.97L13 13.2L11 11.2L6 16.2L4.59 14.79L11 8.38L13 10.38L14.06 9.02ZM20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4H20ZM20 18H4V6H20V18Z"/>
-                        </svg>
-                        Impacto Ministerial
-                    </div>
-                    
-                    <table width="100%" cellpadding="0" cellspacing="0" class="row-item">
-                        <tr>
-                            <td class="value-text" style="font-size: 8.5pt;">Novas Decisões (Conversões):</td>
-                            <td align="right" class="value-headline" style="font-size: 10pt; color: #10B981;">{{ $report->conversions ?? 0 }}</td>
-                        </tr>
-                    </table>
-                    <table width="100%" cellpadding="0" cellspacing="0" class="row-item">
-                        <tr>
-                            <td class="value-text" style="font-size: 8.5pt;">Reconciliações:</td>
-                            <td align="right" class="value-headline" style="font-size: 10pt;">{{ $report->reconciliations ?? 0 }}</td>
-                        </tr>
-                    </table>
-                    <table width="100%" cellpadding="0" cellspacing="0" class="row-item">
-                        <tr>
-                            <td class="value-text" style="font-size: 8.5pt;">Casas de Paz Abertas:</td>
-                            <td align="right" class="value-headline" style="font-size: 10pt;">{{ $report->house_of_peace ?? 0 }}</td>
-                        </tr>
-                    </table>
-                    <table width="100%" cellpadding="0" cellspacing="0" class="row-item">
-                        <tr>
-                            <td class="value-text" style="font-size: 8.5pt;">Discipulados Realizados (MDAs):</td>
-                            <td align="right" class="value-headline" style="font-size: 10pt;">{{ $report->mdas_done ?? 0 }}</td>
-                        </tr>
-                    </table>
-                    <table width="100%" cellpadding="0" cellspacing="0" class="row-item-last">
-                        <tr>
-                            <td class="value-text" style="font-size: 8.5pt;">Quilo do Amor:</td>
-                            <td align="right" class="value-headline" style="font-size: 10pt;">{{ number_format($report->kg_of_love ?? 0, 1) }} Kg</td>
-                        </tr>
-                    </table>
+            </td>
+            <td width="25%">
+                <div class="info-bar-cell">
+                    <span class="info-label">Data Reunião</span>
+                    <span class="info-value">{{ $report->meeting_date?->format('d/m/Y') }}</span>
                 </div>
-
+            </td>
+            <td width="25%">
+                <div class="info-bar-cell">
+                    <span class="info-label">Local</span>
+                    <span class="info-value">{{ $report->meeting_location ?? 'Sede Central' }}</span>
+                </div>
             </td>
         </tr>
     </table>
 
-    <!-- Lista de Chamada de Membros -->
-    <div class="card" style="margin-bottom: 90px;">
-        <div class="card-title">
-            <svg style="width: 14px; height: 14px; fill: #060e1e; vertical-align: middle; margin-right: 4px;" viewBox="0 0 24 24">
-                <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 4c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V19z"/>
-            </svg>
-            Lista de Chamada
-        </div>
-        
-        @if($presentMembers->count() > 0)
-            @php
-                $chunks = $presentMembers->chunk(2);
-            @endphp
-            <table style="width: 100%; border-collapse: collapse;">
-                @foreach($chunks as $chunk)
-                    <tr>
-                        @foreach($chunk as $member)
-                            <td style="width: 50%; padding: 6px 0; border-bottom: 1px solid rgba(198, 198, 205, 0.3); font-size: 9.5pt; color: #171c1f; vertical-align: middle;">
-                                <svg style="width: 13px; height: 13px; fill: #10B981; vertical-align: middle; margin-right: 8px;" viewBox="0 0 24 24">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                                </svg>
-                                {{ $member->name }}
+    <!-- Main Body: Two Columns Table -->
+    <table class="main-layout-table" cellpadding="0" cellspacing="0">
+        <tr>
+            <!-- Financial Panel (55%) -->
+            <td width="55%">
+                <div class="panel-financial">
+                    <div class="panel-title">Resumo Financeiro</div>
+                    <div class="financial-total-label">Total Geral Coletado</div>
+                    <div class="financial-total-val">R$ {{ number_format($report->total_offer, 2, ',', '.') }}</div>
+                    
+                    <div class="financial-sub-box">
+                        <span class="financial-sub-label">Via PIX / Cartão</span>
+                        <span class="financial-sub-val">R$ {{ number_format($report->offer_pix ?? 0, 2, ',', '.') }}</span>
+                    </div>
+                    
+                    <div class="financial-sub-box" style="margin-bottom: 0;">
+                        <span class="financial-sub-label">Em Espécie</span>
+                        <span class="financial-sub-val">R$ {{ number_format($report->offer_cash ?? 0, 2, ',', '.') }}</span>
+                    </div>
+                </div>
+            </td>
+            
+            <!-- Ministerial Impact Panel (45%) -->
+            <td width="45%">
+                <div class="panel-impact">
+                    <div class="panel-title">Impacto Ministerial</div>
+                    
+                    <table class="impact-item-table" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td class="impact-item-cell">
+                                <table width="100%" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td class="impact-label">Decisões</td>
+                                        <td class="impact-val" style="color: #3B82F6;">{{ str_pad($report->conversions ?? 0, 2, '0', STR_PAD_LEFT) }}</td>
+                                    </tr>
+                                </table>
                             </td>
-                        @endforeach
-                        @if($chunk->count() == 1)
-                            <td style="width: 50%; border-bottom: 1px solid rgba(198, 198, 205, 0.3);"></td>
-                        @endif
-                    </tr>
-                @endforeach
-                <!-- Empty lines for manually adding members/visitors if needed -->
-                @for($i = 0; $i < 2; $i++)
-                    <tr>
-                        <td style="width: 50%; padding: 6px 0; border-bottom: 1px solid rgba(198, 198, 205, 0.3); height: 25px;"></td>
-                        <td style="width: 50%; padding: 6px 0; border-bottom: 1px solid rgba(198, 198, 205, 0.3); height: 25px;"></td>
-                    </tr>
-                @endfor
-            </table>
-        @else
-            <p style="font-size: 8.5pt; color: #45474c; font-style: italic; margin: 5px 0;">Nenhum membro presente registrado nesta reunião.</p>
-        @endif
+                        </tr>
+                    </table>
+                    
+                    <table class="impact-item-table" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td class="impact-item-cell">
+                                <table width="100%" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td class="impact-label">Reconciliações</td>
+                                        <td class="impact-val" style="color: #8B5CF6;">{{ str_pad($report->reconciliations ?? 0, 2, '0', STR_PAD_LEFT) }}</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <table class="impact-item-table" cellpadding="0" cellspacing="0" style="margin-bottom: 0;">
+                        <tr>
+                            <td class="impact-item-cell">
+                                <table width="100%" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td class="impact-label">MDAs Realizados</td>
+                                        <td class="impact-val" style="color: #10B981;">{{ str_pad($report->mdas_done ?? 0, 2, '0', STR_PAD_LEFT) }}</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
 
-        @if(!empty($report->visitor_names) && count(array_filter($report->visitor_names)) > 0)
-            <div class="label" style="margin-top: 15px; margin-bottom: 6px; font-weight: bold;">Visitantes Registrados</div>
-            <div style="font-size: 9pt; color: #171c1f; padding-left: 6px; line-height: 1.4;">
-                @foreach(array_filter($report->visitor_names) as $vName)
-                    • {{ $vName }}<br/>
-                @endforeach
-            </div>
-        @endif
-    </div>
-
-    <!-- Bloco de Rodapé com Assinaturas e Informações do Sistema -->
-    <div class="footer-block">
-        <!-- Seção de Assinaturas -->
-        <table class="signatures-table" cellpadding="0" cellspacing="0">
+    <!-- Attendance Table Section -->
+    <div class="section-title">Lista de Presença e Participação</div>
+    <table class="attendance-table">
+        <thead>
             <tr>
-                <td width="46%">
-                    <div class="signature-line" style="margin-top: 15px;">
-                        <strong>Líder de Célula</strong><br/>
-                        <span style="font-size: 7.5pt; color: #45474c;">{{ $report->submittedBy->name ?? 'Responsável' }}</span>
-                    </div>
-                </td>
-                <td width="8%"></td>
-                <td width="46%">
-                    <div class="signature-line" style="margin-top: 15px;">
-                        <strong>Tesouraria / Auditoria</strong><br/>
-                        <span style="font-size: 7.5pt; color: #45474c;">&nbsp;</span>
-                    </div>
-                </td>
+                <th width="50%">Membro / Visitante</th>
+                <th width="30%">Cargo/Função</th>
+                <th width="20%">Status</th>
             </tr>
-        </table>
+        </thead>
+        <tbody>
+            @foreach($presentMembers as $member)
+                <tr>
+                    <td><strong>{{ $member->user?->name ?? $member->name }}</strong></td>
+                    <td>{{ $member->user?->role_label ?? 'Membro' }}</td>
+                    <td>
+                        <span class="badge-present">Presente</span>
+                    </td>
+                </tr>
+            @endforeach
+            
+            @php
+                $visitorsList = is_array($report->visitor_names) ? $report->visitor_names : json_decode($report->visitor_names, true) ?? [];
+            @endphp
+            
+            @foreach($visitorsList as $visitor)
+                @php
+                    $vName = is_array($visitor) ? ($visitor['name'] ?? '') : $visitor;
+                @endphp
+                @if($vName)
+                    <tr>
+                        <td><strong>{{ $vName }}</strong></td>
+                        <td style="color: #575e70; font-style: italic;">Visitante</td>
+                        <td>
+                            <span class="badge-present">Presente</span>
+                        </td>
+                    </tr>
+                @endif
+            @endforeach
+            
+            @if($presentMembers->count() === 0 && count(array_filter($visitorsList)) === 0)
+                <tr>
+                    <td colspan="3" align="center" style="color: #76777d; font-style: italic; padding: 15px 0;">
+                        Nenhum participante registrado nesta reunião.
+                    </td>
+                </tr>
+            @endif
+        </tbody>
+    </table>
 
-        <!-- Rodapé Fixo -->
-        <div class="footer-text">
-            Relatório de Célula • Gerado em {{ $generated_at }} pelo usuário {{ auth()->user()->name }} • MDA Church ERP
-        </div>
-    </div>
+    <!-- Signatures Section -->
+    <table class="footer-signatures" cellpadding="0" cellspacing="0">
+        <tr>
+            <td width="45%">
+                <div class="signature-line-box">
+                    <strong>{{ $report->submittedBy->name ?? 'Responsável' }}</strong><br/>
+                    <span style="font-size: 7.5pt; color: #45474c; text-transform: uppercase;">Líder de Célula</span>
+                </div>
+            </td>
+            <td width="10%"></td>
+            <td width="45%">
+                <div class="signature-line-box">
+                    <strong>Tesouraria / Auditoria</strong><br/>
+                    <span style="font-size: 7.5pt; color: #45474c; text-transform: uppercase;">Assinatura / Carimbo</span>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Footer metadata -->
+    <table class="footer-metadata-table" cellpadding="0" cellspacing="0">
+        <tr>
+            <td class="footer-text-left">
+                © {{ date('Y') }} MDA Church Enterprise | Sistema de Gestão Eclesiástica<br/>
+                Documento gerado eletronicamente em {{ $generated_at }}
+            </td>
+            <td class="footer-text-right" valign="bottom">
+                Página 01 de 01
+            </td>
+        </tr>
+    </table>
 
 </body>
 </html>
