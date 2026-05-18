@@ -58,6 +58,14 @@ class Member extends Model implements Auditable
     }
 
     /**
+     * Discípulos deste membro no modelo MDA.
+     */
+    public function disciples(): HasMany
+    {
+        return $this->hasMany(Member::class, 'mentor_id', 'user_id');
+    }
+
+    /**
      * Atalho para a célula deste membro (via user).
      */
     public function cell(): BelongsTo
