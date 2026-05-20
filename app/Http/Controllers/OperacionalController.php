@@ -2,160 +2,65 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cell;
-use App\Models\HierarchyNode;
-use App\Models\Member;
-use App\Models\Visitor;
-use App\Models\WeeklyReport;
-use Illuminate\Http\JsonResponse;
+use App\Models\User;
+use App\Models\AuditLog;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class OperacionalController extends Controller
 {
+    /**
+     * Exibe o painel administrativo principal com indicadores core e logs de auditoria.
+     */
     public function dashboard(Request $request): View
     {
-        $user = $request->user();
+        // KPIs Principais
+        $totalUsers       = User::count();
+        $totalRoles       = Role::count();
+        $totalPermissions = Permission::count();
+        $totalLogs        = AuditLog::count();
 
-        // KPIs principais
-        $totalCells    = Cell::where('active', true)->count();
-        $totalMembers  = Member::where('status', 'Active')->count();
-        $totalVisitors = Visitor::whereNotIn('status', ['Converted', 'Inactive'])->count();
-
-        // Visitantes sem contato nas últimas 48h (Radar)
-        $radarCount = Visitor::whereNotIn('status', ['Converted', 'Inactive'])
-            ->where(function ($q) {
-                $q->whereNull('last_contact_at')
-                  ->orWhere('last_contact_at', '<', now()->subHours(48));
-            })->count();
-
-        // Oferta do mês corrente
-        $offerThisMonth = WeeklyReport::whereMonth('meeting_date', now()->month)
-            ->whereYear('meeting_date', now()->year)
-            ->sum(\Illuminate\Support\Facades\DB::raw('offer_pix + offer_cash'));
-
-        // Relatórios aguardando conciliação
-        $pendingReports = WeeklyReport::with(['cell', 'submittedBy'])
-            ->where('status', 'Submitted')
-            ->orderByDesc('meeting_date')
-            ->take(8)
-            ->get();
-
-        // Relatórios recentes (últimos 10)
-        $recentReports = WeeklyReport::with(['cell', 'submittedBy'])
-            ->orderByDesc('meeting_date')
+        // Logs de atividade recentes (últimos 10)
+        $recentLogs = AuditLog::with('user')
+            ->orderByDesc('created_at')
             ->take(10)
             ->get();
 
-        // Distribuição de células por nó hierárquico (top 8)
-        $cellsByNode = HierarchyNode::withCount('cells')
-            ->having('cells_count', '>', 0)
-            ->orderByDesc('cells_count')
-            ->take(8)
-            ->get();
+        // Histórico de Evolução (últimos 6 meses)
+        $userGrowth = collect();
+        $logGrowth  = collect();
+        
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $endOfMonth = $date->copy()->endOfMonth();
+            
+            // Total acumulado de usuários criados até o fim daquele mês
+            $uCount = User::where('created_at', '<=', $endOfMonth)->count();
+            
+            // Total de logs gerados especificamente naquele mês
+            $lCount = AuditLog::whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->count();
+                
+            $monthName = $date->translatedFormat('M');
+            // Limpa ponto final que o PHP/Carbon às vezes gera no PT-BR (ex: "mai.")
+            $monthName = str_replace('.', '', $monthName);
+            $monthName = mb_convert_case($monthName, MB_CASE_TITLE, "UTF-8");
+            
+            $userGrowth->put($monthName, $uCount);
+            $logGrowth->put($monthName, $lCount);
+        }
 
-        // Células sem relatório nesta semana
-        $startOfWeek = now()->startOfWeek();
-        $cellsWithReportThisWeek = WeeklyReport::where('meeting_date', '>=', $startOfWeek)
-            ->pluck('cell_id')
-            ->unique();
-        $cellsMissingReport = Cell::where('active', true)
-            ->whereNotIn('id', $cellsWithReportThisWeek)
-            ->count();
-
-        return view('operacional.dashboard', compact(
-            'totalCells',
-            'totalMembers',
-            'totalVisitors',
-            'radarCount',
-            'offerThisMonth',
-            'pendingReports',
-            'recentReports',
-            'cellsByNode',
-            'cellsMissingReport'
+        return view('dashboard', compact(
+            'totalUsers',
+            'totalRoles',
+            'totalPermissions',
+            'totalLogs',
+            'recentLogs',
+            'userGrowth',
+            'logGrowth'
         ));
     }
-
-    public function radar(): View
-    {
-        $critical = Visitor::with('assignedCell')
-            ->whereNotIn('status', ['Converted', 'Inactive'])
-            ->where(function ($q) {
-                $q->whereNull('last_contact_at')
-                  ->orWhere('last_contact_at', '<', now()->subHours(72));
-            })
-            ->orderBy('last_contact_at')
-            ->get();
-
-        $warning = Visitor::with('assignedCell')
-            ->whereNotIn('status', ['Converted', 'Inactive'])
-            ->where('last_contact_at', '>=', now()->subHours(72))
-            ->where('last_contact_at', '<', now()->subHours(48))
-            ->orderBy('last_contact_at')
-            ->get();
-
-        return view('operacional.radar', compact('critical', 'warning'));
-    }
-
-    public function registerContact(Request $request, Visitor $visitor): JsonResponse
-    {
-        $request->validate([
-            'status' => 'required|string',
-            'notes'  => 'nullable|string|max:500',
-        ]);
-
-        $visitor->update([
-            'last_contact_at' => now(),
-            'contacted_by'    => auth()->id(),
-            'notes'           => $request->notes,
-            'status'          => $request->status === 'not_interested' ? 'Inactive' : $visitor->status,
-        ]);
-
-        return response()->json(['success' => true, 'message' => 'Contato registrado com sucesso!']);
-    }
-
-    /**
-     * Visualização do Organograma (Estrutura Hierárquica).
-     */
-    public function hierarchy(): View
-    {
-        $networks = HierarchyNode::whereNull('parent_id')
-            ->with(['children.children.children.cells.leader', 'cells.leader'])
-            ->orderBy('name')
-            ->get();
-
-        return view('operacional.hierarchy', compact('networks'));
-    }
-
-    /**
-     * Consolidação Mensal (Relatório de Fechamento).
-     */
-    public function monthlyConsolidation(Request $request): View
-    {
-        $month = $request->get('month', now()->month);
-        $year  = $request->get('year', now()->year);
-        $date  = now()->setYear($year)->setMonth($month);
-
-        $prevDate = $date->copy()->subMonth();
-
-        // Dados Mês Atual
-        $stats = [
-            'cells_total'    => Cell::where('active', true)->count(),
-            'cells_new'      => Cell::whereMonth('created_at', $month)->whereYear('created_at', $year)->count(),
-            'members_total'  => Member::where('status', 'Active')->count(),
-            'members_new'    => Member::whereMonth('created_at', $month)->whereYear('created_at', $year)->count(),
-            'visitors_new'   => Visitor::whereMonth('created_at', $month)->whereYear('created_at', $year)->count(),
-            'offers_total'   => WeeklyReport::whereMonth('meeting_date', $month)->whereYear('meeting_date', $year)->sum(DB::raw('offer_pix + offer_cash')),
-        ];
-
-        // Dados Mês Anterior (para comparação)
-        $prevStats = [
-            'members_new'    => Member::whereMonth('created_at', $prevDate->month)->whereYear('created_at', $prevDate->year)->count(),
-            'offers_total'   => WeeklyReport::whereMonth('meeting_date', $prevDate->month)->whereYear('meeting_date', $prevDate->year)->sum(DB::raw('offer_pix + offer_cash')),
-        ];
-
-        return view('operacional.consolidation', compact('stats', 'prevStats', 'date'));
-    }
 }
-

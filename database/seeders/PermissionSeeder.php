@@ -13,32 +13,20 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $modules = [
-            'Sistema' => [
-                'Super Usuário (Acesso Total)',
-                'Ver Usuários',
-                'Criar Usuários',
-                'Editar Usuários',
-                'Ver Perfis',
-                'Criar Perfis',
-                'Editar Perfis',
-                'Ver Trilha de Auditoria',
-                'Ver Configurações'
-            ],
-            'Financeiro' => [
-                'Acesso ao Módulo',
-                'Gerenciar Plano de Contas',
-                'Gerenciar Centros de Custo',
-                'Gerenciar Contas',
-                'Gerenciar Malotes',
-                'Gerenciar Transações',
-                'Ver Livro Diário',
-                'Gerenciar Imobilizado',
-            ]
+            'menus' => ['view', 'create', 'edit', 'delete'],
+            'users' => ['view', 'create', 'edit', 'delete'],
+            'roles' => ['view', 'create', 'edit', 'delete'],
+            'permissions' => ['view', 'create', 'edit', 'delete'],
+            'logs' => ['view'],
+            'settings' => ['view', 'edit']
         ];
 
-        foreach ($modules as $module => $permissions) {
-            foreach ($permissions as $permission) {
-                Permission::firstOrCreate(['name' => $module . '.' . $permission, 'guard_name' => 'web']);
+        foreach ($modules as $module => $actions) {
+            foreach ($actions as $action) {
+                Permission::firstOrCreate([
+                    'name' => $module . '.' . $action,
+                    'guard_name' => 'web'
+                ]);
             }
         }
     }

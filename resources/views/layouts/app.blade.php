@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'MDA Church ERP') }} — @yield('title', 'Dashboard')</title>
+    <title>{{ config('app.name', 'Sistema Padrão') }} — @yield('title', 'Dashboard')</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -155,14 +155,15 @@
             left: 0;
             right: 0;
             height: 64px;
-            background: #1c2434;
-            color: white;
+            background: #ffffff;
+            color: #1e293b;
             z-index: 50;
             display: flex;
             align-items: center;
             padding: 0 20px;
             gap: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             transition: left 0.3s ease;
         }
 
@@ -290,11 +291,11 @@
         <div class="px-8 py-8 flex items-center gap-4 shrink-0">
             <div class="w-12 h-12 bg-[#f59e0b] rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/30">
                 <span class="material-symbols-outlined text-white text-[28px]"
-                      style="font-variation-settings:'FILL' 1,'wght' 600">church</span>
+                      style="font-variation-settings:'FILL' 1,'wght' 600">widgets</span>
             </div>
             <div class="flex flex-col">
-                <span class="text-[17px] font-black text-white tracking-tight leading-tight uppercase">MDA Church</span>
-                <span class="text-[9px] font-black text-[#f59e0b] tracking-[0.25em] uppercase mt-0.5">Enterprise</span>
+                <span class="text-[17px] font-black text-white tracking-tight leading-tight uppercase">Painel</span>
+                <span class="text-[9px] font-black text-[#f59e0b] tracking-[0.25em] uppercase mt-0.5">Administrativo</span>
             </div>
         </div>
 
@@ -321,7 +322,8 @@
                     @foreach($category->items as $item)
                         @if($item->is_active && (!$item->is_admin_only || (Auth::user() && Auth::user()->role === 'Admin')))
                             @php
-                                $isActive = request()->is(trim($item->url, '/'));
+                                $itemUrlClean = trim($item->url, '/');
+                                $isActive = request()->is($itemUrlClean) || request()->is($itemUrlClean . '/*');
                                 $isDanger = $category->name === 'CONTROLE DE CRISE';
                             @endphp
                             <a href="{{ str_starts_with($item->url, 'http') ? $item->url : url($item->url) }}"
@@ -344,35 +346,7 @@
                 </a>
             @endif
 
-            @if(Auth::user() && Auth::user()->role === 'Admin')
-                <p class="px-4 pt-6 pb-3 text-[10px] font-black text-rose-400 uppercase tracking-[0.25em]">Administração</p>
-
-                <a href="{{ route('admin.menus.index') }}"
-                   class="nav-item {{ request()->routeIs('admin.menus.*') ? 'active' : '' }} {{ !request()->routeIs('admin.menus.*') ? 'nav-item-danger' : '' }}">
-                    <i class="fas fa-bars-staggered w-5 text-[14px]"></i>
-                    <span>Gerenciar Menus</span>
-                </a>
-                <a href="{{ route('admin.users.index') }}"
-                   class="nav-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }} {{ !request()->routeIs('admin.users.*') ? 'nav-item-danger' : '' }}">
-                    <i class="fas fa-users w-5 text-[14px]"></i>
-                    <span>Usuários</span>
-                </a>
-                <a href="{{ route('admin.roles.index') }}"
-                   class="nav-item {{ request()->routeIs('admin.roles.*') ? 'active' : '' }} {{ !request()->routeIs('admin.roles.*') ? 'nav-item-danger' : '' }}">
-                    <i class="fas fa-shield-alt w-5 text-[14px]"></i>
-                    <span>Perfis (Roles)</span>
-                </a>
-                <a href="{{ route('admin.permissions.index') }}"
-                   class="nav-item {{ request()->routeIs('admin.permissions.*') ? 'active' : '' }} {{ !request()->routeIs('admin.permissions.*') ? 'nav-item-danger' : '' }}">
-                    <i class="fas fa-key w-5 text-[14px]"></i>
-                    <span>Permissões</span>
-                </a>
-                <a href="{{ route('admin.logs.index') }}"
-                   class="nav-item {{ request()->routeIs('admin.logs.*') ? 'active' : '' }} {{ !request()->routeIs('admin.logs.*') ? 'nav-item-danger' : '' }}">
-                    <i class="fas fa-fingerprint w-5 text-[14px]"></i>
-                    <span>Logs de Sistema</span>
-                </a>
-            @endif
+            {{-- Menus estáticos removidos para evitar duplicação com os dinâmicos --}}
 
             <!-- Logout -->
             <div class="pt-4 px-2">
@@ -404,44 +378,44 @@
     ═══════════════════════════════════════ -->
     <header id="topbar">
         <!-- Mobile menu button -->
-        <button class="lg:hidden p-2 rounded-xl hover:bg-white/10 transition-colors flex items-center justify-center"
+        <button class="lg:hidden p-2 rounded-xl hover:bg-slate-100 transition-colors flex items-center justify-center"
                 onclick="toggleSidebar()" id="toggle-sidebar">
-            <span class="material-symbols-outlined text-white text-[24px]">menu</span>
+            <span class="material-symbols-outlined text-slate-800 text-[24px]">menu</span>
         </button>
 
         <!-- Page title -->
         <div class="flex flex-col">
-            <h1 class="text-[18px] font-black text-white tracking-tight leading-tight uppercase">
+            <h1 class="text-[18px] font-black text-slate-800 tracking-tight leading-tight uppercase">
                 @yield('title', 'Dashboard')
             </h1>
-            <div class="hidden sm:flex items-center gap-2 text-[10px] text-white/40 font-bold uppercase tracking-widest">
-                <span class="text-[#f59e0b]">MDA Church</span>
+            <div class="hidden sm:flex items-center gap-2 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                <span class="text-[#f59e0b]">Sistema Padrão</span>
                 <span>›</span>
-                <span>@yield('title', 'Dashboard')</span>
+                <span class="text-slate-400">@yield('title', 'Dashboard')</span>
             </div>
         </div>
 
         <div class="ml-auto flex items-center gap-4">
             <!-- Search (desktop) -->
-            <div class="hidden md:flex items-center gap-3 bg-white/8 border border-white/10 rounded-xl px-4 py-2
-                        focus-within:bg-white/15 focus-within:border-[#f59e0b]/50 transition-all duration-300">
-                <span class="material-symbols-outlined text-white/40 text-[18px]">search</span>
+            <div class="hidden md:flex items-center gap-3 bg-slate-50 border border-gray-200 rounded-xl px-4 py-2
+                        focus-within:bg-slate-100 focus-within:border-[#f59e0b]/50 transition-all duration-300">
+                <span class="material-symbols-outlined text-slate-400 text-[18px]">search</span>
                 <input type="text"
                        placeholder="Pesquisar no sistema..."
-                       class="bg-transparent border-none outline-none focus:ring-0 text-[12px] font-medium w-52 placeholder:text-white/30 text-white">
+                       class="bg-transparent border-none outline-none focus:ring-0 text-[12px] font-medium w-52 placeholder:text-slate-400 text-slate-700">
             </div>
 
             <!-- User -->
-            <div class="flex items-center gap-3 pl-4 border-l border-white/10">
+            <div class="flex items-center gap-3 pl-4 border-l border-gray-200">
                 <div class="text-right hidden sm:block">
-                    <p class="text-[13px] font-black text-white leading-none">{{ Auth::user()->name ?? 'Administrador' }}</p>
+                    <p class="text-[13px] font-black text-slate-800 leading-none">{{ Auth::user()->name ?? 'Administrador' }}</p>
                     <p class="text-[9px] font-bold text-[#f59e0b] mt-1 uppercase tracking-widest">{{ Auth::user()->role_label ?? 'Master' }}</p>
                 </div>
                 <div class="relative">
                     <div class="w-10 h-10 rounded-xl bg-[#f59e0b] flex items-center justify-center text-white font-black text-sm shadow-lg shadow-amber-500/30 cursor-pointer">
                         {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 2)) }}
                     </div>
-                    <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-400 border-2 border-[#1c2434] rounded-full"></div>
+                    <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full"></div>
                 </div>
             </div>
         </div>
@@ -500,12 +474,15 @@
             if (window.innerWidth < 1024) closeSidebar();
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            var currentPath = window.location.pathname;
+            var currentPath = window.location.pathname.replace(/\/$/, "");
             $('#sidebar-nav a').removeClass('active');
             $('#sidebar-nav a').each(function () {
                 var href = $(this).attr('href');
-                if (href && (href === currentPath || href === window.location.origin + currentPath)) {
-                    $(this).addClass('active');
+                if (href) {
+                    var hrefPath = new URL(href, window.location.origin).pathname.replace(/\/$/, "");
+                    if (hrefPath && (currentPath === hrefPath || currentPath.startsWith(hrefPath + '/'))) {
+                        $(this).addClass('active');
+                    }
                 }
             });
         });

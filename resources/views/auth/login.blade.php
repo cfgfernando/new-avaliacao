@@ -12,7 +12,7 @@
                 <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400 group-focus-within:text-accent transition-colors">
                     <i class="fas fa-envelope"></i>
                 </div>
-                <x-text-input id="email" class="block w-full pl-12" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" placeholder="seu.nome@mdachurch.com" />
+                <x-text-input id="email" class="block w-full pl-12" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" placeholder="seu.nome@sistema.com" />
             </div>
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>

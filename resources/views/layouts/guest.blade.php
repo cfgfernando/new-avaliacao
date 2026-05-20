@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'MDA Church ERP') }}</title>
+        <title>{{ config('app.name', 'Sistema Padrão') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,20 +20,20 @@
         <div class="min-h-screen flex flex-col sm:justify-center items-center relative overflow-hidden">
             <!-- BACKGROUND IMAGE WITH OVERLAY -->
             <div class="absolute inset-0 z-0 bg-primary">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Interior_of_the_Cathedral_of_Bras%C3%ADlia.jpg/1920px-Interior_of_the_Cathedral_of_Bras%C3%ADlia.jpg" alt="Background" class="w-full h-full object-cover opacity-60 mix-blend-overlay">
-                <div class="absolute inset-0 bg-gradient-to-br from-primary/80 via-transparent to-accent/20"></div>
+                <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1920&auto=format&fit=crop" alt="Background" class="w-full h-full object-cover opacity-30 mix-blend-overlay">
+                <div class="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/50 to-accent/10"></div>
             </div>
 
             <div class="relative z-10 w-full flex flex-col items-center py-12">
                 <div class="mb-8 sm:mb-10 text-center animate-reveal-up px-4">
                     <a href="/" class="flex flex-col items-center gap-4 group">
-                        <div class="w-16 h-16 sm:w-20 sm:h-20 bg-accent rounded-2xl flex items-center justify-center text-white text-3xl sm:text-4xl shadow-2xl shadow-accent/40 transition-transform group-hover:scale-105 group-hover:rotate-3 duration-500">
-                            <i class="fas fa-church"></i>
+                        <div class="w-16 h-16 sm:w-20 sm:h-20 bg-accent rounded-2xl flex items-center justify-center text-[#1c2434] text-3xl sm:text-4xl shadow-2xl shadow-accent/40 transition-transform group-hover:scale-105 group-hover:rotate-3 duration-500">
+                            <i class="fas fa-layer-group"></i>
                         </div>
                         <h1 class="text-3xl sm:text-4xl font-black text-white uppercase tracking-tighter mt-2 sm:mt-4">
-                            MDA <span class="text-accent">Church</span>
+                            Sistema <span class="text-accent">Padrão</span>
                         </h1>
-                        <p class="text-accent/80 font-bold text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.4em] mt-1 sm:mt-2">Enterprise Resource Planning</p>
+                        <p class="text-accent/80 font-bold text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.4em] mt-1 sm:mt-2">Painel de Controle Administrativo</p>
                     </a>
                 </div>
 
@@ -45,7 +45,7 @@
                 </div>
 
                 <div class="mt-12 text-center text-white/50 text-xs font-medium animate-reveal-up delay-200">
-                    &copy; {{ date('Y') }} MDA Church ERP. <span class="text-accent/60">Tecnologia para o Reino.</span>
+                    &copy; {{ date('Y') }} Sistema Padrão. <span class="text-accent/60">Tecnologia e Performance.</span>
                 </div>
             </div>
         </div>
