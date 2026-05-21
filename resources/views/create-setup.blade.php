@@ -161,19 +161,27 @@
                                 <p class="text-xs text-slate-500 font-medium font-sans">Selecione a categoria de escala BARS correspondente e confirme os dados finais do avaliador responsável.</p>
                             </div>
 
-                            <!-- 4. Categoria Regulamentar (5 Cards de Rádio Customizados) -->
+                            <!-- 4. Categoria Regulamentar (preenchida automaticamente) -->
                             <div>
-                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-3">Categoria Regulamentar (Escala BARS correspondente) <span class="text-rose-500">*</span></label>
-                                
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="radio-categoria-container">
+                                <div class="flex items-center justify-between mb-3">
+                                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">
+                                        Categoria Regulamentar (Escala BARS correspondente)
+                                        <span class="text-rose-500">*</span>
+                                    </label>
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-2.5 py-0.5 font-mono">
+                                        <i class="fas fa-lock text-[9px]"></i> Automático
+                                    </span>
+                                </div>
+
+                                <div id="radio-categoria-container" class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     <!-- Card 1: Geral -->
-                                    <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all select-none group focus-within:ring-2 focus-within:ring-blue-100" id="card-radio-geral">
+                                    <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl select-none" id="card-radio-geral" data-card-value="geral">
                                         <input type="radio" name="temp_categoria" value="geral" class="sr-only radio-categoria">
                                         <div class="flex items-start gap-3">
-                                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-all">
+                                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
                                                 <i class="fas fa-users text-xs"></i>
                                             </div>
-                                            <div>
+                                            <div class="flex-1 min-w-0">
                                                 <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide font-sans">Quadro Geral</h4>
                                                 <p class="text-[10px] text-slate-500 mt-1 leading-normal font-sans">Carreira técnica geral, administrativa e operacional.</p>
                                             </div>
@@ -181,13 +189,13 @@
                                     </label>
 
                                     <!-- Card 2: Saúde -->
-                                    <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all select-none group focus-within:ring-2 focus-within:ring-blue-100" id="card-radio-saude">
+                                    <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl select-none" id="card-radio-saude" data-card-value="saude">
                                         <input type="radio" name="temp_categoria" value="saude" class="sr-only radio-categoria">
                                         <div class="flex items-start gap-3">
-                                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-all">
+                                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
                                                 <i class="fas fa-heartbeat text-xs"></i>
                                             </div>
-                                            <div>
+                                            <div class="flex-1 min-w-0">
                                                 <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide font-sans">Saúde Pública</h4>
                                                 <p class="text-[10px] text-slate-500 mt-1 leading-normal font-sans">Médicos, enfermeiros, técnicos e agentes de saúde.</p>
                                             </div>
@@ -195,13 +203,13 @@
                                     </label>
 
                                     <!-- Card 3: Guarda -->
-                                    <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all select-none group focus-within:ring-2 focus-within:ring-blue-100" id="card-radio-guarda">
+                                    <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl select-none" id="card-radio-guarda" data-card-value="guarda">
                                         <input type="radio" name="temp_categoria" value="guarda" class="sr-only radio-categoria">
                                         <div class="flex items-start gap-3">
-                                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-all">
+                                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
                                                 <i class="fas fa-shield-alt text-xs"></i>
                                             </div>
-                                            <div>
+                                            <div class="flex-1 min-w-0">
                                                 <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide font-sans">Segurança</h4>
                                                 <p class="text-[10px] text-slate-500 mt-1 leading-normal font-sans">GMs, patrulheiros, inspetores e agentes urbanos.</p>
                                             </div>
@@ -209,33 +217,34 @@
                                     </label>
 
                                     <!-- Card 4: Educação -->
-                                    <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all select-none group focus-within:ring-2 focus-within:ring-blue-100" id="card-radio-educacao">
+                                    <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl select-none" id="card-radio-educacao" data-card-value="educacao">
                                         <input type="radio" name="temp_categoria" value="educacao" class="sr-only radio-categoria">
                                         <div class="flex items-start gap-3">
-                                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-all">
+                                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
                                                 <i class="fas fa-graduation-cap text-xs"></i>
                                             </div>
-                                            <div>
+                                            <div class="flex-1 min-w-0">
                                                 <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide font-sans">Educação Básica</h4>
                                                 <p class="text-[10px] text-slate-500 mt-1 leading-normal font-sans">Professores, educadores e pedagogos escolares.</p>
                                             </div>
                                         </div>
                                     </label>
 
-                                    <!-- Card 5: Gestão Governamental (PEGP) -->
-                                    <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all select-none group focus-within:ring-2 focus-within:ring-blue-100 md:col-span-2" id="card-radio-gestao">
+                                    <!-- Card 5: Gestão / PEGP -->
+                                    <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl select-none md:col-span-2" id="card-radio-gestao" data-card-value="geral_gestao">
                                         <input type="radio" name="temp_categoria" value="geral_gestao" class="sr-only radio-categoria">
                                         <div class="flex items-start gap-3">
-                                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-all">
+                                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
                                                 <i class="fas fa-briefcase text-xs"></i>
                                             </div>
-                                            <div>
+                                            <div class="flex-1 min-w-0">
                                                 <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide font-sans">Gestão e PEGP</h4>
                                                 <p class="text-[10px] text-slate-500 mt-1 leading-normal font-sans">Especialistas em gestão pública, analistas e executivos municipais.</p>
                                             </div>
                                         </div>
                                     </label>
                                 </div>
+
                                 @error('categoria')
                                     <p class="mt-1 text-xs text-rose-600 font-medium font-sans">{{ $message }}</p>
                                 @enderror
@@ -585,10 +594,9 @@ $(document).ready(function() {
 
     function resetApoio() {
         resetApoioExcludingSelect();
-        // Desmarcar rádio
-        $('.radio-categoria').prop('checked', false).closest('label').removeClass('border-blue-500 ring-2 ring-blue-100').addClass('border-slate-200');
-        $('#categoria').val('');
+        resetCategoria(); // Restaura todos os cards e limpa a seleção travada
     }
+
 
     function resetApoioExcludingSelect() {
         $('#apoio-servidor-info').hide();
@@ -596,47 +604,88 @@ $(document).ready(function() {
         $('#resumo-servidor').text('-');
     }
 
-    // Aplica a categoria automaticamente com base no grupo funcional do servidor
+    // Aplica a categoria automaticamente: mostra apenas o card do servidor e trava a seleção.
     function applyCategoria(group) {
         if (!group) return;
 
-        // Mapear groups para valores dos radios
+        // Mapear evaluation_group para o value do radio correspondente
         var radioValue = group;
         if (group === 'PEGP' || group === 'geral_gestao') {
             radioValue = 'geral_gestao';
-        } else if (group === 'geral') {
-            // 'geral' pode ser quadro geral OU gestao — priorizamos 'geral' (Quadro Geral)
-            radioValue = 'geral';
         }
 
         var targetRadio = $('.radio-categoria[value="' + radioValue + '"]');
-        // Fallback: se nao encontrou, tenta geral_gestao
-        if (targetRadio.length === 0 && (group === 'geral' || group === 'PEGP')) {
-            targetRadio = $('.radio-categoria[value="geral_gestao"]');
+        // Fallback: grupo desconhecido → Quadro Geral
+        if (targetRadio.length === 0) {
+            targetRadio = $('.radio-categoria[value="geral"]');
         }
 
-        if (targetRadio.length > 0) {
-            // Marcar o radio
-            targetRadio.prop('checked', true);
-            // Atualizar visuais dos cards
-            $('.radio-categoria').closest('label').removeClass('border-blue-500 ring-2 ring-blue-100').addClass('border-slate-200');
-            targetRadio.closest('label').removeClass('border-slate-200').addClass('border-blue-500 ring-2 ring-blue-100');
-            // Atualizar o campo hidden e o resumo
-            var val = targetRadio.val();
-            if (val === 'geral_gestao') {
-                $('#categoria').val('geral');
-                $('#resumo-categoria').text('Gestão e PEGP');
-            } else {
-                $('#categoria').val(val);
-                var categoryTexts = {
-                    'geral':    'Quadro Geral',
-                    'saude':    'Saúde Pública',
-                    'guarda':   'Segurança',
-                    'educacao': 'Educação Básica'
-                };
-                $('#resumo-categoria').text(categoryTexts[val] || val);
+        if (targetRadio.length === 0) return;
+
+        var targetCard  = targetRadio.closest('label');
+        var targetValue = targetRadio.val();
+
+        // 1. Marcar o radio
+        targetRadio.prop('checked', true);
+
+        // 2. Esconder todos os cards que NÃO pertencem ao servidor
+        $('#radio-categoria-container label').each(function() {
+            if ($(this).attr('id') !== targetCard.attr('id')) {
+                $(this).addClass('hidden');
             }
+        });
+
+        // 3. Estilo "confirmado/travado" no card correto
+        targetCard
+            .removeClass('border-slate-200 cursor-pointer hover:bg-slate-50')
+            .addClass('border-blue-500 ring-2 ring-blue-100 cursor-not-allowed pointer-events-none bg-blue-50/30');
+
+        // Adicionar badge de confirmação se ainda não existir
+        if (targetCard.find('.badge-confirmado').length === 0) {
+            targetCard.append(
+                '<span class="badge-confirmado absolute top-3 right-3 inline-flex items-center gap-1 text-[9px] font-bold text-blue-600 bg-white border border-blue-200 rounded-full px-2 py-0.5 font-mono shadow-sm">' +
+                '<i class="fas fa-check-circle"></i> Confirmado</span>'
+            );
         }
+
+        // 4. Atualizar o grid para exibir em coluna única (só há 1 card visível)
+        $('#radio-categoria-container').removeClass('md:grid-cols-2').addClass('md:grid-cols-1');
+
+        // 5. Atualizar campo hidden e texto de resumo
+        var categoryTexts = {
+            'geral':       'Quadro Geral',
+            'saude':       'Saúde Pública',
+            'guarda':      'Segurança',
+            'educacao':    'Educação Básica',
+            'geral_gestao':'Gestão e PEGP'
+        };
+
+        if (targetValue === 'geral_gestao') {
+            $('#categoria').val('geral');
+        } else {
+            $('#categoria').val(targetValue);
+        }
+        $('#resumo-categoria').text(categoryTexts[targetValue] || targetValue);
+    }
+
+    // Reseta os cards de categoria (ao trocar de servidor)
+    function resetCategoria() {
+        // Mostrar todos os cards novamente
+        $('#radio-categoria-container label').removeClass('hidden');
+        $('#radio-categoria-container').removeClass('md:grid-cols-1').addClass('md:grid-cols-2');
+
+        // Remover estilos de travado
+        $('#radio-categoria-container label')
+            .removeClass('border-blue-500 ring-2 ring-blue-100 cursor-not-allowed pointer-events-none bg-blue-50/30')
+            .addClass('border-slate-200');
+
+        // Remover badge
+        $('#radio-categoria-container .badge-confirmado').remove();
+
+        // Desmarcar todos os radios
+        $('.radio-categoria').prop('checked', false);
+        $('#categoria').val('');
+        $('#resumo-categoria').text('-');
     }
 
     // Cada função só atua quando o passo correspondente está ativo,
