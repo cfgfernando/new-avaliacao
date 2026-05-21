@@ -486,42 +486,47 @@ $(document).ready(function() {
         validateStep1();
     });
 
-    // 4. Seleção do Servidor e AJAX de Detalhes
+    // 4. Seleção do Servidor e AJAX de Detalhes do Painel de Apoio
     $('#evaluated_id').on('change', function() {
         var selectedOption = $(this).find('option:selected');
-        var val = $(this).val();
-        var isPad = selectedOption.data('pad') == 1 || selectedOption.data('pad') === true;
-        var group = selectedOption.data('group');
+        var val             = $(this).val();
+        var isPad           = selectedOption.data('pad') == 1 || selectedOption.data('pad') === true;
+        var group           = selectedOption.data('group'); // fallback imediato
 
-        // Resetar Alertas
+        // Resetar Alertas de PAD
         $('#pad-warning-container').addClass('hidden');
         $('#pad-block-alert').addClass('hidden');
         $('#pad-allow-alert').addClass('hidden');
 
+        // Servidor desmarcado → reseta tudo
         if (!val) {
             resetApoio();
             validateStep2();
             return;
         }
 
-        // Validação da regra do PAD (dinâmica)
+        // ─── PAD CHECK ───────────────────────────────────────────────────────
         if (isPad) {
             $('#pad-warning-container').removeClass('hidden');
             if (blockOnPadCurrent === 1) {
-                // Bloqueia avanço
                 $('#pad-block-alert').removeClass('hidden');
                 $('#btn-next').prop('disabled', true).addClass('opacity-50 cursor-not-allowed');
                 resetApoioExcludingSelect();
-                return;
-            } else {
-                // Apenas alerta, mas permite avançar
-                $('#pad-allow-alert').removeClass('hidden');
+                return; // bloqueia: não avança nem carrega painel
             }
+            $('#pad-allow-alert').removeClass('hidden'); // apenas avisa, permite prosseguir
         }
 
-        // Fazer requisição AJAX para carregar detalhes do servidor no painel lateral
-        var detailUrl = "/api/servidores/" + val + "/detalhes";
-        
+        // ─── VALIDAÇÃO IMEDIATA (sem esperar AJAX) ───────────────────────────
+        // Aplica a categoria já disponível no data-group do <option>
+        if (group) {
+            applyCategoria(group);
+        }
+        // Habilita "Avançar" imediatamente — o painel de apoio é secundário
+        validateStep2();
+
+        // ─── AJAX: Painel de Apoio (metas + incidentes + refinamento de categoria) ──
+        var detailUrl = '/api/servidores/' + val + '/detalhes';
         $('#apoio-estado-vazio').hide();
         $('#apoio-servidor-info').addClass('opacity-50').removeClass('hidden').show();
 
@@ -530,63 +535,51 @@ $(document).ready(function() {
             $('#servidor-cargo').text(data.user.cargo);
             $('#servidor-lotacao').text(data.user.lotacao);
             $('#servidor-avatar').attr('src', data.user.avatar);
-
-            // Preencher resumo final
             $('#resumo-servidor').text(data.user.name + ' (' + data.user.cargo + ')');
 
-            // Atualizar Metas
+            // Refina a categoria com o dado confiável da API
+            applyCategoria(data.user.evaluation_group);
+
+            // Metas
             var metasHtml = '';
             if (data.goals.length === 0) {
-                metasHtml = '<div class="text-xs text-slate-400 font-semibold p-3 bg-slate-50 rounded-lg border border-slate-100 text-center"><i class="fas fa-info-circle mr-1 font-sans"></i> Nenhuma meta pactuada para este ciclo.</div>';
+                metasHtml = '<div class="text-xs text-slate-400 font-semibold p-3 bg-slate-50 rounded-lg border border-slate-100 text-center"><i class="fas fa-info-circle mr-1"></i> Nenhuma meta pactuada para este ciclo.</div>';
             } else {
-                $.each(data.goals, function(index, goal) {
-                    var target = parseFloat(goal.target_value);
+                $.each(data.goals, function(i, goal) {
+                    var target   = parseFloat(goal.target_value);
                     var achieved = parseFloat(goal.achieved_value || 0);
-                    var pct = target > 0 ? Math.min(100, Math.round((achieved / target) * 100)) : 0;
-                    
-                    var barColor = 'bg-blue-500';
-                    if (pct < 50) barColor = 'bg-rose-500';
-                    else if (pct < 80) barColor = 'bg-amber-500';
-                    else barColor = 'bg-emerald-500';
+                    var pct      = target > 0 ? Math.min(100, Math.round((achieved / target) * 100)) : 0;
+                    var barColor = pct < 50 ? 'bg-rose-500' : (pct < 80 ? 'bg-amber-500' : 'bg-emerald-500');
 
                     metasHtml += '<div class="space-y-1.5">';
                     metasHtml += '  <div class="flex justify-between items-center text-xs font-semibold">';
-                    metasHtml += '      <span class="text-slate-700 max-w-[80%] truncate font-sans" title="' + goal.description + '">' + goal.description + '</span>';
-                    metasHtml += '      <span class="text-slate-500 font-mono">' + achieved + ' / ' + target + ' ' + (goal.metric || '') + '</span>';
+                    metasHtml += '    <span class="text-slate-700 max-w-[80%] truncate font-sans" title="' + goal.description + '">' + goal.description + '</span>';
+                    metasHtml += '    <span class="text-slate-500 font-mono">' + achieved + ' / ' + target + ' ' + (goal.metric || '') + '</span>';
                     metasHtml += '  </div>';
-                    metasHtml += '  <div class="relative w-full h-2 bg-slate-100 rounded-full border border-slate-150 overflow-hidden">';
-                    metasHtml += '      <div class="goal-progress-bar h-full rounded-full transition-all duration-1000 w-0 ' + barColor + '" data-width="' + pct + '%"></div>';
+                    metasHtml += '  <div class="relative w-full h-2 bg-slate-100 rounded-full overflow-hidden">';
+                    metasHtml += '    <div class="goal-progress-bar h-full rounded-full transition-all duration-1000 w-0 ' + barColor + '" data-width="' + pct + '%"></div>';
                     metasHtml += '  </div>';
-                    metasHtml += '  <div class="flex justify-between items-center text-[10px] text-slate-400 mt-0.5">';
-                    metasHtml += '      <span class="font-sans">Atingimento</span>';
-                    metasHtml += '      <span class="font-bold text-slate-700 font-mono">' + pct + '%</span>';
+                    metasHtml += '  <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">';
+                    metasHtml += '    <span class="font-sans">Atingimento</span>';
+                    metasHtml += '    <span class="font-bold text-slate-700 font-mono">' + pct + '%</span>';
                     metasHtml += '  </div>';
                     metasHtml += '</div>';
                 });
             }
             $('#servidor-metas-container').html(metasHtml);
-
-            // Animação das barras
             setTimeout(function() {
-                $('.goal-progress-bar').each(function() {
-                    var finalWidth = $(this).data('width');
-                    $(this).css('width', finalWidth);
-                });
+                $('.goal-progress-bar').each(function() { $(this).css('width', $(this).data('width')); });
             }, 100);
 
-            // Atualizar Incidentes
+            // Incidentes
             $('#incidente-positivo-count').text(data.incidents.positive);
             $('#incidente-negativo-count').text(data.incidents.negative);
 
-            // Seleção automática da categoria baseada no evaluation_group do servidor (via API)
-            applyCategoria(data.user.evaluation_group);
-
             $('#apoio-servidor-info').removeClass('opacity-50');
-            validateStep2();
         }).fail(function() {
-            alert('Falha ao obter histórico do servidor.');
-            resetApoio();
-            validateStep2();
+            // Painel de apoio falhou — apenas esconde o painel, navegação não é afetada
+            $('#apoio-servidor-info').hide();
+            $('#apoio-estado-vazio').show().find('p').text('Histórico indisponível. A avaliação pode prosseguir normalmente.');
         });
     });
 
