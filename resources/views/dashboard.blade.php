@@ -16,6 +16,18 @@
         $avaliados = $servidores->filter(function($s) {
             return $s->evaluations->first() && $s->evaluations->first()->status === 'submitted';
         })->count();
+
+        // Recuperar informações dinâmicas do ciclo ativo
+        $activeCycle = \App\Models\EvaluationCycle::where('status', 'active')->first() 
+            ?? \App\Models\EvaluationCycle::latest()->first();
+        
+        $cycleName = $activeCycle ? $activeCycle->name : 'Ciclo Avaliativo Consolidado do Primeiro Semestre - 2026';
+        $startDate = $activeCycle ? ($activeCycle->start_date ? (\Carbon\Carbon::parse($activeCycle->start_date)->format('Y-m-d')) : '2026-01-01') : '2026-01-01';
+        $endDate = $activeCycle ? ($activeCycle->end_date ? (\Carbon\Carbon::parse($activeCycle->end_date)->format('Y-m-d')) : '2026-06-30') : '2026-06-30';
+        
+        $weights = $activeCycle ? ($activeCycle->weights ?? []) : [];
+        $okrWeight = $weights['okr'] ?? 50;
+        $barsWeight = $weights['bars'] ?? 50;
     @endphp
 
     <div class="space-y-6 animate-reveal-up">
@@ -23,28 +35,28 @@
         {{-- =========================================================
              1. CARD DO CICLO SEMESTRAL VIGENTE (TOP CARD)
              ========================================================= --}}
-        <div class="bg-gradient-to-r from-[#0f172a] to-[#1e293b] text-white rounded-xl p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6 border border-slate-800 shadow-md relative overflow-hidden">
+        <div class="bg-gradient-to-r from-[#0b1329] via-[#0d162d] to-[#1b2544] text-white rounded-xl p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6 border border-slate-800 shadow-md relative overflow-hidden">
             <div class="space-y-3 z-10">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-[#2563eb]/15 text-[10px] font-black text-[#2563eb] uppercase tracking-widest font-mono">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-[#131d35] text-[10px] font-bold text-blue-400 uppercase tracking-wider font-mono border border-blue-500/10">
                     Ciclo Semestral Vigente
                 </span>
-                <h1 class="text-xl md:text-2xl font-bold uppercase text-white tracking-tight font-sans">
-                    Ciclo Avaliativo Consolidado do Primeiro Semestre - 2026
+                <h1 class="text-xl md:text-2xl font-bold text-white tracking-tight font-sans">
+                    {{ $cycleName }}
                 </h1>
                 <p class="text-slate-400 text-xs font-semibold">
-                    Período avaliativo de <span class="text-white font-bold">2026-01-01</span> até <span class="text-white font-bold">2026-06-30</span>.
+                    Período avaliativo de <span class="text-white font-bold">{{ $startDate }}</span> até <span class="text-white font-bold">{{ $endDate }}</span>.
                 </p>
             </div>
             
             {{-- Metas e Competências à direita (unificado e colorido conforme imagem) --}}
-            <div class="bg-[#090d16]/90 border border-white/5 rounded-xl px-6 py-4 flex items-center divide-x divide-slate-800 z-10 shrink-0">
-                <div class="text-center pr-6 min-w-[100px]">
-                    <p class="text-[9px] font-black text-[#2563eb] uppercase tracking-wider mb-1">Metas OKR</p>
-                    <p class="text-2xl font-bold text-white font-mono">50%</p>
+            <div class="bg-[#070c18]/60 border border-slate-800 rounded-xl px-6 py-4 flex items-center divide-x divide-slate-800/80 z-10 shrink-0">
+                <div class="text-center pr-6 min-w-[110px]">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1 font-mono">Metas OKR</p>
+                    <p class="text-2xl font-bold text-blue-400 font-mono">{{ $okrWeight }}%</p>
                 </div>
-                <div class="text-center pl-6 min-w-[100px]">
-                    <p class="text-[9px] font-black text-[#2563eb] uppercase tracking-wider mb-1">Competências BARS</p>
-                    <p class="text-2xl font-bold text-white font-mono">50%</p>
+                <div class="text-center pl-6 min-w-[110px]">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1 font-mono">Competências BARS</p>
+                    <p class="text-2xl font-bold text-blue-400 font-mono">{{ $barsWeight }}%</p>
                 </div>
             </div>
         </div>
