@@ -53,6 +53,11 @@ class OperacionalController extends Controller
             $logGrowth->put($monthName, $lCount);
         }
 
+        // Servidores públicos para avaliação
+        $servidores = User::whereNotNull('registration_number')
+            ->with(['evaluations'])
+            ->get();
+
         return view('dashboard', compact(
             'totalUsers',
             'totalRoles',
@@ -60,7 +65,8 @@ class OperacionalController extends Controller
             'totalLogs',
             'recentLogs',
             'userGrowth',
-            'logGrowth'
+            'logGrowth',
+            'servidores'
         ));
     }
 }

@@ -13,17 +13,17 @@
     </div>
 
     @if(session('success'))
-        <div class="bg-emerald-50 text-emerald-600 p-4 rounded-2xl mb-6 font-bold text-sm border border-emerald-100 flex items-center gap-3">
+        <div class="bg-emerald-50 text-emerald-600 p-4 rounded-xl mb-6 font-bold text-sm border border-emerald-100 flex items-center gap-3">
             <i class="fas fa-check-circle"></i> {{ session('success') }}
         </div>
     @endif
     @if(session('error'))
-        <div class="bg-rose-50 text-rose-600 p-4 rounded-2xl mb-6 font-bold text-sm border border-rose-100 flex items-center gap-3">
+        <div class="bg-rose-50 text-rose-600 p-4 rounded-xl mb-6 font-bold text-sm border border-rose-100 flex items-center gap-3">
             <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
         </div>
     @endif
 
-    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>

@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <div class="card-neo !p-0 overflow-hidden">
+    <div class="card-neo rounded-xl border border-slate-200 !p-0 overflow-hidden">
         <table class="w-full text-left border-collapse">
             <thead>
                 <tr class="bg-slate-50 border-b border-slate-100">
@@ -74,9 +74,9 @@
             const json = JSON.parse(data);
             Swal.fire({
                 title: 'Detalhes da Ação',
-                html: `<pre class="text-left text-xs bg-slate-900 text-emerald-400 p-6 rounded-2xl overflow-auto max-h-[500px]">${JSON.stringify(json, null, 4)}</pre>`,
+                html: `<pre class="text-left text-xs bg-slate-900 text-emerald-400 p-6 rounded-xl overflow-auto max-h-[500px]">${JSON.stringify(json, null, 4)}</pre>`,
                 width: '800px',
-                confirmButtonColor: '#0ea5e9',
+                confirmButtonColor: '#2563eb',
                 confirmButtonText: 'FECHAR',
                 background: '#fff',
             });
@@ -84,7 +84,7 @@
             Swal.fire({
                 title: 'Detalhes da Ação',
                 text: data,
-                confirmButtonColor: '#0ea5e9',
+                confirmButtonColor: '#2563eb',
             });
         }
     }

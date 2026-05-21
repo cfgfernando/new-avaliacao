@@ -10,7 +10,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@100..900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
 
     <!-- Material Symbols (Stitch pattern) -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
@@ -71,31 +71,32 @@
         /* ─── BASE ─── */
         * { -webkit-font-smoothing: antialiased; }
         [x-cloak] { display: none !important; }
-        body { font-family: 'Libre Franklin', sans-serif; }
+        body { font-family: 'Inter', sans-serif; }
 
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
 
         /* ─── SCROLLBAR ─── */
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.2); border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.4); }
 
         /* ─── SIDEBAR ─── */
         #sidebar {
             position: fixed;
             top: 0; left: 0; bottom: 0;
             width: 280px;
-            background: #1c2434;
-            color: white;
+            background: #0f172b;
+            color: #8a99af;
             display: flex;
             flex-direction: column;
             z-index: 60;
             transform: translateX(-100%);
             transition: transform 0.3s ease;
             overflow-y: auto;
-            box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         @media (min-width: 1024px) {
@@ -112,10 +113,10 @@
             align-items: center;
             gap: 14px;
             padding: 11px 16px;
-            border-radius: 10px;
+            border-radius: 8px; /* ROUND_EIGHT (8px) */
             font-size: 14px;
             font-weight: 500;
-            color: rgba(255,255,255,0.65);
+            color: #8a99af;
             transition: all 0.2s ease;
             cursor: pointer;
             text-decoration: none;
@@ -123,29 +124,30 @@
         }
 
         .nav-item:hover {
-            background: rgba(255,255,255,0.08);
-            color: rgba(255,255,255,0.9);
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
         }
 
         .nav-item.active {
-            background: #f59e0b;
-            color: white !important;
+            background: #2563eb !important;
+            color: #ffffff !important;
             font-weight: 700;
-            box-shadow: 0 4px 12px rgba(245,158,11,0.35);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
+            border-left: none;
         }
 
         .nav-item.active .material-symbols-outlined,
         .nav-item.active i {
-            color: white !important;
+            color: #ffffff !important;
         }
 
         .nav-item-danger {
-            color: rgba(248,113,113,0.8) !important;
+            color: #e11d48 !important; /* text-rose-600 */
         }
 
         .nav-item-danger:hover {
-            background: rgba(248,113,113,0.1) !important;
-            color: #f87171 !important;
+            background: #fff1f2 !important; /* bg-rose-50 */
+            color: #be123c !important; /* text-rose-700 */
         }
 
         /* ─── TOPBAR ─── */
@@ -187,7 +189,7 @@
             top: 0; left: 0;
             width: 100%;
             height: 3px;
-            background: #f59e0b;
+            background: #2563eb;
             z-index: 9999;
             transform: scaleX(0);
             transform-origin: left;
@@ -200,19 +202,23 @@
         /* ─── CARDS & COMPONENTS ─── */
         .card-neo {
             background: white;
-            border-radius: 16px;
-            border: 1px solid #f1f5f9;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-radius: 12px; /* rounded-xl (12px) */
+            border: 1px solid rgba(226, 232, 240, 0.6); /* border-slate-200/60 */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+            transition: all 0.3s ease;
+        }
+ 
+        .card-neo:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
         }
 
         .btn-neo {
             display: inline-flex;
             align-items: center;
-            border-radius: 12px;
-            font-weight: 800;
-            font-size: 10px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
+            border-radius: 8px; /* rounded-lg (8px) */
+            font-weight: 750;
+            font-size: 14px;
             transition: all 0.2s ease;
             cursor: pointer;
         }
@@ -225,7 +231,7 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
+            border-radius: 8px; /* ROUND_EIGHT (8px) */
             transition: all 0.25s ease;
         }
 
@@ -236,21 +242,28 @@
 
         .input-neo {
             width: 100%;
-            background: #f8fafc;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 0 14px;
-            font-size: 13px;
+            background: rgba(248, 250, 252, 0.5); /* bg-slate-50/50 */
+            border: 1px solid #e2e8f0;
+            border-radius: 8px; /* rounded-lg (8px) */
+            padding: 14px 16px; /* py-3.5 px-4 */
+            font-size: 14px;
             font-weight: 500;
-            color: #1e293b;
-            transition: all 0.2s ease;
+            color: #020617; /* primary-dark */
+            transition: all 0.3s ease;
             outline: none;
         }
 
-        .input-neo:focus {
-            border-color: #f59e0b;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(245,158,11,0.12);
+        /* Foco com Laranja Vibrante - Elite V8 */
+        input:focus, select:focus, textarea:focus {
+            border-color: #2563eb !important; /* focus:border-accent */
+            background-color: #ffffff !important; /* focus:bg-white */
+            outline: none !important;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15) !important; /* focus:ring-4 focus:ring-accent/15 */
+        }
+
+        /* Valores financeiros na cor laranja vibrante ao focar */
+        .mask-money:focus {
+            color: #2563eb !important;
         }
 
         .font-money {
@@ -269,7 +282,7 @@
         .print-header, .print-footer { display: none; }
     </style>
 </head>
-<body class="bg-[#f1f5f9] text-slate-800">
+<body class="bg-[#f8fafc] text-slate-800 font-sans">
 
     <!-- SPA Progress Bar -->
     <div id="spa-progress"></div>
@@ -288,14 +301,13 @@
     <aside id="sidebar">
 
         <!-- Logo -->
-        <div class="px-8 py-8 flex items-center gap-4 shrink-0">
-            <div class="w-12 h-12 bg-[#f59e0b] rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/30">
-                <span class="material-symbols-outlined text-white text-[28px]"
-                      style="font-variation-settings:'FILL' 1,'wght' 600">widgets</span>
+        <div class="px-6 py-6 flex items-center gap-3 shrink-0">
+            <div class="w-10 h-10 bg-[#2563eb] rounded-lg flex items-center justify-center shadow-md shadow-[#2563eb]/20">
+                <span class="text-white text-md font-black tracking-tighter">SAD</span>
             </div>
             <div class="flex flex-col">
-                <span class="text-[17px] font-black text-white tracking-tight leading-tight uppercase">Painel</span>
-                <span class="text-[9px] font-black text-[#f59e0b] tracking-[0.25em] uppercase mt-0.5">Administrativo</span>
+                <span class="text-[13px] font-bold text-white tracking-tight leading-none uppercase">SAD-BARS</span>
+                <span class="text-[8px] font-semibold text-slate-400 mt-1 uppercase tracking-wider">Metodologia Mista</span>
             </div>
         </div>
 
@@ -313,9 +325,9 @@
                 @foreach($menuCategories as $category)
                     @php
                         $isAlert = $category->name === 'CONTROLE DE CRISE';
-                        $catColor = $isAlert ? 'text-rose-400' : 'text-slate-500';
+                        $catColor = $isAlert ? 'text-rose-500' : 'text-slate-400';
                     @endphp
-                    <p class="px-4 pt-6 pb-3 text-[10px] font-black {{ $catColor }} uppercase tracking-[0.25em] opacity-80">
+                    <p class="px-4 pt-6 pb-3 text-[9px] font-bold {{ $catColor }} uppercase tracking-widest font-mono">
                         {{ $category->name }}
                     </p>
 
@@ -362,12 +374,14 @@
         </nav>
 
         <!-- Footer -->
-        <div class="px-6 pb-6 shrink-0">
-            <div class="p-4 bg-white/5 rounded-xl border border-white/8">
-                <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Versão 2.5.0</p>
-                <div class="flex items-center gap-2 mt-1">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                    <p class="text-[10px] text-white/40">Status: Conectado</p>
+        <div class="px-4 pb-4 shrink-0 mt-auto">
+            <div class="p-3 bg-[#0a0f1d] rounded-xl border border-white/5 flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-[#2563eb] flex items-center justify-center text-white font-bold text-xs font-mono">
+                    {{ strtoupper(substr(Auth::user()->name ?? 'HS', 0, 2)) }}
+                </div>
+                <div class="min-w-0">
+                    <p class="text-[11px] font-bold text-white truncate leading-none">{{ Auth::user()->name ?? 'Dra. Helena Souza' }}</p>
+                    <p class="text-[9px] text-slate-400 truncate mt-1">Gestora Subprefeitura</p>
                 </div>
             </div>
         </div>
@@ -383,40 +397,27 @@
             <span class="material-symbols-outlined text-slate-800 text-[24px]">menu</span>
         </button>
 
-        <!-- Page title -->
-        <div class="flex flex-col">
-            <h1 class="text-[18px] font-black text-slate-800 tracking-tight leading-tight uppercase">
-                @yield('title', 'Dashboard')
-            </h1>
-            <div class="hidden sm:flex items-center gap-2 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                <span class="text-[#f59e0b]">Sistema Padrão</span>
-                <span>›</span>
-                <span class="text-slate-400">@yield('title', 'Dashboard')</span>
+        <!-- Título e Subtítulos da Esquerda -->
+        <div class="flex flex-col gap-1 min-w-0">
+            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono leading-none">Sistema de Avaliação de Desempenho Misto</p>
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-[12px] font-extrabold text-slate-900 tracking-tight leading-tight uppercase font-mono">SAD-BARS Setor Público</span>
+                <span class="text-[9px] font-bold bg-slate-100 text-slate-650 px-2 py-0.5 rounded border border-slate-200 uppercase font-mono">Padrão Homologação</span>
             </div>
         </div>
 
-        <div class="ml-auto flex items-center gap-4">
-            <!-- Search (desktop) -->
-            <div class="hidden md:flex items-center gap-3 bg-slate-50 border border-gray-200 rounded-xl px-4 py-2
-                        focus-within:bg-slate-100 focus-within:border-[#f59e0b]/50 transition-all duration-300">
-                <span class="material-symbols-outlined text-slate-400 text-[18px]">search</span>
-                <input type="text"
-                       placeholder="Pesquisar no sistema..."
-                       class="bg-transparent border-none outline-none focus:ring-0 text-[12px] font-medium w-52 placeholder:text-slate-400 text-slate-700">
+        <!-- Direita: Informações do Avaliador e Servidor em Foco -->
+        <div class="ml-auto flex items-center gap-4 shrink-0">
+            <div class="text-right hidden md:block">
+                <p class="text-[9px] font-bold text-slate-450 uppercase tracking-wider font-mono leading-none">Avaliador de Carreira</p>
+                <div class="flex items-center gap-1.5 mt-1 justify-end">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    <p class="text-[10px] font-bold text-emerald-600 font-mono">Subprefeitura Ativa</p>
+                </div>
             </div>
 
-            <!-- User -->
-            <div class="flex items-center gap-3 pl-4 border-l border-gray-200">
-                <div class="text-right hidden sm:block">
-                    <p class="text-[13px] font-black text-slate-800 leading-none">{{ Auth::user()->name ?? 'Administrador' }}</p>
-                    <p class="text-[9px] font-bold text-[#f59e0b] mt-1 uppercase tracking-widest">{{ Auth::user()->role_label ?? 'Master' }}</p>
-                </div>
-                <div class="relative">
-                    <div class="w-10 h-10 rounded-xl bg-[#f59e0b] flex items-center justify-center text-white font-black text-sm shadow-lg shadow-amber-500/30 cursor-pointer">
-                        {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 2)) }}
-                    </div>
-                    <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full"></div>
-                </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 hidden sm:block">
+                <p class="text-[10px] text-slate-500 font-semibold leading-none font-sans">Servidor em Foco: <strong class="text-slate-800 font-bold">João Carlos da Silva</strong></p>
             </div>
         </div>
     </header>
@@ -426,13 +427,28 @@
     ═══════════════════════════════════════ -->
     <div id="main-wrapper">
         <div id="main-content"
-             class="p-6 md:p-10 max-w-[1600px] mx-auto w-full transition-opacity duration-300"
+             class="p-6 md:p-10 max-w-[1600px] mx-auto w-full transition-opacity duration-300 flex flex-col min-h-[calc(100vh-64px)]"
              hx-target="#main-content"
              hx-select="#main-content"
              hx-swap="innerHTML transition:true"
              hx-boost="true">
-            @yield('content')
-            {{ $slot ?? '' }}
+            <div class="flex-grow">
+                @yield('content')
+                {{ $slot ?? '' }}
+            </div>
+            
+            <!-- Rodapé Escuro da Imagem -->
+            <footer class="mt-10 bg-[#0f172a] text-slate-400 text-[10px] px-6 py-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 font-mono">
+                <div class="flex items-center gap-2">
+                    <span class="text-[#2563eb] font-bold">SAD-BARS</span>
+                    <span>•</span>
+                    <span>Desenvolvido conforme Diretrizes de Gestão de Desempenho Funcional e Desburocratização no Serviço Público.</span>
+                </div>
+                <div class="flex items-center gap-1.5 text-[#2563eb] font-bold">
+                    <span class="material-symbols-outlined text-[16px] text-[#2563eb]">verified_user</span>
+                    <span>Conformidade Jurídico-Administrativa</span>
+                </div>
+            </footer>
         </div>
     </div>
 
@@ -454,10 +470,21 @@
             if (window.innerWidth < 1024) closeSidebar();
         });
 
-        // Máscaras
+        // Configurações de Máscara dinâmica CPF/CNPJ
+        var cpfCnpjMascara = function (val) {
+            return val.replace(/\D/g, '').length <= 11 ? '000.000.000-009' : '00.000.000/0000-00';
+        },
+        cpfCnpjOptions = {
+            onKeyPress: function(val, e, field, options) {
+                field.mask(cpfCnpjMascara.apply({}, arguments), options);
+            }
+        };
+
+        // Aplicação Inicial de Máscaras
         $('.mask-money').mask('#.##0,00', {reverse: true});
         $('.mask-phone').mask('(00) 00000-0000');
         $('.mask-cpf').mask('000.000.000-00');
+        $('.mask-cpfcnpj').mask(cpfCnpjMascara, cpfCnpjOptions);
 
         // HTMX after swap
         document.addEventListener('htmx:afterSwap', function (evt) {
@@ -470,6 +497,7 @@
             $('.mask-money').mask('#.##0,00', {reverse: true});
             $('.mask-phone').mask('(00) 00000-0000');
             $('.mask-cpf').mask('000.000.000-00');
+            $('.mask-cpfcnpj').mask(cpfCnpjMascara, cpfCnpjOptions);
 
             if (window.innerWidth < 1024) closeSidebar();
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -488,5 +516,6 @@
         });
     });
     </script>
+    @stack('scripts')
 </body>
 </html>

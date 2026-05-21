@@ -27,6 +27,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // ----------------------------------------------------------
+    // MÓDULO DE AVALIAÇÃO DE DESEMPENHO (APD)
+    // ----------------------------------------------------------
+    Route::get('evaluation/{evaluated}', [\App\Http\Controllers\EvaluationController::class, 'create'])->name('evaluation.create');
+    Route::post('evaluation', [\App\Http\Controllers\EvaluationController::class, 'store'])->name('evaluation.store');
+
+    // Setup de Nova Avaliação
+    Route::get('evaluations/setup', [\App\Http\Controllers\EvaluationSetupController::class, 'create'])->name('evaluations.setup.create');
+    Route::post('evaluations/setup', [\App\Http\Controllers\EvaluationSetupController::class, 'store'])->name('evaluations.setup.store');
+    
+    // API Dropdown Dinâmico de Lotação
+    Route::get('api/servidores', [\App\Http\Controllers\EvaluationSetupController::class, 'getServidoresByLotacao'])->name('api.lotacao.servidores');
+    Route::get('api/servidores/{user}/detalhes', [\App\Http\Controllers\EvaluationSetupController::class, 'getServidorDetalhes'])->name('api.servidores.detalhes');
+
+    // Preenchimento e Submissão pelo ID da Avaliação (Rascunho)
+    Route::get('evaluations/{evaluation}/fill', [\App\Http\Controllers\EvaluationController::class, 'fill'])->name('evaluations.fill');
+    Route::post('evaluations/{evaluation}/submit', [\App\Http\Controllers\EvaluationController::class, 'submit'])->name('evaluations.submit');
+    Route::post('evaluation/incident', [\App\Http\Controllers\EvaluationController::class, 'storeIncident'])->name('evaluation.incident.store');
+
+    // ----------------------------------------------------------
     // MÓDULO DE ADMINISTRAÇÃO CORE (Apenas Administradores)
     // ----------------------------------------------------------
     Route::middleware('role:Admin')->prefix('admin')->group(function () {
@@ -60,6 +79,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
             $logs = \App\Models\AuditLog::with('user')->orderBy('created_at', 'desc')->paginate(30);
             return view('admin.audits.custom_index', compact('logs'));
         })->name('admin.logs.index');
+
+        // Gestão de Ciclos de Avaliação (APD)
+        Route::post('evaluation-cycles/{evaluation_cycle}/update-weights', [\App\Http\Controllers\Admin\EvaluationCycleController::class, 'updateWeights'])
+            ->name('admin.evaluation-cycles.update-weights');
+        Route::resource('evaluation-cycles', \App\Http\Controllers\Admin\EvaluationCycleController::class)->names('admin.evaluation-cycles');
+
+        // Gestão de Perguntas de Avaliação (APD)
+        Route::post('bars/generate-anchors', [\App\Http\Controllers\Admin\EvaluationQuestionController::class, 'generateAnchors'])
+            ->name('admin.bars.generate-anchors');
+        Route::resource('evaluation-questions', \App\Http\Controllers\Admin\EvaluationQuestionController::class)
+            ->only(['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'])
+            ->names('admin.evaluation-questions');
+        Route::post('evaluation-questions/{evaluation_question}/toggle', [\App\Http\Controllers\Admin\EvaluationQuestionController::class, 'toggle'])
+            ->name('admin.evaluation-questions.toggle');
+
+        // Resultados de Avaliações (APD)
+        Route::get('evaluation-results', [\App\Http\Controllers\Admin\EvaluationResultsController::class, 'index'])->name('admin.evaluation-results.index');
+        Route::get('evaluation-results/{evaluation}', [\App\Http\Controllers\Admin\EvaluationResultsController::class, 'show'])->name('admin.evaluation-results.show');
+        Route::post('evaluation-results/{evaluation}/goals', [\App\Http\Controllers\Admin\EvaluationResultsController::class, 'updateGoals'])->name('admin.evaluation-results.update-goals');
 
         // Auditoria Forense Geral (Spatie Audits se configurado)
         Route::get('audits', [AuditController::class, 'index'])->name('admin.audits.index');

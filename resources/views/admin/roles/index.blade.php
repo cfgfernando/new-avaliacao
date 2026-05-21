@@ -13,12 +13,12 @@
     </div>
 
     @if(session('success'))
-        <div class="bg-emerald-50 text-emerald-600 p-4 rounded-2xl mb-6 font-bold text-sm border border-emerald-100 flex items-center gap-3">
+        <div class="bg-emerald-50 text-emerald-600 p-4 rounded-xl mb-6 font-bold text-sm border border-emerald-100 flex items-center gap-3">
             <i class="fas fa-check-circle"></i> {{ session('success') }}
         </div>
     @endif
 
-    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden p-6">
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden p-6">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Arraste para ordenar a hierarquia visual</h3>
             <span class="text-[10px] text-slate-300 font-bold bg-slate-50 px-3 py-1 rounded-full uppercase tracking-widest border border-slate-100">Ordem salva automaticamente</span>
@@ -53,7 +53,7 @@
                     </div>
                 </li>
             @empty
-                <li class="p-8 text-center text-slate-400 text-sm font-semibold border border-dashed border-slate-200 rounded-2xl">
+                <li class="p-8 text-center text-slate-400 text-sm font-semibold border border-dashed border-slate-200 rounded-xl">
                     Nenhum perfil encontrado.
                 </li>
             @endforelse

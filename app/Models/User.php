@@ -22,6 +22,12 @@ class User extends Authenticatable
         'role',
         'cell_id',
         'node_id',
+        'registration_number',
+        'cargo',
+        'lotacao',
+        'evaluation_group',
+        'has_active_pad',
+        'evaluator_id',
     ];
 
     protected $hidden = [
@@ -32,11 +38,22 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password'          => 'hashed',
+        'has_active_pad'    => 'boolean',
     ];
 
     // =========================================================================
     // RELACIONAMENTOS
     // =========================================================================
+
+    public function evaluations(): HasMany
+    {
+        return $this->hasMany(Evaluation::class, 'evaluated_id');
+    }
+
+    public function evaluationsAsEvaluator(): HasMany
+    {
+        return $this->hasMany(Evaluation::class, 'evaluator_id');
+    }
 
     public function cell(): BelongsTo
     {

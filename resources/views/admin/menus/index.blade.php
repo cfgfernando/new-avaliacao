@@ -11,7 +11,7 @@
         justify-content: center;
         height: 100px;
         border: 2px dashed #e2e8f0;
-        border-radius: 1rem;
+        border-radius: 0.75rem;
         color: #94a3b8;
         font-size: 10px;
         font-weight: 900;
@@ -41,8 +41,8 @@
     <!-- Categories Grid -->
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 categories-grid">
         @foreach($categories as $category)
-            <div class="card-neo !p-0 overflow-hidden" data-category-id="{{ $category->id }}">
-                <div class="bg-slate-50 border-b border-slate-100 p-5 flex justify-between items-center">
+            <div class="card-neo rounded-xl border border-slate-200 !p-0 overflow-hidden" data-category-id="{{ $category->id }}">
+                <div class="bg-slate-50 border-b border-slate-200 p-5 flex justify-between items-center">
                     <div class="flex items-center gap-3">
                         <div class="category-handle cursor-grab active:cursor-grabbing w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-accent hover:bg-accent hover:text-white transition-all">
                             <i class="fas fa-layer-group text-xs"></i>
@@ -52,7 +52,7 @@
 
                     <div class="flex items-center gap-3">
                         <!-- Numeric Order Input -->
-                        <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-slate-100 shadow-sm">
+                        <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm">
                             <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Ordem</span>
                             <input type="number" 
                                    value="{{ $category->order }}" 
@@ -70,14 +70,14 @@
                 </div>
                 
                 <div class="p-4">
-                    <ul class="sortable-list min-h-[120px] space-y-3 p-2 rounded-2xl bg-slate-50/50" data-category-id="{{ $category->id }}">
+                    <ul class="sortable-list min-h-[120px] space-y-3 p-2 rounded-xl bg-slate-50/50" data-category-id="{{ $category->id }}">
                         @foreach($category->items as $item)
-                            <li class="group bg-white border border-slate-100 p-4 rounded-xl flex items-center justify-between shadow-sm hover:shadow-md hover:border-accent/30 transition-all duration-300 cursor-default {{ !$item->is_active ? 'opacity-50 grayscale bg-slate-50' : '' }}" data-id="{{ $item->id }}">
+                            <li class="group bg-white border border-slate-200 p-4 rounded-xl flex items-center justify-between shadow-sm hover:shadow-md hover:border-accent/30 transition-all duration-300 cursor-default {{ !$item->is_active ? 'opacity-50 grayscale bg-slate-50' : '' }}" data-id="{{ $item->id }}">
                                 <div class="flex items-center gap-4">
                                     <div class="drag-handle cursor-grab active:cursor-grabbing text-slate-300 group-hover:text-accent transition-colors p-1">
                                         <i class="fas fa-grip-vertical"></i>
                                     </div>
-                                    <div class="w-10 h-10 rounded-xl {{ $item->is_active ? 'bg-slate-50 text-slate-800 group-hover:bg-accent group-hover:text-white' : 'bg-slate-200 text-slate-400' }} flex items-center justify-center transition-all duration-500">
+                                    <div class="w-10 h-10 rounded-lg {{ $item->is_active ? 'bg-slate-50 text-slate-800 group-hover:bg-accent group-hover:text-white' : 'bg-slate-200 text-slate-400' }} flex items-center justify-center transition-all duration-500">
                                         <i class="{{ $item->icon ?: 'fas fa-link' }}"></i>
                                     </div>
                                     <div>
@@ -121,7 +121,7 @@
 @push('modals')
 <!-- Modal Novo Item -->
 <div id="itemModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto custom-scrollbar">
-    <div class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-lg m-auto overflow-hidden animate-reveal-up border border-white/20 flex flex-col">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg m-auto overflow-hidden animate-reveal-up border border-slate-200 flex flex-col">
         <div class="p-8 border-b border-slate-100 flex justify-between items-center">
             <h3 id="itemModalTitle" class="text-xl font-black text-slate-800 uppercase tracking-tight">Novo Item de Menu</h3>
             <button onclick="closeModal('itemModal')" class="text-slate-400 hover:text-slate-800"><i class="fas fa-times"></i></button>
@@ -130,7 +130,7 @@
             @csrf
             <input type="hidden" name="_method" id="itemMethod" value="POST">
             <div>
-                <label class="block text-[10px] font-black text-primary-light uppercase tracking-[0.2em] mb-2 px-1">Categoria Pai</label>
+                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-2 px-1">Categoria Pai</label>
                 <select name="category_id" id="itemCategory" class="input-neo">
                     @foreach($categories as $cat)
                         <option value="{{ $cat->id }}">{{ $cat->name }}</option>
@@ -138,23 +138,23 @@
                 </select>
             </div>
             <div>
-                <label class="block text-[10px] font-black text-primary-light uppercase tracking-[0.2em] mb-2 px-1">Título do Link</label>
+                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-2 px-1">Título do Link</label>
                 <input type="text" name="title" id="itemTitle" required class="input-neo" placeholder="Ex: Membros">
             </div>
             <div class="grid grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-[10px] font-black text-primary-light uppercase tracking-[0.2em] mb-2 px-1">URL / Rota</label>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-2 px-1">URL / Rota</label>
                     <input type="text" name="url" id="itemUrl" required class="input-neo" placeholder="/members">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-black text-primary-light uppercase tracking-[0.2em] mb-2 px-1">Ícone (FontAwesome)</label>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-2 px-1">Ícone (FontAwesome)</label>
                     <input type="text" name="icon" id="itemIcon" class="input-neo" placeholder="fas fa-users">
                 </div>
             </div>
             
             <!-- Sugestões de Ícones -->
-            <div class="bg-slate-50 p-4 rounded-2xl">
-                <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">Sugestões de Ícones</label>
+            <div class="bg-slate-50 p-4 rounded-xl">
+                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">Sugestões de Ícones</label>
                 <div class="grid grid-cols-6 gap-2">
                     @php
                         $suggestedIcons = [
@@ -179,7 +179,7 @@
 
 <!-- Modal Nova/Editar Categoria -->
 <div id="categoryModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto custom-scrollbar">
-    <div class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-lg m-auto overflow-hidden animate-reveal-up border border-white/20 flex flex-col">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg m-auto overflow-hidden animate-reveal-up border border-slate-200 flex flex-col">
         <div class="p-8 border-b border-slate-100 flex justify-between items-center">
             <h3 id="categoryModalTitle" class="text-xl font-black text-slate-800 uppercase tracking-tight">Nova Categoria</h3>
             <button onclick="closeModal('categoryModal')" class="text-slate-400 hover:text-slate-800"><i class="fas fa-times"></i></button>
@@ -188,15 +188,15 @@
             @csrf
             <input type="hidden" name="_method" id="categoryMethod" value="POST">
             <div>
-                <label class="block text-[10px] font-black text-primary-light uppercase tracking-[0.2em] mb-2 px-1">Nome da Categoria</label>
+                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-2 px-1">Nome da Categoria</label>
                 <input type="text" name="name" id="categoryName" required class="input-neo" placeholder="Ex: Gestão Financeira">
             </div>
             <div>
-                <label class="block text-[10px] font-black text-primary-light uppercase tracking-[0.2em] mb-2 px-1">Ordem de Exibição</label>
+                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-2 px-1">Ordem de Exibição</label>
                 <input type="number" name="order" id="categoryOrder" required class="input-neo" placeholder="Ex: 1">
             </div>
             <div class="pt-4">
-                <button type="submit" id="categorySubmitBtn" class="btn-neo bg-slate-800 text-white w-full py-4 text-sm">CRIAR CATEGORIA</button>
+                <button type="submit" id="categorySubmitBtn" class="btn-neo bg-slate-800 text-white w-full py-4 text-sm shadow-md transition-colors">CRIAR CATEGORIA</button>
             </div>
         </form>
     </div>
@@ -288,7 +288,7 @@
             icon: 'error',
             title: 'Erro!',
             text: message,
-            confirmButtonColor: '#0ea5e9'
+            confirmButtonColor: '#2563eb'
         });
     }
 
@@ -382,9 +382,9 @@
             background: '#ffffff',
             customClass: {
                 title: 'text-slate-800 font-black uppercase tracking-tight',
-                popup: 'rounded-[32px] border border-slate-100 shadow-2xl',
-                confirmButton: 'btn-neo bg-rose-500 text-white hover:bg-rose-600 px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] mx-2',
-                cancelButton: 'btn-neo bg-slate-100 text-slate-500 hover:bg-slate-200 px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] mx-2'
+                popup: 'rounded-xl border border-slate-200 shadow-2xl',
+                confirmButton: 'btn-neo bg-rose-500 text-white hover:bg-rose-600 px-6 py-3 rounded-lg font-black uppercase tracking-widest text-[10px] mx-2 shadow-md shadow-rose-500/10',
+                cancelButton: 'btn-neo bg-slate-100 text-slate-500 hover:bg-slate-200 px-6 py-3 rounded-lg font-black uppercase tracking-widest text-[10px] mx-2'
             },
             buttonsStyling: false
         }).then((result) => {

@@ -18,22 +18,22 @@
         @csrf
 
         <!-- Cabeçalho do Formulário -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mb-6">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-2">Nome do Perfil <span class="text-rose-500">*</span></label>
-                    <input type="text" name="name" value="{{ old('name') }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Ex: Administrador">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-2">Nome do Perfil <span class="text-rose-500">*</span></label>
+                    <input type="text" name="name" value="{{ old('name') }}" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Ex: Administrador">
                     @error('name') <span class="text-xs text-rose-500 font-bold mt-1 block">{{ $message }}</span> @enderror
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-2">Descrição</label>
-                    <input type="text" name="description" value="{{ old('description') }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Ex: Acesso total ao sistema">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-2">Descrição</label>
+                    <input type="text" name="description" value="{{ old('description') }}" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Ex: Acesso total ao sistema">
                 </div>
             </div>
         </div>
 
         <!-- Matriz de Permissões -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mb-6">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
             <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
                 <div class="flex items-center gap-2">
                     <i class="fas fa-th text-slate-400"></i>
@@ -56,8 +56,8 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 @foreach($modules as $moduleName => $modulePerms)
-                <div class="border border-slate-100 rounded-xl overflow-hidden module-group">
-                    <div class="bg-slate-50 px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                <div class="border border-slate-200 rounded-xl overflow-hidden module-group">
+                    <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
                         <span class="text-xs font-bold text-slate-700">{{ $moduleName }}</span>
                         <label class="flex items-center gap-2 cursor-pointer">
                             <div class="relative">
@@ -106,7 +106,7 @@
                 <span class="text-xs font-bold text-slate-700">Perfil Ativo</span>
             </label>
 
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 px-6 rounded-lg transition-colors flex items-center gap-2">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-md shadow-blue-500/10 transition-colors flex items-center gap-2">
                 <i class="fas fa-plus"></i> Criar Perfil
             </button>
         </div>

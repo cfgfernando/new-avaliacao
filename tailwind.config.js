@@ -13,20 +13,24 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Libre Franklin', ...defaultTheme.fontFamily.sans],
+                sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                mono: ['JetBrains Mono', ...defaultTheme.fontFamily.mono],
             },
             colors: {
                 primary: {
-                    DEFAULT: '#1c2434', // Sidebar Bg (Deep Navy)
-                    dark: '#111827',    // Deep Dark Text
-                    light: '#8a99af',   // Sidebar Inactive Text
+                    DEFAULT: '#0f172a', // Sidebar Background (Navy Profundo)
+                    dark: '#020617',    // Texto Principal / Títulos (Contraste Máximo)
+                    light: '#94a3b8',   // Texto Secundário / Inativo
                 },
                 accent: {
-                    DEFAULT: '#f59e0b', // Amber/Orange
-                    hover: '#d97706',   // Darker Orange
+                    DEFAULT: '#2563eb', // Azul Royal (Ações Principais)
+                    hover: '#1d4ed8',   // Hover Azul Royal
                 },
                 background: {
-                    DEFAULT: '#f1f5f9', // Main Content Bg (Off-white)
+                    DEFAULT: '#f8fafc', // Fundo Principal da Aplicação
+                },
+                rose: {
+                    150: '#ffe4e6',     // Light custom rose
                 }
             },
             boxShadow: {
