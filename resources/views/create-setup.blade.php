@@ -578,17 +578,8 @@ $(document).ready(function() {
             $('#incidente-positivo-count').text(data.incidents.positive);
             $('#incidente-negativo-count').text(data.incidents.negative);
 
-            // Seleção automática da categoria correspondente
-            if (group) {
-                var targetRadio = $('.radio-categoria[value="' + group + '"]');
-                if (targetRadio.length === 0 && (group === 'geral' || group === 'PEGP')) {
-                    targetRadio = $('.radio-categoria[value="geral_gestao"]');
-                }
-                
-                if (targetRadio.length > 0) {
-                    targetRadio.prop('checked', true).trigger('change');
-                }
-            }
+            // Seleção automática da categoria baseada no evaluation_group do servidor (via API)
+            applyCategoria(data.user.evaluation_group);
 
             $('#apoio-servidor-info').removeClass('opacity-50');
             validateStep2();
@@ -612,7 +603,49 @@ $(document).ready(function() {
         $('#resumo-servidor').text('-');
     }
 
-    // 5. Validações das Etapas
+    // Aplica a categoria automaticamente com base no grupo funcional do servidor
+    function applyCategoria(group) {
+        if (!group) return;
+
+        // Mapear groups para valores dos radios
+        var radioValue = group;
+        if (group === 'PEGP' || group === 'geral_gestao') {
+            radioValue = 'geral_gestao';
+        } else if (group === 'geral') {
+            // 'geral' pode ser quadro geral OU gestao — priorizamos 'geral' (Quadro Geral)
+            radioValue = 'geral';
+        }
+
+        var targetRadio = $('.radio-categoria[value="' + radioValue + '"]');
+        // Fallback: se nao encontrou, tenta geral_gestao
+        if (targetRadio.length === 0 && (group === 'geral' || group === 'PEGP')) {
+            targetRadio = $('.radio-categoria[value="geral_gestao"]');
+        }
+
+        if (targetRadio.length > 0) {
+            // Marcar o radio
+            targetRadio.prop('checked', true);
+            // Atualizar visuais dos cards
+            $('.radio-categoria').closest('label').removeClass('border-blue-500 ring-2 ring-blue-100').addClass('border-slate-200');
+            targetRadio.closest('label').removeClass('border-slate-200').addClass('border-blue-500 ring-2 ring-blue-100');
+            // Atualizar o campo hidden e o resumo
+            var val = targetRadio.val();
+            if (val === 'geral_gestao') {
+                $('#categoria').val('geral');
+                $('#resumo-categoria').text('Gestão e PEGP');
+            } else {
+                $('#categoria').val(val);
+                var categoryTexts = {
+                    'geral':    'Quadro Geral',
+                    'saude':    'Saúde Pública',
+                    'guarda':   'Segurança',
+                    'educacao': 'Educação Básica'
+                };
+                $('#resumo-categoria').text(categoryTexts[val] || val);
+            }
+        }
+    }
+
     // Cada função só atua quando o passo correspondente está ativo,
     // evitando que callbacks AJAX de outros passos interfiram no estado do botão.
     function validateStep1() {
@@ -673,6 +706,18 @@ $(document).ready(function() {
             // Injetar dados do resumo
             $('#resumo-ciclo').text(authAdminOrReadOnlyCycleName());
             $('#resumo-lotacao').text($('#lotacao').val());
+
+            // Re-aplicar visualmente a categoria ja auto-selecionada no Passo 2
+            var categoriaAtual = $('#categoria').val();
+            if (categoriaAtual) {
+                var radioAtual = categoriaAtual === 'geral' 
+                    ? $('.radio-categoria:checked') 
+                    : $('.radio-categoria[value="' + categoriaAtual + '"]');
+                if (radioAtual.length > 0) {
+                    $('.radio-categoria').closest('label').removeClass('border-blue-500 ring-2 ring-blue-100').addClass('border-slate-200');
+                    radioAtual.closest('label').removeClass('border-slate-200').addClass('border-blue-500 ring-2 ring-blue-100');
+                }
+            }
 
             // Atualizar Stepper UI
             $('.step-indicator[data-step="3"]').addClass('active').find('span').removeClass('bg-slate-100 text-slate-400').addClass('bg-blue-600 text-white border-blue-50');

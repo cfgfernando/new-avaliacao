@@ -120,11 +120,12 @@ class EvaluationSetupController extends Controller
 
         return response()->json([
             'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'cargo' => $user->cargo ?? 'Não informado',
-                'lotacao' => $user->lotacao ?? 'Não informado',
-                'avatar' => 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&background=0D8ABC&color=fff',
+                'id'               => $user->id,
+                'name'             => $user->name,
+                'cargo'            => $user->cargo ?? 'Não informado',
+                'lotacao'          => $user->lotacao ?? 'Não informado',
+                'evaluation_group' => $user->evaluation_group ?? 'geral',
+                'avatar'           => 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&background=0D8ABC&color=fff',
             ],
             'goals' => $goals,
             'incidents' => [
