@@ -7,13 +7,39 @@
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-200 pb-5">
         <div>
-            <h1 class="text-3xl font-bold text-[#0f172b] tracking-tight">Inicializar Nova Avaliação Regulamentar</h1>
-            <p class="text-sm text-slate-500 mt-1 font-medium">Configure os parâmetros do processo avaliativo. O painel de apoio à direita carregará o histórico funcional do servidor.</p>
+            <h1 class="text-3xl font-bold text-[#0f172b] tracking-tight font-sans">Inicializar Nova Avaliação Regulamentar</h1>
+            <p class="text-sm text-slate-500 mt-1 font-medium font-sans">Siga as etapas do assistente para configurar os parâmetros da avaliação e iniciar o processo.</p>
         </div>
         <div class="mt-4 md:mt-0 flex gap-2">
-            <a href="{{ route('dashboard') }}" class="inline-flex items-center px-4 py-2 text-xs font-bold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all">
+            <a href="{{ route('dashboard') }}" class="inline-flex items-center px-4 py-2 text-xs font-bold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all font-sans">
                 <i class="fas fa-arrow-left mr-2"></i> Voltar ao Dashboard
             </a>
+        </div>
+    </div>
+
+    <!-- Stepper Progress Indicator -->
+    <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm max-w-4xl mx-auto">
+        <div class="flex items-center justify-between max-w-xl mx-auto relative">
+            <!-- Linha de progresso de fundo -->
+            <div class="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-1 bg-slate-100 rounded-full z-0"></div>
+            <!-- Linha de progresso ativa -->
+            <div id="stepper-progress-line" class="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-blue-600 rounded-full z-0 transition-all duration-300 w-0"></div>
+
+            <!-- Passo 1 -->
+            <div class="z-10 text-center flex flex-col items-center step-indicator active" data-step="1">
+                <span class="w-8 h-8 rounded-full bg-blue-600 text-white font-bold text-xs flex items-center justify-center border-4 border-blue-50 transition-all duration-300 font-mono">1</span>
+                <span class="text-[9px] font-bold text-slate-700 uppercase tracking-wider font-mono mt-1.5 bg-white px-2">Parâmetros</span>
+            </div>
+            <!-- Passo 2 -->
+            <div class="z-10 text-center flex flex-col items-center step-indicator" data-step="2">
+                <span class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 font-bold text-xs flex items-center justify-center border-4 border-white transition-all duration-300 font-mono font-medium">2</span>
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono mt-1.5 bg-white px-2">Servidor</span>
+            </div>
+            <!-- Passo 3 -->
+            <div class="z-10 text-center flex flex-col items-center step-indicator" data-step="3">
+                <span class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 font-bold text-xs flex items-center justify-center border-4 border-white transition-all duration-300 font-mono font-medium">3</span>
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono mt-1.5 bg-white px-2">Finalização</span>
+            </div>
         </div>
     </div>
 
@@ -24,171 +50,255 @@
         <div class="lg:col-span-7">
             <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm h-full flex flex-col justify-between space-y-6">
                 
-                <form action="{{ route('evaluations.setup.store') }}" method="POST" id="evaluation-setup-form" class="space-y-5">
+                <form action="{{ route('evaluations.setup.store') }}" method="POST" id="evaluation-setup-form" class="space-y-5 flex-1 flex flex-col justify-between">
                     @csrf
+                    <input type="hidden" name="categoria" id="categoria" value="">
                     
-                    <div class="space-y-4">
-                        <!-- 1. Ciclo Avaliativo -->
-                        <div>
-                            <label for="cycle_id" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-2">Ciclo Avaliativo <span class="text-rose-500">*</span></label>
-                            @if(auth()->user()->isAdmin())
-                                <select name="cycle_id" id="cycle_id" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm font-semibold text-slate-800 focus:border-blue-500 focus:ring-0 outline-none">
-                                    @foreach($cycles as $cycle)
-                                        <option value="{{ $cycle->id }}" {{ $cycle->status === 'active' ? 'selected' : '' }}>
-                                            {{ $cycle->name }} {{ $cycle->status === 'active' ? '(Ciclo Vigente)' : '' }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            @else
-                                @php $activeCycle = $cycles->first(); @endphp
-                                <input type="hidden" name="cycle_id" id="cycle_id" value="{{ $activeCycle?->id }}">
-                                <input type="text" value="{{ $activeCycle?->name ?? 'Nenhum ciclo ativo' }}" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-500 cursor-not-allowed" readonly>
-                                <p class="mt-1 text-[10px] text-slate-400">Restrito ao ciclo avaliativo vigente para a sua Chefia Imediata.</p>
-                            @endif
-                            @error('cycle_id')
-                                <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- 2. Secretaria / Lotação -->
-                        <div>
-                            <label for="lotacao" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-2">Secretaria / Lotação de Exercício <span class="text-rose-500">*</span></label>
-                            @if(auth()->user()->isAdmin())
-                                <select name="lotacao" id="lotacao" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm font-semibold text-slate-800 focus:border-blue-500 focus:ring-0 outline-none">
-                                    <option value="">Selecione uma secretaria/lotação...</option>
-                                    @foreach($lotacoes as $lot)
-                                        <option value="{{ $lot }}">{{ $lot }}</option>
-                                    @endforeach
-                                </select>
-                            @else
-                                @php $chefiaLotacao = $lotacoes->first(); @endphp
-                                <input type="hidden" name="lotacao" id="lotacao" value="{{ $chefiaLotacao }}">
-                                <input type="text" value="{{ $chefiaLotacao }}" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-500 cursor-not-allowed" readonly>
-                                <p class="mt-1 text-[10px] text-slate-400">Limitado à sua secretaria/lotação funcional.</p>
-                            @endif
-                            @error('lotacao')
-                                <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- 3. Servidor Avaliado -->
-                        <div>
-                            <label for="evaluated_id" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-2">Servidor Avaliado <span class="text-rose-500">*</span></label>
-                            <select name="evaluated_id" id="evaluated_id" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-800 focus:border-blue-500 focus:ring-0 outline-none" disabled>
-                                <option value="">Selecione primeiro uma lotação...</option>
-                            </select>
-                            <p id="loading-servidores" class="mt-1.5 text-xs text-blue-600 font-medium hidden items-center gap-1.5 animate-pulse">
-                                <i class="fas fa-spinner fa-spin"></i> Carregando servidores ativos da lotação...
-                            </p>
-                            @error('evaluated_id')
-                                <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- 4. Categoria Regulamentar (5 Cards de Rádio Customizados) -->
-                        <div>
-                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-3">Categoria Regulamentar (Escala BARS correspondente) <span class="text-rose-500">*</span></label>
-                            <input type="hidden" name="categoria" id="categoria" value="">
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3" id="radio-categoria-container">
-                                <!-- Card 1: Geral -->
-                                <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all select-none group focus-within:ring-2 focus-within:ring-blue-100" id="card-radio-geral">
-                                    <input type="radio" name="temp_categoria" value="geral" class="sr-only radio-categoria">
-                                    <div class="flex items-start gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-all">
-                                            <i class="fas fa-users text-sm"></i>
-                                        </div>
-                                        <div>
-                                            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide">Quadro Geral</h4>
-                                            <p class="text-[10px] text-slate-500 mt-1 leading-normal">Carreira técnica geral, administrativa e operacional.</p>
-                                        </div>
-                                    </div>
-                                </label>
-
-                                <!-- Card 2: Saúde -->
-                                <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all select-none group focus-within:ring-2 focus-within:ring-blue-100" id="card-radio-saude">
-                                    <input type="radio" name="temp_categoria" value="saude" class="sr-only radio-categoria">
-                                    <div class="flex items-start gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-all">
-                                            <i class="fas fa-heartbeat text-sm"></i>
-                                        </div>
-                                        <div>
-                                            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide">Saúde Pública</h4>
-                                            <p class="text-[10px] text-slate-500 mt-1 leading-normal">Médicos, enfermeiros, técnicos e agentes de saúde.</p>
-                                        </div>
-                                    </div>
-                                </label>
-
-                                <!-- Card 3: Guarda -->
-                                <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all select-none group focus-within:ring-2 focus-within:ring-blue-100" id="card-radio-guarda">
-                                    <input type="radio" name="temp_categoria" value="guarda" class="sr-only radio-categoria">
-                                    <div class="flex items-start gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-all">
-                                            <i class="fas fa-shield-alt text-sm"></i>
-                                        </div>
-                                        <div>
-                                            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide">Segurança</h4>
-                                            <p class="text-[10px] text-slate-500 mt-1 leading-normal">GMs, patrulheiros, inspetores e agentes urbanos.</p>
-                                        </div>
-                                    </div>
-                                </label>
-
-                                <!-- Card 4: Educação -->
-                                <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all select-none group focus-within:ring-2 focus-within:ring-blue-100" id="card-radio-educacao">
-                                    <input type="radio" name="temp_categoria" value="educacao" class="sr-only radio-categoria">
-                                    <div class="flex items-start gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-all">
-                                            <i class="fas fa-graduation-cap text-sm"></i>
-                                        </div>
-                                        <div>
-                                            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide">Educação Básica</h4>
-                                            <p class="text-[10px] text-slate-500 mt-1 leading-normal">Professores, educadores e pedagogos escolares.</p>
-                                        </div>
-                                    </div>
-                                </label>
-
-                                <!-- Card 5: Gestão Governamental (Mapeado como 'geral') -->
-                                <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all select-none group focus-within:ring-2 focus-within:ring-blue-100" id="card-radio-gestao">
-                                    <input type="radio" name="temp_categoria" value="geral_gestao" class="sr-only radio-categoria">
-                                    <div class="flex items-start gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-all">
-                                            <i class="fas fa-briefcase text-sm"></i>
-                                        </div>
-                                        <div>
-                                            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide">Gestão e PEGP</h4>
-                                            <p class="text-[10px] text-slate-500 mt-1 leading-normal">Especialistas em gestão pública e executivos.</p>
-                                        </div>
-                                    </div>
-                                </label>
+                    <div class="space-y-6 flex-1">
+                        
+                        {{-- ==========================================
+                             PASSO 1: PARÂMETROS GERAIS (CICLO / LOTAÇÃO)
+                             ========================================== --}}
+                        <div id="step-1-content" class="step-content space-y-5">
+                            <div class="border-b border-slate-100 pb-3 mb-4">
+                                <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider font-sans">Passo 1: Ciclo & Lotação</h2>
+                                <p class="text-xs text-slate-500 font-medium font-sans">Selecione o ciclo de avaliação vigente e sua secretaria/lotação funcional.</p>
                             </div>
-                            @error('categoria')
-                                <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
-                            @enderror
+
+                            <!-- 1. Ciclo Avaliativo -->
+                            <div>
+                                <label for="cycle_id" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-2">Ciclo Avaliativo <span class="text-rose-500">*</span></label>
+                                @if(auth()->user()->isAdmin())
+                                    <select name="cycle_id" id="cycle_id" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-800 focus:border-blue-500 focus:ring-0 focus:bg-white outline-none">
+                                        @foreach($cycles as $cycle)
+                                            <option value="{{ $cycle->id }}" data-block-on-pad="{{ $cycle->block_on_pad ? '1' : '0' }}" {{ $cycle->status === 'active' ? 'selected' : '' }}>
+                                                {{ $cycle->name }} {{ $cycle->status === 'active' ? '(Ciclo Vigente)' : '' }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                @else
+                                    @php $activeCycle = $cycles->first(); @endphp
+                                    <input type="hidden" name="cycle_id" id="cycle_id" value="{{ $activeCycle?->id }}" data-block-on-pad="{{ $activeCycle?->block_on_pad ? '1' : '0' }}">
+                                    <input type="text" value="{{ $activeCycle?->name ?? 'Nenhum ciclo ativo' }}" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-500 cursor-not-allowed" readonly>
+                                    <p class="mt-1 text-[10px] text-slate-400 font-sans">Restrito ao ciclo avaliativo vigente para a sua Chefia Imediata.</p>
+                                @endif
+                                @error('cycle_id')
+                                    <p class="mt-1 text-xs text-rose-600 font-medium font-sans">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- 2. Secretaria / Lotação -->
+                            <div>
+                                <label for="lotacao" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-2">Secretaria / Lotação de Exercício <span class="text-rose-500">*</span></label>
+                                @if(auth()->user()->isAdmin())
+                                    <select name="lotacao" id="lotacao" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-800 focus:border-blue-500 focus:ring-0 focus:bg-white outline-none">
+                                        <option value="">Selecione uma secretaria/lotação...</option>
+                                        @foreach($lotacoes as $lot)
+                                            <option value="{{ $lot }}">{{ $lot }}</option>
+                                        @endforeach
+                                    </select>
+                                @else
+                                    @php $chefiaLotacao = $lotacoes->first(); @endphp
+                                    <input type="hidden" name="lotacao" id="lotacao" value="{{ $chefiaLotacao }}">
+                                    <input type="text" value="{{ $chefiaLotacao }}" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-500 cursor-not-allowed" readonly>
+                                    <p class="mt-1 text-[10px] text-slate-400 font-sans">Limitado à sua secretaria/lotação funcional.</p>
+                                @endif
+                                @error('lotacao')
+                                    <p class="mt-1 text-xs text-rose-600 font-medium font-sans">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
 
-                        <!-- 5. Avaliador Portador de Fé Pública -->
-                        <div class="pt-2">
-                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-2">Avaliador Responsável (Fé Pública)</label>
-                            <div class="flex items-center gap-3 bg-slate-50 rounded-xl border border-slate-200 p-4">
-                                <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 border border-blue-200 font-bold text-xs flex items-center justify-center font-mono">
-                                    {{ strtoupper(substr(Auth::user()->name ?? 'RH', 0, 2)) }}
+                        {{-- ==========================================
+                             PASSO 2: SELEÇÃO DE SERVIDOR
+                             ========================================== --}}
+                        <div id="step-2-content" class="step-content space-y-5 hidden">
+                            <div class="border-b border-slate-100 pb-3 mb-4">
+                                <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider font-sans">Passo 2: Servidor Avaliado</h2>
+                                <p class="text-xs text-slate-500 font-medium font-sans">Selecione o servidor ativo para avaliar. O painel à direita carregará as metas e incidentes funcionais do mesmo.</p>
+                            </div>
+
+                            <!-- 3. Servidor Avaliado -->
+                            <div>
+                                <label for="evaluated_id" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-2">Servidor Avaliado <span class="text-rose-500">*</span></label>
+                                <select name="evaluated_id" id="evaluated_id" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-800 focus:border-blue-500 focus:ring-0 focus:bg-white outline-none" disabled>
+                                    <option value="">Selecione primeiro uma lotação...</option>
+                                </select>
+                                <p id="loading-servidores" class="mt-1.5 text-xs text-blue-600 font-medium hidden items-center gap-1.5 animate-pulse font-sans">
+                                    <i class="fas fa-spinner fa-spin"></i> Carregando servidores ativos da lotação...
+                                </p>
+                                @error('evaluated_id')
+                                    <p class="mt-1 text-xs text-rose-600 font-medium font-sans">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Alertas de PAD (Preenchidos via JavaScript) -->
+                            <div id="pad-warning-container" class="hidden">
+                                <!-- Bloqueio Rígido -->
+                                <div id="pad-block-alert" class="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-xs font-medium space-y-2 hidden">
+                                    <div class="flex items-center gap-2 text-rose-700 font-bold uppercase tracking-wider text-[10px] font-mono">
+                                        <i class="fas fa-exclamation-triangle text-sm"></i> AVALIAÇÃO BLOQUEADA PELO RH
+                                    </div>
+                                    <p class="font-sans leading-relaxed">Este servidor responde a um Processo Administrativo Disciplinar (PAD) ativo. De acordo com as diretrizes da CAPD e a parametrização do ciclo de avaliação, o início da avaliação está temporariamente suspenso.</p>
                                 </div>
-                                <div>
-                                    <span class="text-xs font-bold text-slate-800 block">{{ Auth::user()->name ?? 'Departamento de RH' }}</span>
-                                    <span class="text-[10px] text-slate-500 block uppercase mt-0.5 font-mono">Matrícula: {{ Auth::user()->registration_number ?? 'CAPD.2026.01' }} • Status: Portador de Fé Pública</span>
+                                
+                                <!-- Aviso Permitido -->
+                                <div id="pad-allow-alert" class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-xs font-medium space-y-2 hidden">
+                                    <div class="flex items-center gap-2 text-amber-700 font-bold uppercase tracking-wider text-[10px] font-mono">
+                                        <i class="fas fa-exclamation-circle text-sm"></i> ALERTA FUNCIONAL (PAD ATIVO)
+                                    </div>
+                                    <p class="font-sans leading-relaxed">Este servidor responde a um Processo Administrativo Disciplinar (PAD) ativo. A avaliação foi permitida de forma excepcional pelo RH neste ciclo, mas o registro formal do PAD permanecerá vinculado ao histórico funcional.</p>
                                 </div>
                             </div>
                         </div>
+
+                        {{-- ==========================================
+                             PASSO 3: CATEGORIA & FÉ PÚBLICA (CONFIRMAR)
+                             ========================================== --}}
+                        <div id="step-3-content" class="step-content space-y-5 hidden">
+                            <div class="border-b border-slate-100 pb-3 mb-4">
+                                <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider font-sans">Passo 3: Categoria Regulamentar & Confirmação</h2>
+                                <p class="text-xs text-slate-500 font-medium font-sans">Selecione a categoria de escala BARS correspondente e confirme os dados finais do avaliador responsável.</p>
+                            </div>
+
+                            <!-- 4. Categoria Regulamentar (5 Cards de Rádio Customizados) -->
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-3">Categoria Regulamentar (Escala BARS correspondente) <span class="text-rose-500">*</span></label>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="radio-categoria-container">
+                                    <!-- Card 1: Geral -->
+                                    <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all select-none group focus-within:ring-2 focus-within:ring-blue-100" id="card-radio-geral">
+                                        <input type="radio" name="temp_categoria" value="geral" class="sr-only radio-categoria">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-all">
+                                                <i class="fas fa-users text-xs"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide font-sans">Quadro Geral</h4>
+                                                <p class="text-[10px] text-slate-500 mt-1 leading-normal font-sans">Carreira técnica geral, administrativa e operacional.</p>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    <!-- Card 2: Saúde -->
+                                    <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all select-none group focus-within:ring-2 focus-within:ring-blue-100" id="card-radio-saude">
+                                        <input type="radio" name="temp_categoria" value="saude" class="sr-only radio-categoria">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-all">
+                                                <i class="fas fa-heartbeat text-xs"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide font-sans">Saúde Pública</h4>
+                                                <p class="text-[10px] text-slate-500 mt-1 leading-normal font-sans">Médicos, enfermeiros, técnicos e agentes de saúde.</p>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    <!-- Card 3: Guarda -->
+                                    <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all select-none group focus-within:ring-2 focus-within:ring-blue-100" id="card-radio-guarda">
+                                        <input type="radio" name="temp_categoria" value="guarda" class="sr-only radio-categoria">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-all">
+                                                <i class="fas fa-shield-alt text-xs"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide font-sans">Segurança</h4>
+                                                <p class="text-[10px] text-slate-500 mt-1 leading-normal font-sans">GMs, patrulheiros, inspetores e agentes urbanos.</p>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    <!-- Card 4: Educação -->
+                                    <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all select-none group focus-within:ring-2 focus-within:ring-blue-100" id="card-radio-educacao">
+                                        <input type="radio" name="temp_categoria" value="educacao" class="sr-only radio-categoria">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-all">
+                                                <i class="fas fa-graduation-cap text-xs"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide font-sans">Educação Básica</h4>
+                                                <p class="text-[10px] text-slate-500 mt-1 leading-normal font-sans">Professores, educadores e pedagogos escolares.</p>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    <!-- Card 5: Gestão Governamental (PEGP) -->
+                                    <label class="relative flex flex-col p-4 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all select-none group focus-within:ring-2 focus-within:ring-blue-100 md:col-span-2" id="card-radio-gestao">
+                                        <input type="radio" name="temp_categoria" value="geral_gestao" class="sr-only radio-categoria">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 group-hover:bg-slate-200 transition-all">
+                                                <i class="fas fa-briefcase text-xs"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide font-sans">Gestão e PEGP</h4>
+                                                <p class="text-[10px] text-slate-500 mt-1 leading-normal font-sans">Especialistas em gestão pública, analistas e executivos municipais.</p>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                                @error('categoria')
+                                    <p class="mt-1 text-xs text-rose-600 font-medium font-sans">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Resumo das Configurações -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+                                <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Resumo da Avaliação</h4>
+                                <div class="grid grid-cols-2 gap-4 text-xs">
+                                    <div>
+                                        <span class="text-slate-400 font-semibold font-sans">Servidor:</span>
+                                        <span id="resumo-servidor" class="font-bold text-slate-800 block mt-0.5 truncate font-sans">-</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400 font-semibold font-sans">Ciclo:</span>
+                                        <span id="resumo-ciclo" class="font-bold text-slate-800 block mt-0.5 truncate font-sans">-</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400 font-semibold font-sans">Lotação:</span>
+                                        <span id="resumo-lotacao" class="font-bold text-slate-800 block mt-0.5 truncate font-sans">-</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400 font-semibold font-sans">Categoria BARS:</span>
+                                        <span id="resumo-categoria" class="font-bold text-slate-800 block mt-0.5 uppercase tracking-wide font-sans">-</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 5. Avaliador Portador de Fé Pública -->
+                            <div class="pt-2">
+                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-2">Avaliador Responsável (Fé Pública)</label>
+                                <div class="flex items-center gap-3 bg-slate-50 rounded-xl border border-slate-200 p-4">
+                                    <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 border border-blue-200 font-bold text-xs flex items-center justify-center font-mono">
+                                        {{ strtoupper(substr(Auth::user()->name ?? 'RH', 0, 2)) }}
+                                    </div>
+                                    <div>
+                                        <span class="text-xs font-bold text-slate-800 block font-sans">{{ Auth::user()->name ?? 'Departamento de RH' }}</span>
+                                        <span class="text-[10px] text-slate-500 block uppercase mt-0.5 font-mono">Matrícula: {{ Auth::user()->registration_number ?? 'CAPD.2026.01' }} • Portador de Fé Pública</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <!-- Botões de Ação -->
-                    <div class="pt-6 border-t border-slate-100 flex items-center justify-end gap-3">
-                        <a href="{{ route('dashboard') }}" class="px-5 py-2.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-500 bg-white hover:bg-slate-50 transition-all">
-                            Cancelar
-                        </a>
-                        <button type="submit" id="btn-submit" class="px-6 py-2.5 rounded-lg text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-blue-500/10" disabled>
-                            <i class="fas fa-play"></i> Iniciar Avaliação
-                        </button>
+                    <!-- Botões de Ação Dinâmicos do Wizard -->
+                    <div class="pt-6 border-t border-slate-100 flex items-center justify-between gap-3 bg-white mt-auto">
+                        <div>
+                            <button type="button" id="btn-back" class="px-5 py-2.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-500 bg-white hover:bg-slate-50 transition-all font-sans hidden">
+                                <i class="fas fa-chevron-left mr-1"></i> Voltar
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <a href="{{ route('dashboard') }}" id="btn-cancel" class="px-5 py-2.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-500 bg-white hover:bg-slate-50 transition-all font-sans">
+                                Cancelar
+                            </a>
+                            <button type="button" id="btn-next" class="px-6 py-2.5 rounded-lg text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all flex items-center gap-2 shadow-md shadow-blue-500/10 font-sans" disabled>
+                                Avançar <i class="fas fa-chevron-right ml-1"></i>
+                            </button>
+                            <button type="submit" id="btn-submit" class="px-6 py-2.5 rounded-lg text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-blue-500/10 font-sans hidden" disabled>
+                                <i class="fas fa-play"></i> Iniciar Avaliação
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -200,12 +310,12 @@
                 
                 <!-- Estado Vazio: Nenhum servidor selecionado -->
                 <div id="apoio-estado-vazio" class="flex flex-col items-center justify-center text-center my-auto py-12 space-y-4">
-                    <div class="w-20 h-20 bg-slate-50 text-slate-350 rounded-full border border-slate-150 flex items-center justify-center">
+                    <div class="w-20 h-20 bg-slate-50 text-slate-300 rounded-full border border-slate-100 flex items-center justify-center shadow-inner">
                         <span class="material-symbols-outlined text-4xl">contact_page</span>
                     </div>
                     <div>
-                        <h3 class="text-sm font-bold text-slate-800">Apoio à Decisão (Histórico)</h3>
-                        <p class="text-xs text-slate-450 mt-1 max-w-[280px] mx-auto leading-relaxed">Selecione uma secretaria e um servidor à esquerda para carregar o histórico de metas e incidentes funcionais.</p>
+                        <h3 class="text-sm font-bold text-slate-800 font-sans">Apoio à Decisão (Histórico)</h3>
+                        <p class="text-xs text-slate-400 mt-1 max-w-[280px] mx-auto leading-relaxed font-sans font-medium">Selecione uma secretaria e avance para selecionar um servidor. Aqui será carregado o histórico de metas e incidentes funcionais.</p>
                     </div>
                 </div>
 
@@ -215,11 +325,11 @@
                     <div class="flex items-center gap-4 border-b border-slate-100 pb-4">
                         <img id="servidor-avatar" src="" alt="Avatar" class="w-14 h-14 rounded-full border border-slate-200 shadow-sm shrink-0">
                         <div class="min-w-0">
-                            <h3 id="servidor-nome" class="text-base font-bold text-slate-900 truncate">Nome do Servidor</h3>
-                            <p id="servidor-cargo" class="text-xs text-slate-500 font-semibold truncate mt-0.5">Cargo do Servidor</p>
+                            <h3 id="servidor-nome" class="text-base font-bold text-slate-900 truncate font-sans">Nome do Servidor</h3>
+                            <p id="servidor-cargo" class="text-xs text-slate-500 font-semibold truncate mt-0.5 font-sans">Cargo do Servidor</p>
                             <div class="flex items-center gap-1.5 mt-1">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                <span id="servidor-lotacao" class="text-[10px] text-slate-400 font-bold uppercase truncate">Lotação</span>
+                                <span id="servidor-lotacao" class="text-[10px] text-slate-450 font-bold uppercase truncate font-mono">Lotação</span>
                             </div>
                         </div>
                     </div>
@@ -246,7 +356,7 @@
                             <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex items-center justify-between">
                                 <div class="space-y-0.5">
                                     <span class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest font-mono">Positivos</span>
-                                    <span class="text-xs text-slate-500 block leading-tight font-medium">Elogios & Destaques</span>
+                                    <span class="text-xs text-slate-500 block leading-tight font-medium font-sans">Elogios & Destaques</span>
                                 </div>
                                 <span id="incidente-positivo-count" class="w-10 h-10 rounded-full bg-emerald-500 text-white font-bold text-sm flex items-center justify-center shadow-sm font-mono">
                                     0
@@ -257,14 +367,14 @@
                             <div class="bg-rose-50 border border-rose-100 rounded-xl p-4 flex items-center justify-between">
                                 <div class="space-y-0.5">
                                     <span class="text-[10px] font-bold text-rose-700 uppercase tracking-widest font-mono">Negativos</span>
-                                    <span class="text-xs text-slate-500 block leading-tight font-medium">Falhas & Atrasos</span>
+                                    <span class="text-xs text-slate-500 block leading-tight font-medium font-sans">Falhas & Atrasos</span>
                                 </div>
                                 <span id="incidente-negativo-count" class="w-10 h-10 rounded-full bg-rose-500 text-white font-bold text-sm flex items-center justify-center shadow-sm font-mono">
                                     0
                                 </span>
                             </div>
                         </div>
-                        <p class="text-[10px] text-slate-400 mt-2 leading-relaxed">
+                        <p class="text-[10px] text-slate-400 mt-2 leading-relaxed font-sans font-medium">
                             <i class="fas fa-info-circle mr-1"></i> Os incidentes críticos registrados servem como subsídio legal direto para justificar a pontuação nas âncoras BARS de comportamento.
                         </p>
                     </div>
@@ -278,47 +388,52 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
-    
-    // 1. Controle dos Cards de Rádio da Categoria
+    var currentStep = 1;
+    var blockOnPadCurrent = parseInt($('#cycle_id option:selected').data('block-on-pad')) || 1;
+
+    // 1. Ouvinte para mudança de ciclo
+    $('#cycle_id').on('change', function() {
+        var selectedOpt = $(this).find('option:selected');
+        blockOnPadCurrent = parseInt(selectedOpt.data('block-on-pad')) || 0;
+        
+        // Se já houver um servidor selecionado, re-validar as travas do PAD
+        if ($('#evaluated_id').val()) {
+            $('#evaluated_id').trigger('change');
+        }
+    });
+
+    // 2. Controle de Rádio da Categoria
     $('.radio-categoria').on('change', function() {
-        // Remove destaques de todos os labels do grupo
+        // Remove destaques
         $('.radio-categoria').closest('label').removeClass('border-blue-500 ring-2 ring-blue-100').addClass('border-slate-200');
         
-        // Adiciona destaque ao label ativo
         if ($(this).is(':checked')) {
             $(this).closest('label').removeClass('border-slate-200').addClass('border-blue-500 ring-2 ring-blue-100');
             
-            // Tratamento do valor especial de gestão (que no backend mapeia para 'geral')
             var val = $(this).val();
             if (val === 'geral_gestao') {
                 $('#categoria').val('geral');
+                $('#resumo-categoria').text('Gestão e PEGP');
             } else {
                 $('#categoria').val(val);
+                var categoryTexts = {
+                    'geral': 'Quadro Geral',
+                    'saude': 'Saúde Pública',
+                    'guarda': 'Segurança',
+                    'educacao': 'Educação Básica'
+                };
+                $('#resumo-categoria').text(categoryTexts[val] || val);
             }
         }
-        checkFormValidity();
+        validateStep3();
     });
-
-    // 2. Validador do Formulário
-    function checkFormValidity() {
-        var cycle = $('#cycle_id').val();
-        var lotacao = $('#lotacao').val();
-        var servidor = $('#evaluated_id').val();
-        var categoria = $('#categoria').val();
-        
-        if (cycle && lotacao && servidor && categoria) {
-            $('#btn-submit').prop('disabled', false).removeClass('opacity-50 cursor-not-allowed');
-        } else {
-            $('#btn-submit').prop('disabled', true).addClass('opacity-50 cursor-not-allowed');
-        }
-    }
 
     // 3. Dropdown Dinâmico de Servidores por Lotação
     function loadServidores(lotacaoVal) {
         if (!lotacaoVal) {
             $('#evaluated_id').html('<option value="">Selecione primeiro uma lotação...</option>').prop('disabled', true);
             resetApoio();
-            checkFormValidity();
+            validateStep1();
             return;
         }
 
@@ -334,10 +449,9 @@ $(document).ready(function() {
                 options = '<option value="">Nenhum servidor ativo encontrado nesta lotação</option>';
             } else {
                 $.each(data, function(index, servidor) {
-                    var padBadge = servidor.has_active_pad ? ' [PAD ATIVO — AVALIAÇÃO BLOQUEADA]' : '';
-                    var isDisabled = servidor.has_active_pad ? 'disabled class="text-rose-500 bg-rose-50/50"' : '';
+                    var padBadge = servidor.has_active_pad ? ' [PAD ATIVO]' : '';
                     
-                    options += '<option value="' + servidor.id + '" data-group="' + servidor.evaluation_group + '" data-pad="' + servidor.has_active_pad + '" ' + isDisabled + '>';
+                    options += '<option value="' + servidor.id + '" data-group="' + servidor.evaluation_group + '" data-pad="' + servidor.has_active_pad + '">';
                     options += servidor.name + ' (' + servidor.cargo + ')' + padBadge;
                     options += '</option>';
                 });
@@ -345,58 +459,71 @@ $(document).ready(function() {
             
             $('#evaluated_id').html(options).prop('disabled', data.length === 0);
             $('#loading-servidores').addClass('hidden');
-            checkFormValidity();
+            validateStep2();
         }).fail(function() {
             $('#evaluated_id').html('<option value="">Erro ao buscar servidores ativos</option>').prop('disabled', true);
             $('#loading-servidores').addClass('hidden');
-            checkFormValidity();
+            validateStep2();
         });
     }
 
-    // Evento change da lotação
     $('#lotacao').on('change', function() {
         loadServidores($(this).val());
+        validateStep1();
     });
 
-    // 4. Seleção de Servidor e Requisição AJAX de Detalhes (Painel de Apoio)
+    // 4. Seleção do Servidor e AJAX de Detalhes
     $('#evaluated_id').on('change', function() {
         var selectedOption = $(this).find('option:selected');
         var val = $(this).val();
-        var isPad = selectedOption.data('pad');
+        var isPad = selectedOption.data('pad') == 1 || selectedOption.data('pad') === true;
         var group = selectedOption.data('group');
 
-        if (isPad == 1 || isPad === true) {
-            alert('Atenção: Este servidor possui Processo Administrativo Disciplinar (PAD) ativo. Por determinação legal da CAPD, o processo avaliativo está temporariamente suspenso.');
-            $(this).val('');
-            resetApoio();
-            checkFormValidity();
-            return;
-        }
+        // Resetar Alertas
+        $('#pad-warning-container').addClass('hidden');
+        $('#pad-block-alert').addClass('hidden');
+        $('#pad-allow-alert').addClass('hidden');
 
         if (!val) {
             resetApoio();
-            checkFormValidity();
+            validateStep2();
             return;
+        }
+
+        // Validação da regra do PAD (dinâmica)
+        if (isPad) {
+            $('#pad-warning-container').removeClass('hidden');
+            if (blockOnPadCurrent === 1) {
+                // Bloqueia avanço
+                $('#pad-block-alert').removeClass('hidden');
+                $('#btn-next').prop('disabled', true).addClass('opacity-50 cursor-not-allowed');
+                resetApoioExcludingSelect();
+                return;
+            } else {
+                // Apenas alerta, mas permite avançar
+                $('#pad-allow-alert').removeClass('hidden');
+            }
         }
 
         // Fazer requisição AJAX para carregar detalhes do servidor no painel lateral
         var detailUrl = "/api/servidores/" + val + "/detalhes";
         
-        // Mostrar transição de loading sutil no painel
         $('#apoio-estado-vazio').hide();
         $('#apoio-servidor-info').addClass('opacity-50').removeClass('hidden').show();
 
         $.getJSON(detailUrl, function(data) {
-            // Atualizar cabeçalho do servidor
             $('#servidor-nome').text(data.user.name);
             $('#servidor-cargo').text(data.user.cargo);
             $('#servidor-lotacao').text(data.user.lotacao);
             $('#servidor-avatar').attr('src', data.user.avatar);
 
-            // Atualizar Metas (Barras de progresso)
+            // Preencher resumo final
+            $('#resumo-servidor').text(data.user.name + ' (' + data.user.cargo + ')');
+
+            // Atualizar Metas
             var metasHtml = '';
             if (data.goals.length === 0) {
-                metasHtml = '<div class="text-xs text-slate-400 font-semibold p-3 bg-slate-50 rounded-lg border border-slate-100 text-center"><i class="fas fa-info-circle mr-1"></i> Nenhuma meta pactuada para este ciclo.</div>';
+                metasHtml = '<div class="text-xs text-slate-400 font-semibold p-3 bg-slate-50 rounded-lg border border-slate-100 text-center"><i class="fas fa-info-circle mr-1 font-sans"></i> Nenhuma meta pactuada para este ciclo.</div>';
             } else {
                 $.each(data.goals, function(index, goal) {
                     var target = parseFloat(goal.target_value);
@@ -410,14 +537,14 @@ $(document).ready(function() {
 
                     metasHtml += '<div class="space-y-1.5">';
                     metasHtml += '  <div class="flex justify-between items-center text-xs font-semibold">';
-                    metasHtml += '      <span class="text-slate-700 max-w-[80%] truncate" title="' + goal.description + '">' + goal.description + '</span>';
+                    metasHtml += '      <span class="text-slate-700 max-w-[80%] truncate font-sans" title="' + goal.description + '">' + goal.description + '</span>';
                     metasHtml += '      <span class="text-slate-500 font-mono">' + achieved + ' / ' + target + ' ' + (goal.metric || '') + '</span>';
                     metasHtml += '  </div>';
-                    metasHtml += '  <div class="relative w-full h-2.5 bg-slate-100 rounded-full border border-slate-150 overflow-hidden">';
+                    metasHtml += '  <div class="relative w-full h-2 bg-slate-100 rounded-full border border-slate-150 overflow-hidden">';
                     metasHtml += '      <div class="goal-progress-bar h-full rounded-full transition-all duration-1000 w-0 ' + barColor + '" data-width="' + pct + '%"></div>';
                     metasHtml += '  </div>';
                     metasHtml += '  <div class="flex justify-between items-center text-[10px] text-slate-400 mt-0.5">';
-                    metasHtml += '      <span>Atingimento</span>';
+                    metasHtml += '      <span class="font-sans">Atingimento</span>';
                     metasHtml += '      <span class="font-bold text-slate-700 font-mono">' + pct + '%</span>';
                     metasHtml += '  </div>';
                     metasHtml += '</div>';
@@ -425,7 +552,7 @@ $(document).ready(function() {
             }
             $('#servidor-metas-container').html(metasHtml);
 
-            // Iniciar animação das barras de progresso
+            // Animação das barras
             setTimeout(function() {
                 $('.goal-progress-bar').each(function() {
                     var finalWidth = $(this).data('width');
@@ -433,15 +560,14 @@ $(document).ready(function() {
                 });
             }, 100);
 
-            // Atualizar contagem de Incidentes Críticos
+            // Atualizar Incidentes
             $('#incidente-positivo-count').text(data.incidents.positive);
             $('#incidente-negativo-count').text(data.incidents.negative);
 
-            // Seletor inteligente da categoria correspondente ao grupo funcional do servidor
+            // Seleção automática da categoria correspondente
             if (group) {
                 var targetRadio = $('.radio-categoria[value="' + group + '"]');
                 if (targetRadio.length === 0 && (group === 'geral' || group === 'PEGP')) {
-                    // Trata também a categoria regulamentar de gestão
                     targetRadio = $('.radio-categoria[value="geral_gestao"]');
                 }
                 
@@ -450,29 +576,138 @@ $(document).ready(function() {
                 }
             }
 
-            // Exibir painel com efeito fade
             $('#apoio-servidor-info').removeClass('opacity-50');
-            checkFormValidity();
+            validateStep2();
         }).fail(function() {
-            alert('Falha ao tentar obter histórico e apoio à decisão do servidor.');
+            alert('Falha ao obter histórico do servidor.');
             resetApoio();
-            checkFormValidity();
+            validateStep2();
         });
     });
 
     function resetApoio() {
-        $('#apoio-servidor-info').hide();
-        $('#apoio-estado-vazio').show();
-        
-        // Desmarcar rádio da categoria para forçar nova escolha
+        resetApoioExcludingSelect();
+        // Desmarcar rádio
         $('.radio-categoria').prop('checked', false).closest('label').removeClass('border-blue-500 ring-2 ring-blue-100').addClass('border-slate-200');
         $('#categoria').val('');
     }
 
-    // Carga inicial se a lotação já estiver definida (Ex: supervisor logado)
+    function resetApoioExcludingSelect() {
+        $('#apoio-servidor-info').hide();
+        $('#apoio-estado-vazio').show();
+        $('#resumo-servidor').text('-');
+    }
+
+    // 5. Validações das Etapas
+    function validateStep1() {
+        var cycle = $('#cycle_id').val();
+        var lotacao = $('#lotacao').val();
+        if (cycle && lotacao) {
+            $('#btn-next').prop('disabled', false).removeClass('opacity-50 cursor-not-allowed');
+        } else {
+            $('#btn-next').prop('disabled', true).addClass('opacity-50 cursor-not-allowed');
+        }
+    }
+
+    function validateStep2() {
+        var servidor = $('#evaluated_id').val();
+        var selectedOption = $('#evaluated_id option:selected');
+        var isPad = selectedOption.data('pad') == 1 || selectedOption.data('pad') === true;
+
+        if (servidor && !(isPad && blockOnPadCurrent === 1)) {
+            $('#btn-next').prop('disabled', false).removeClass('opacity-50 cursor-not-allowed');
+        } else {
+            $('#btn-next').prop('disabled', true).addClass('opacity-50 cursor-not-allowed');
+        }
+    }
+
+    function validateStep3() {
+        var categoria = $('#categoria').val();
+        if (categoria) {
+            $('#btn-submit').prop('disabled', false).removeClass('opacity-50 cursor-not-allowed');
+        } else {
+            $('#btn-submit').prop('disabled', true).addClass('opacity-50 cursor-not-allowed');
+        }
+    }
+
+    // 6. Controle de Navegação do Wizard
+    $('#btn-next').on('click', function() {
+        if (currentStep === 1) {
+            // Avança para o Passo 2
+            $('#step-1-content').addClass('hidden');
+            $('#step-2-content').removeClass('hidden');
+            $('#btn-back').removeClass('hidden');
+            
+            // Atualizar Stepper UI
+            $('.step-indicator[data-step="2"]').addClass('active').find('span').removeClass('bg-slate-100 text-slate-400').addClass('bg-blue-600 text-white border-blue-50');
+            $('#stepper-progress-line').css('width', '50%');
+            
+            currentStep = 2;
+            validateStep2();
+        } else if (currentStep === 2) {
+            // Avança para o Passo 3
+            $('#step-2-content').addClass('hidden');
+            $('#step-3-content').removeClass('hidden');
+            $('#btn-next').addClass('hidden');
+            $('#btn-submit').removeClass('hidden');
+
+            // Injetar dados do resumo
+            $('#resumo-ciclo').text(authAdminOrReadOnlyCycleName());
+            $('#resumo-lotacao').text($('#lotacao').val());
+
+            // Atualizar Stepper UI
+            $('.step-indicator[data-step="3"]').addClass('active').find('span').removeClass('bg-slate-100 text-slate-400').addClass('bg-blue-600 text-white border-blue-50');
+            $('#stepper-progress-line').css('width', '100%');
+
+            currentStep = 3;
+            validateStep3();
+        }
+    });
+
+    $('#btn-back').on('click', function() {
+        if (currentStep === 2) {
+            // Volta para Passo 1
+            $('#step-2-content').addClass('hidden');
+            $('#step-1-content').removeClass('hidden');
+            $('#btn-back').addClass('hidden');
+            
+            // Atualizar Stepper UI
+            $('.step-indicator[data-step="2"]').removeClass('active').find('span').addClass('bg-slate-100 text-slate-400').removeClass('bg-blue-600 text-white border-blue-50');
+            $('#stepper-progress-line').css('width', '0%');
+
+            currentStep = 1;
+            validateStep1();
+        } else if (currentStep === 3) {
+            // Volta para Passo 2
+            $('#step-3-content').addClass('hidden');
+            $('#step-2-content').removeClass('hidden');
+            $('#btn-submit').addClass('hidden');
+            $('#btn-next').removeClass('hidden');
+
+            // Atualizar Stepper UI
+            $('.step-indicator[data-step="3"]').removeClass('active').find('span').addClass('bg-slate-100 text-slate-400').removeClass('bg-blue-600 text-white border-blue-50');
+            $('#stepper-progress-line').css('width', '50%');
+
+            currentStep = 2;
+            validateStep2();
+        }
+    });
+
+    function authAdminOrReadOnlyCycleName() {
+        if ($('#cycle_id').is('select')) {
+            return $('#cycle_id option:selected').text().trim();
+        } else {
+            return "{{ $cycles->first()?->name ?? 'Ciclo Vigente' }}";
+        }
+    }
+
+    // Carga inicial se a lotação já estiver definida (Ex: chefia imediata logada)
     var initialLotacao = $('#lotacao').val();
     if (initialLotacao) {
         loadServidores(initialLotacao);
+        validateStep1();
+    } else {
+        validateStep1();
     }
 });
 </script>

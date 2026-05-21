@@ -178,6 +178,9 @@ class EvaluationSetupTest extends TestCase
 
     public function test_setup_prevents_evaluating_servers_with_active_pad(): void
     {
+        // Força block_on_pad como true
+        $this->cycle->update(['block_on_pad' => true]);
+
         $response = $this->actingAs($this->chefia)->post(route('evaluations.setup.store'), [
             'cycle_id' => $this->cycle->id,
             'lotacao' => 'Secretaria de Saúde',
@@ -188,6 +191,30 @@ class EvaluationSetupTest extends TestCase
         $response->assertSessionHasErrors(['evaluated_id']);
         $this->assertEquals(0, Evaluation::count());
     }
+
+    public function test_setup_allows_evaluating_servers_with_active_pad_when_block_on_pad_is_false(): void
+    {
+        // Força block_on_pad como false
+        $this->cycle->update(['block_on_pad' => false]);
+
+        $response = $this->actingAs($this->chefia)->post(route('evaluations.setup.store'), [
+            'cycle_id' => $this->cycle->id,
+            'lotacao' => 'Secretaria de Saúde',
+            'evaluated_id' => $this->servidorPad->id,
+            'categoria' => 'saude'
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $this->assertEquals(1, Evaluation::count());
+        
+        $evaluation = Evaluation::first();
+        $this->assertEquals('draft', $evaluation->status);
+        $this->assertEquals('saude', $evaluation->categoria);
+        
+        $response->assertRedirect(route('evaluations.fill', $evaluation->id));
+        $response->assertSessionHas('success');
+    }
+
 
     public function test_setup_creates_draft_and_redirects_to_fill(): void
     {

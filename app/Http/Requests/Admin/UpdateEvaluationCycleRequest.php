@@ -19,6 +19,7 @@ class UpdateEvaluationCycleRequest extends FormRequest
             'end_date' => 'required|date|after_or_equal:start_date',
             'cutoff_score' => 'required|numeric|min:1|max:5',
             'status' => 'required|in:active,inactive,closed',
+            'block_on_pad' => 'nullable|boolean',
             'global_goals' => 'nullable|array',
             'global_goals.*.description' => 'required|string|max:255',
             'global_goals.*.metric' => 'required|string|max:255',

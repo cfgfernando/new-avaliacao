@@ -52,6 +52,16 @@
                     </div>
                 </div>
 
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-2">Restrições Funcionais</label>
+                    <div class="flex items-center gap-3 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <input type="hidden" name="block_on_pad" value="0">
+                        <input type="checkbox" name="block_on_pad" id="block_on_pad" value="1" {{ old('block_on_pad', $cycle->block_on_pad ? '1' : '0') == '1' ? 'checked' : '' }} class="rounded border-slate-200 text-blue-600 focus:ring-blue-500/15 focus:ring-0 outline-none w-4 h-4">
+                        <label for="block_on_pad" class="text-xs font-bold text-slate-700 select-none cursor-pointer">Bloquear avaliações de servidores com Processo Administrativo Disciplinar (PAD) ativo</label>
+                    </div>
+                    @error('block_on_pad') <p class="text-rose-500 text-[10px] font-bold mt-1">{{ $message }}</p> @enderror
+                </div>
+
                 <div class="border-t border-slate-200 pt-6">
                     <h4 class="text-xs font-bold text-slate-800 uppercase tracking-tight mb-4">Pesos das Categorias</h4>
 

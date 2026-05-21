@@ -30,13 +30,16 @@ class StoreEvaluationSetupRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     $evaluated = \App\Models\User::find($value);
                     if ($evaluated) {
-                        // 1. Trava de PAD
-                        if ($evaluated->has_active_pad) {
+                        // 1. Trava de PAD (depende de configuração do ciclo)
+                        $cycleId = $this->input('cycle_id');
+                        $cycle = \App\Models\EvaluationCycle::find($cycleId);
+                        $blockOnPad = $cycle ? (bool) $cycle->block_on_pad : true;
+                        
+                        if ($blockOnPad && $evaluated->has_active_pad) {
                             $fail('Este servidor possui Processo Administrativo Disciplinar (PAD) ativo e sua avaliação está suspensa.');
                         }
 
                         // 2. Regra de Unicidade (Anti-Duplicidade) no ciclo
-                        $cycleId = $this->input('cycle_id');
                         if ($cycleId) {
                             $exists = \App\Models\Evaluation::where('cycle_id', $cycleId)
                                 ->where('evaluated_id', $value)

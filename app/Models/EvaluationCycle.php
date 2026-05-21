@@ -15,6 +15,7 @@ class EvaluationCycle extends Model
         'global_goals',
         'cutoff_score',
         'status',
+        'block_on_pad',
     ];
 
     protected $casts = [
@@ -23,6 +24,7 @@ class EvaluationCycle extends Model
         'weights' => 'array',
         'global_goals' => 'array',
         'cutoff_score' => 'decimal:2',
+        'block_on_pad' => 'boolean',
     ];
 
     public function evaluations(): HasMany

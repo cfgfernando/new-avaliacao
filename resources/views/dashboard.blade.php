@@ -46,6 +46,11 @@
                 <p class="text-slate-400 text-xs font-semibold">
                     Período avaliativo de <span class="text-white font-bold">{{ $startDate }}</span> até <span class="text-white font-bold">{{ $endDate }}</span>.
                 </p>
+                <div class="pt-2">
+                    <a href="{{ route('evaluations.setup.create') }}" class="inline-flex items-center px-4 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md shadow-blue-500/20 transition-all font-sans">
+                        <i class="fas fa-plus-circle mr-1.5"></i> Iniciar Nova Avaliação
+                    </a>
+                </div>
             </div>
             
             {{-- Metas e Competências à direita (unificado e colorido conforme imagem) --}}
