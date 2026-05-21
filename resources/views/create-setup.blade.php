@@ -389,18 +389,32 @@
 <script>
 $(document).ready(function() {
     var currentStep = 1;
-    var blockOnPadCurrent = parseInt($('#cycle_id option:selected').data('block-on-pad')) || 1;
 
-    // 1. Ouvinte para mudança de ciclo
+    // Lê block_on_pad do select (Admin) ou do input hidden (Chefia)
+    function getBlockOnPad() {
+        var $cycleEl = $('#cycle_id');
+        if ($cycleEl.is('select')) {
+            return parseInt($cycleEl.find('option:selected').data('block-on-pad')) || 0;
+        } else {
+            return parseInt($cycleEl.data('block-on-pad')) || 0;
+        }
+    }
+
+    var blockOnPadCurrent = getBlockOnPad();
+
+    // 1. Ouvinte para mudança de ciclo (apenas Admin tem select)
     $('#cycle_id').on('change', function() {
-        var selectedOpt = $(this).find('option:selected');
-        blockOnPadCurrent = parseInt(selectedOpt.data('block-on-pad')) || 0;
+        blockOnPadCurrent = getBlockOnPad();
         
         // Se já houver um servidor selecionado, re-validar as travas do PAD
         if ($('#evaluated_id').val()) {
             $('#evaluated_id').trigger('change');
         }
+        validateStep1();
     });
+
+    // Disparar validação inicial do Passo 1 para habilitar botão se campos já preenchidos
+    validateStep1();
 
     // 2. Controle de Rádio da Categoria
     $('.radio-categoria').on('change', function() {
