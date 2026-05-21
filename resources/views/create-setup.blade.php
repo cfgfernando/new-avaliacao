@@ -613,7 +613,10 @@ $(document).ready(function() {
     }
 
     // 5. Validações das Etapas
+    // Cada função só atua quando o passo correspondente está ativo,
+    // evitando que callbacks AJAX de outros passos interfiram no estado do botão.
     function validateStep1() {
+        if (currentStep !== 1) return;
         var cycle = $('#cycle_id').val();
         var lotacao = $('#lotacao').val();
         if (cycle && lotacao) {
@@ -624,6 +627,7 @@ $(document).ready(function() {
     }
 
     function validateStep2() {
+        if (currentStep !== 2) return;
         var servidor = $('#evaluated_id').val();
         var selectedOption = $('#evaluated_id option:selected');
         var isPad = selectedOption.data('pad') == 1 || selectedOption.data('pad') === true;
@@ -636,6 +640,7 @@ $(document).ready(function() {
     }
 
     function validateStep3() {
+        if (currentStep !== 3) return;
         var categoria = $('#categoria').val();
         if (categoria) {
             $('#btn-submit').prop('disabled', false).removeClass('opacity-50 cursor-not-allowed');
