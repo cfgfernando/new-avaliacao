@@ -71,76 +71,76 @@
              ========================================================= --}}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {{-- KPI 1: Servidores no Setor --}}
-            <div class="card-neo flex flex-col justify-between">
+            <div class="card-neo p-5 md:p-6 flex flex-col justify-between">
                 <div class="flex items-start justify-between">
                     <div>
                         <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Servidores no Setor</p>
                         <h3 class="text-3xl font-bold text-slate-900 mt-2 font-mono">{{ $totalServidores }}</h3>
                     </div>
-                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-[#2563eb] flex items-center justify-center">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-200/50">
                         <span class="material-symbols-outlined text-[20px]">group</span>
                     </div>
                 </div>
-                <p class="text-[10.5px] text-slate-500 font-medium mt-4">
+                <p class="text-[11px] text-slate-500 font-medium mt-4">
                     Cadastrados e geridos pela Subprefeitura / Secretarias.
                 </p>
             </div>
 
             {{-- KPI 2: Metas Ativas Pactuadas --}}
-            <div class="card-neo flex flex-col justify-between">
+            <div class="card-neo p-5 md:p-6 flex flex-col justify-between">
                 <div class="flex items-start justify-between">
                     <div>
                         <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Metas Ativas Pactuadas</p>
                         <h3 class="text-3xl font-bold text-slate-900 mt-2 font-mono">{{ $totalMetas }}</h3>
                     </div>
-                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-[#2563eb] flex items-center justify-center">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-200/50">
                         <span class="material-symbols-outlined text-[20px]">description</span>
                     </div>
                 </div>
-                <p class="text-[10.5px] text-slate-500 font-medium mt-4">
+                <p class="text-[11px] text-slate-500 font-medium mt-4">
                     Metas quantitativas de entrega vinculadas aos planos de trabalho.
                 </p>
             </div>
 
             {{-- KPI 3: Incidentes Críticos --}}
-            <div class="card-neo flex flex-col justify-between">
+            <div class="card-neo p-5 md:p-6 flex flex-col justify-between">
                 <div class="flex items-start justify-between">
                     <div>
                         <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Incidentes Críticos</p>
                         <h3 class="text-3xl font-bold text-slate-900 mt-2 font-mono">{{ $totalIncidentes }}</h3>
                     </div>
-                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-[#2563eb] flex items-center justify-center">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-200/50">
                         <span class="material-symbols-outlined text-[20px]">book</span>
                     </div>
                 </div>
                 <div class="flex items-center gap-3 mt-4 text-[11px] font-bold">
-                    <span class="flex items-center gap-1 text-emerald-600">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span class="flex items-center gap-1.5 text-emerald-700 bg-emerald-50 border border-emerald-250 px-2 py-0.5 rounded font-mono">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                         {{ $incidentesPositivos }} Pos.
                     </span>
-                    <span class="flex items-center gap-1 text-rose-600">
-                        <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                    <span class="flex items-center gap-1.5 text-rose-700 bg-rose-50 border border-rose-250 px-2 py-0.5 rounded font-mono">
+                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
                         {{ $incidentesNegativos }} Neg.
                     </span>
                 </div>
             </div>
 
             {{-- KPI 4: Progresso do Ciclo --}}
-            <div class="card-neo flex flex-col justify-between">
+            <div class="card-neo p-5 md:p-6 flex flex-col justify-between">
                 <div class="flex items-start justify-between">
                     <div>
                         <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Progresso do Ciclo</p>
-                        <h3 class="text-3xl font-bold text-emerald-600 mt-2 font-mono">{{ $avaliados }} / {{ $totalServidores }}</h3>
+                        <h3 class="text-3xl font-bold text-emerald-700 mt-2 font-mono">{{ $avaliados }} / {{ $totalServidores }}</h3>
                     </div>
-                    <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                    <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-200/50">
                         <span class="material-symbols-outlined text-[20px]">how_to_reg</span>
                     </div>
                 </div>
                 @php
                     $percent = $totalServidores > 0 ? ($avaliados / $totalServidores) * 100 : 0;
                 @endphp
-                <div class="mt-4">
-                    <div class="w-full bg-slate-100 rounded-full h-1.5">
+                <div class="mt-4 space-y-2">
+                    <div class="w-full bg-slate-100 rounded-full h-1.5 border border-slate-200/30">
                         <div class="bg-emerald-500 h-1.5 rounded-full transition-all duration-500" style="width: {{ $percent }}%"></div>
                     </div>
                 </div>
@@ -150,7 +150,7 @@
         {{-- =========================================================
              3. QUADRO DE SERVIDORES E STATUS DE AVALIAÇÃO
              ========================================================= --}}
-        <div class="card-neo space-y-6">
+        <div class="card-neo p-6 md:p-8 space-y-6">
             <div class="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div>
                     <h2 class="text-lg font-bold text-slate-900 tracking-tight font-sans">
@@ -258,6 +258,78 @@
                         </div>
                     </div>
                 @endforeach
+            </div>
+        </div>
+
+        {{-- =========================================================
+             4. TABELA DE REGISTROS RECENTES (LOGS DE AUDITORIA)
+             ========================================================= --}}
+        <div class="card-neo p-6 md:p-8 space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900 tracking-tight font-sans">
+                        Registros Recentes de Atividades
+                    </h2>
+                    <p class="text-slate-500 text-xs mt-1">
+                        Histórico dos últimos eventos e ações de auditoria executadas no sistema.
+                    </p>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-200/50">
+                    <span class="material-symbols-outlined text-[20px]">history</span>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200/60 shadow-xs">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200">
+                            <th class="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Usuário</th>
+                            <th class="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Ação</th>
+                            <th class="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Descrição</th>
+                            <th class="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Endereço IP</th>
+                            <th class="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Data/Hora</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @forelse($recentLogs as $log)
+                            <tr class="hover:bg-slate-50/50 transition-colors">
+                                <td class="py-3.5 px-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-6 h-6 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-[10px] font-mono">
+                                            {{ strtoupper(substr($log->user->name ?? 'US', 0, 2)) }}
+                                        </div>
+                                        <span class="text-sm font-bold text-slate-800">{{ $log->user->name ?? 'Usuário do Sistema' }}</span>
+                                    </div>
+                                </td>
+                                <td class="py-3.5 px-4">
+                                    <span class="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded border font-mono uppercase tracking-wider
+                                        {{ str_contains(strtolower($log->action), 'delete') || str_contains(strtolower($log->action), 'remove') || str_contains(strtolower($log->action), 'destroy')
+                                            ? 'bg-rose-50 text-rose-700 border-rose-150' 
+                                            : (str_contains(strtolower($log->action), 'create') || str_contains(strtolower($log->action), 'store') || str_contains(strtolower($log->action), 'insert')
+                                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                                : 'bg-blue-50 text-blue-600 border-blue-200') }}">
+                                        {{ $log->action }}
+                                    </span>
+                                </td>
+                                <td class="py-3.5 px-4 text-sm text-slate-600 max-w-xs truncate" title="{{ is_array($log->description) ? json_encode($log->description, JSON_UNESCAPED_UNICODE) : $log->description }}">
+                                    {{ is_array($log->description) ? json_encode($log->description, JSON_UNESCAPED_UNICODE) : $log->description }}
+                                </td>
+                                <td class="py-3.5 px-4 text-xs font-mono text-slate-500">
+                                    {{ $log->ip_address }}
+                                </td>
+                                <td class="py-3.5 px-4 text-xs font-mono text-slate-500">
+                                    {{ $log->created_at ? $log->created_at->format('Y-m-d H:i:s') : '-' }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="py-8 text-center text-sm text-slate-400 font-medium">
+                                    Nenhum log de auditoria recente encontrado.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
 

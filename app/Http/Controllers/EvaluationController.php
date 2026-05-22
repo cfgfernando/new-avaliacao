@@ -18,6 +18,119 @@ use Exception;
 class EvaluationController extends Controller
 {
     /**
+     * Exibe a listagem de todas as avaliações feitas pelo avaliador.
+     */
+    public function index(Request $request)
+    {
+        $evaluatorId = auth()->id();
+        
+        $query = Evaluation::where('evaluator_id', $evaluatorId)
+            ->with(['evaluated', 'cycle']);
+            
+        // Filtros avançados
+        $cycleId = $request->input('cycle_id');
+        if ($cycleId) {
+            $query->where('cycle_id', $cycleId);
+        }
+        
+        $lotacao = $request->input('lotacao');
+        if ($lotacao) {
+            $query->whereHas('evaluated', function($q) use ($lotacao) {
+                $q->where('lotacao', $lotacao);
+            });
+        }
+        
+        $status = $request->input('status');
+        if ($status) {
+            $query->where('status', $status);
+        }
+        
+        $search = $request->input('search');
+        if ($search) {
+            $query->whereHas('evaluated', function($q) use ($search) {
+                $q->where(function($sq) use ($search) {
+                    $sq->where('name', 'like', "%{$search}%")
+                       ->orWhere('registration_number', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        // Filtro por faixa de nota / desempenho
+        $scoreRange = $request->input('score_range');
+        if ($scoreRange === 'above') {
+            $query->where('status', 'submitted')
+                  ->where(function($q) {
+                      $q->whereRaw('final_score >= (select COALESCE(cutoff_score, 3.00) from evaluation_cycles where evaluation_cycles.id = evaluations.cycle_id)');
+                  });
+        } elseif ($scoreRange === 'below') {
+            $query->where('status', 'submitted')
+                  ->where(function($q) {
+                      $q->whereRaw('final_score < (select COALESCE(cutoff_score, 3.00) from evaluation_cycles where evaluation_cycles.id = evaluations.cycle_id)');
+                  });
+        }
+
+        // 1. Extração de métricas dinâmicas filtradas antes de ordenar e paginar
+        $metricsQuery = clone $query;
+        
+        $totalEvaluations = $metricsQuery->count();
+        $submittedCount = (clone $metricsQuery)->where('status', 'submitted')->count();
+        $draftCount = (clone $metricsQuery)->where('status', 'draft')->count();
+        
+        $avgScore = (clone $metricsQuery)->where('status', 'submitted')
+            ->whereNotNull('final_score')
+            ->avg('final_score');
+            
+        $avgScore = $avgScore !== null ? (float) $avgScore : null;
+
+        // 2. Ordenação
+        $sortBy = $request->input('sort_by', 'recent');
+        if ($sortBy === 'name_asc') {
+            $query->join('users as evaluated_users', 'evaluations.evaluated_id', '=', 'evaluated_users.id')
+                  ->select('evaluations.*')
+                  ->orderBy('evaluated_users.name', 'asc');
+        } elseif ($sortBy === 'name_desc') {
+            $query->join('users as evaluated_users', 'evaluations.evaluated_id', '=', 'evaluated_users.id')
+                  ->select('evaluations.*')
+                  ->orderBy('evaluated_users.name', 'desc');
+        } elseif ($sortBy === 'score_desc') {
+            $query->orderBy('final_score', 'desc');
+        } elseif ($sortBy === 'score_asc') {
+            $query->orderBy('final_score', 'asc');
+        } elseif ($sortBy === 'oldest') {
+            $query->orderBy('evaluations.created_at', 'asc');
+        } else {
+            $query->orderBy('evaluations.created_at', 'desc');
+        }
+        
+        $evaluations = $query->paginate(15)->withQueryString();
+        
+        // Povoar filtros
+        $cycles = EvaluationCycle::orderBy('id', 'desc')->get();
+        
+        $lotacoes = User::select('lotacao')
+            ->distinct()
+            ->whereNotNull('lotacao')
+            ->where('lotacao', '!=', '')
+            ->pluck('lotacao');
+            
+        return view('evaluations.index', compact(
+            'evaluations', 
+            'cycles', 
+            'lotacoes', 
+            'cycleId', 
+            'lotacao', 
+            'status', 
+            'search',
+            'sortBy',
+            'scoreRange',
+            'totalEvaluations',
+            'submittedCount',
+            'draftCount',
+            'avgScore'
+        ));
+    }
+
+    /**
      * Exibe a página de avaliação de um servidor específico.
      */
     public function create(User $evaluated)
@@ -77,14 +190,17 @@ class EvaluationController extends Controller
             ->orderBy('incident_date', 'desc')
             ->get();
 
-        // 5. Simular integração de dados (Ponto e RH/Escola de Gestão)
-        // Em produção, isso seria importado via API REST dos sistemas correspondentes.
+        // 5. Buscar dados de ponto integrados da tabela employee_points
+        $employeePoint = \App\Models\EmployeePoint::where('employee_id', $evaluated->id)
+            ->where('cycle_id', $cycle->id)
+            ->first();
+
         $integrationData = [
             'ponto' => [
-                'faltas_injustificadas' => 0, // ex: 0 faltas
-                'atrasos_minutos' => 15,       // ex: 15 minutos acumulados
-                'horas_extras' => 8,          // ex: 8 horas extras
-                'mensagem' => 'Dados do Ponto Eletrônico integrados em tempo real.'
+                'faltas_injustificadas' => $employeePoint ? $employeePoint->faltas_injustificadas : 0,
+                'atrasos_minutos' => $employeePoint ? $employeePoint->atrasos_minutos : 0,
+                'horas_extras' => $employeePoint ? $employeePoint->horas_extras : 0,
+                'mensagem' => $employeePoint && $employeePoint->mensagem ? $employeePoint->mensagem : 'Dados do Ponto Eletrônico integrados em tempo real.',
             ],
             'rh' => [
                 'horas_formacao' => 40,       // ex: 40 horas de cursos Escola de Gestão
@@ -104,6 +220,10 @@ class EvaluationController extends Controller
         DB::beginTransaction();
 
         try {
+            $isDraft = $request->input('submit_type') === 'draft';
+            $status = $isDraft ? 'draft' : 'submitted';
+            $submittedAt = $isDraft ? null : now();
+
             // 1. Criar ou atualizar o registro principal da avaliação
             $evaluation = Evaluation::updateOrCreate(
                 [
@@ -112,10 +232,10 @@ class EvaluationController extends Controller
                 ],
                 [
                     'evaluator_id' => auth()->id() ?? 1, // Fallback se não logado em ambiente dev local
-                    'status' => 'submitted',
+                    'status' => $status,
                     'weight_goals' => $request->input('weight_goals', 0.50),
                     'weight_competencies' => $request->input('weight_competencies', 0.50),
-                    'submitted_at' => now(),
+                    'submitted_at' => $submittedAt,
                 ]
             );
 
@@ -215,7 +335,11 @@ class EvaluationController extends Controller
 
             DB::commit();
 
-            return redirect()->route('dashboard')->with('success', 'Avaliação de Desempenho submetida com sucesso! Nota final: ' . $evaluation->final_score);
+            if ($isDraft) {
+                return redirect()->route('evaluations.index')->with('success', 'Rascunho da avaliação salvo com sucesso!');
+            }
+
+            return redirect()->route('evaluations.index')->with('success', 'Avaliação de Desempenho submetida com sucesso! Nota final: ' . $evaluation->final_score);
         } catch (Exception $e) {
             DB::rollBack();
             return redirect()->back()
@@ -255,13 +379,17 @@ class EvaluationController extends Controller
             ->orderBy('incident_date', 'desc')
             ->get();
 
-        // Simular integração de dados (Ponto e RH/Escola de Gestão)
+        // Buscar dados de ponto integrados da tabela employee_points
+        $employeePoint = \App\Models\EmployeePoint::where('employee_id', $evaluated->id)
+            ->where('cycle_id', $cycle->id)
+            ->first();
+
         $integrationData = [
             'ponto' => [
-                'faltas_injustificadas' => 0,
-                'atrasos_minutos' => 15,
-                'horas_extras' => 8,
-                'mensagem' => 'Dados do Ponto Eletrônico integrados em tempo real.'
+                'faltas_injustificadas' => $employeePoint ? $employeePoint->faltas_injustificadas : 0,
+                'atrasos_minutos' => $employeePoint ? $employeePoint->atrasos_minutos : 0,
+                'horas_extras' => $employeePoint ? $employeePoint->horas_extras : 0,
+                'mensagem' => $employeePoint && $employeePoint->mensagem ? $employeePoint->mensagem : 'Dados do Ponto Eletrônico integrados em tempo real.',
             ],
             'rh' => [
                 'horas_formacao' => 40,
@@ -281,13 +409,17 @@ class EvaluationController extends Controller
         DB::beginTransaction();
 
         try {
-            // 1. Atualizar o registro da avaliação para submetido e gravar os pesos
+            $isDraft = $request->input('submit_type') === 'draft';
+            $status = $isDraft ? 'draft' : 'submitted';
+            $submittedAt = $isDraft ? null : now();
+
+            // 1. Atualizar o registro da avaliação e gravar os pesos
             $evaluation->update([
                 'evaluator_id' => auth()->id() ?? $evaluation->evaluator_id ?? 1,
-                'status' => 'submitted',
+                'status' => $status,
                 'weight_goals' => $request->input('weight_goals', 0.50),
                 'weight_competencies' => $request->input('weight_competencies', 0.50),
-                'submitted_at' => now(),
+                'submitted_at' => $submittedAt,
             ]);
 
             // 2. Salvar as respostas e uploads
@@ -386,7 +518,11 @@ class EvaluationController extends Controller
 
             DB::commit();
 
-            return redirect()->route('dashboard')->with('success', 'Avaliação de Desempenho submetida com sucesso! Nota final: ' . $evaluation->final_score);
+            if ($isDraft) {
+                return redirect()->route('evaluations.index')->with('success', 'Rascunho da avaliação salvo com sucesso!');
+            }
+
+            return redirect()->route('evaluations.index')->with('success', 'Avaliação de Desempenho submetida com sucesso! Nota final: ' . $evaluation->final_score);
         } catch (Exception $e) {
             DB::rollBack();
             return redirect()->back()

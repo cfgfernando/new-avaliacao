@@ -105,6 +105,22 @@ class MenuSeeder extends Seeder
             'order'       => 8
         ]);
 
+        Menu::create([
+            'category_id' => $catAdministracao->id,
+            'title'       => 'Secretarias / Lotações',
+            'url'         => '/admin/offices',
+            'icon'        => 'fas fa-building',
+            'order'       => 9
+        ]);
+
+        Menu::create([
+            'category_id' => $catAdministracao->id,
+            'title'       => 'Servidores Avaliados',
+            'url'         => '/admin/evaluated-users',
+            'icon'        => 'fas fa-id-card',
+            'order'       => 10
+        ]);
+
         // 4. Itens - Configurações
         Menu::create([
             'category_id' => $catConfig->id,

@@ -127,109 +127,40 @@
         <form action="{{ route('evaluation.store') }}" method="POST" enctype="multipart/form-data" id="evaluation-form" class="space-y-8">
     @endisset
         @csrf
+        <input type="hidden" name="submit_type" id="submit_type" value="submit">
         <input type="hidden" name="evaluated_id" value="{{ $evaluated->id }}">
         <input type="hidden" name="cycle_id" value="{{ $cycle->id }}">
 
         <!-- ═══════════════════════════════════════
-             SEÇÃO 1: PACTUAÇÃO DE METAS QUANTITATIVAS
+             SEÇÃO 1: PACTUAÇÃO DE METAS QUANTITATIVAS (Inputs Ocultos)
              ═══════════════════════════════════════ -->
-        <x-card class="md:p-8 space-y-6">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-[20px]">trending_up</span>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold text-slate-900 tracking-tight">1. Pactuação de Metas Quantitativas</h3>
-                        <p class="text-xs text-slate-400">Acompanhamento e mensuração de objectives físicos do servidor</p>
-                    </div>
-                </div>
-                
-                <!-- Controle de Pesos Mistos -->
-                <div class="flex items-center gap-4 bg-slate-50 p-2.5 rounded-xl border border-slate-200/50 text-xs">
-                    <div class="flex items-center gap-2">
-                        <label for="weight_goals" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Peso Metas:</label>
-                        <select name="weight_goals" id="weight_goals" class="bg-white border border-slate-200 rounded-lg p-1.5 font-bold text-slate-800 focus:border-blue-500 focus:ring-blue-500 outline-none">
-                            <option value="0.30" {{ (old('weight_goals', $evaluation->weight_goals ?? 0.50) == 0.30) ? 'selected' : '' }}>30% (Secundário)</option>
-                            <option value="0.40" {{ (old('weight_goals', $evaluation->weight_goals ?? 0.50) == 0.40) ? 'selected' : '' }}>40%</option>
-                            <option value="0.50" {{ (old('weight_goals', $evaluation->weight_goals ?? 0.50) == 0.50) ? 'selected' : '' }}>50% (Equilibrado)</option>
-                            <option value="0.60" {{ (old('weight_goals', $evaluation->weight_goals ?? 0.50) == 0.60) ? 'selected' : '' }}>60%</option>
-                            <option value="0.70" {{ (old('weight_goals', $evaluation->weight_goals ?? 0.50) == 0.70) ? 'selected' : '' }}>70% (Predominante)</option>
-                        </select>
-                    </div>
-                    <div class="flex items-center gap-2 border-l border-slate-200 pl-3">
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">Peso BARS:</span>
-                        <span id="weight_competencies_badge" class="px-2.5 py-1 bg-blue-50 text-blue-700 rounded-md font-bold font-mono border border-blue-150">50%</span>
-                        <input type="hidden" name="weight_competencies" id="weight_competencies" value="{{ old('weight_competencies', $evaluation->weight_competencies ?? 0.50) }}">
-                    </div>
-                </div>
-            </div>
+        <input type="hidden" name="weight_goals" id="weight_goals" value="{{ old('weight_goals', $evaluation->weight_goals ?? 0.50) }}">
+        <input type="hidden" name="weight_competencies" id="weight_competencies" value="{{ old('weight_competencies', $evaluation->weight_competencies ?? 0.50) }}">
 
-            <!-- Tabela de Metas -->
-            <div class="overflow-x-auto rounded-xl border border-slate-100 shadow-sm">
-                <table class="w-full text-sm text-left text-slate-600" id="goals-table">
-                    <thead class="text-xs uppercase bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
-                        <tr>
-                            <th scope="col" class="px-4 py-3">Descrição da Meta</th>
-                            <th scope="col" class="px-4 py-3 w-40">Métrica / Unidade</th>
-                            <th scope="col" class="px-4 py-3 text-right w-32">Alvo Pactuado</th>
-                            <th scope="col" class="px-4 py-3 text-right w-32">Valor Alcançado</th>
-                            <th scope="col" class="px-4 py-3 text-right w-24">Peso</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100 bg-white" id="goals-tbody">
-                        @php
-                            $goals = old('goals');
-                            if (!$goals) {
-                                if (isset($evaluation) && $evaluation->goals->isNotEmpty()) {
-                                    $goals = $evaluation->goals;
-                                } else {
-                                    $goals = $cycle->global_goals ?? [];
-                                }
-                            }
-                        @endphp
-                        @forelse($goals as $idx => $goal)
-                            @php
-                                $desc = is_array($goal) ? ($goal['description'] ?? '') : $goal->description;
-                                $metric = is_array($goal) ? ($goal['metric'] ?? '') : $goal->metric;
-                                $target = is_array($goal) ? ($goal['target_value'] ?? '') : $goal->target_value;
-                                $achieved = is_array($goal) ? ($goal['achieved_value'] ?? '') : $goal->achieved_value;
-                                $weight = is_array($goal) ? ($goal['weight'] ?? 1.0) : $goal->weight;
-                            @endphp
-                            <tr class="goal-row hover:bg-slate-50/50 transition-colors" data-index="{{ $idx }}">
-                                <td class="px-4 py-3">
-                                    <input type="text" name="goals[{{ $idx }}][description]" value="{{ $desc }}" readonly class="w-full bg-slate-50/70 border border-transparent text-slate-500 text-sm py-1.5 px-2.5 outline-none rounded-lg cursor-not-allowed select-none" required>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <input type="text" name="goals[{{ $idx }}][metric]" value="{{ $metric }}" readonly class="w-full bg-slate-50/70 border border-transparent text-slate-500 text-sm py-1.5 px-2.5 outline-none rounded-lg cursor-not-allowed select-none" required>
-                                </td>
-                                <td class="px-4 py-3 text-right">
-                                    <input type="number" step="0.01" min="0" name="goals[{{ $idx }}][target_value]" value="{{ $target }}" readonly class="w-full bg-slate-50/70 border border-transparent text-slate-500 text-sm py-1.5 px-2.5 text-right outline-none rounded-lg cursor-not-allowed select-none font-mono" required>
-                                </td>
-                                <td class="px-4 py-3 text-right">
-                                    <input type="number" step="0.01" min="0" name="goals[{{ $idx }}][achieved_value]" value="{{ $achieved }}" placeholder="Lançado pelo RH" class="w-full bg-slate-50/70 border border-transparent text-slate-500 text-sm py-1.5 px-2.5 text-right outline-none rounded-lg cursor-not-allowed select-none font-mono" readonly>
-                                </td>
-                                <td class="px-4 py-3 text-right font-mono">
-                                    <input type="number" step="0.1" min="0" name="goals[{{ $idx }}][weight]" value="{{ $weight }}" readonly class="w-full bg-slate-50/70 border border-transparent text-slate-500 text-sm py-1.5 px-2.5 text-right outline-none rounded-lg cursor-not-allowed select-none" required>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="px-4 py-6 text-center text-slate-400 font-medium">Nenhuma meta quantitativa cadastrada para este ciclo pelo RH.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Rodapé e Botões da Seção de Metas -->
-            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-2">
-                <div class="text-[12px] text-blue-700 font-bold bg-blue-50/50 px-4 py-3 rounded-lg border border-blue-150 flex items-center gap-2 w-full">
-                    <span class="material-symbols-outlined text-[18px] text-blue-600">info</span>
-                    <span>As metas quantitativas acima são parametrizadas de forma global pelo RH e os valores alcançados serão lançados exclusivamente pelo RH ao final do ciclo.</span>
-                </div>
-            </div>
-        </x-card>
+        @php
+            $goals = old('goals');
+            if (!$goals) {
+                if (isset($evaluation) && $evaluation->goals->isNotEmpty()) {
+                    $goals = $evaluation->goals;
+                } else {
+                    $goals = $cycle->global_goals ?? [];
+                }
+            }
+        @endphp
+        @foreach($goals as $idx => $goal)
+            @php
+                $desc = is_array($goal) ? ($goal['description'] ?? '') : $goal->description;
+                $metric = is_array($goal) ? ($goal['metric'] ?? '') : $goal->metric;
+                $target = is_array($goal) ? ($goal['target_value'] ?? '') : $goal->target_value;
+                $achieved = is_array($goal) ? ($goal['achieved_value'] ?? '') : $goal->achieved_value;
+                $weight = is_array($goal) ? ($goal['weight'] ?? 1.0) : $goal->weight;
+            @endphp
+            <input type="hidden" name="goals[{{ $idx }}][description]" value="{{ $desc }}">
+            <input type="hidden" name="goals[{{ $idx }}][metric]" value="{{ $metric }}">
+            <input type="hidden" name="goals[{{ $idx }}][target_value]" value="{{ $target }}">
+            <input type="hidden" name="goals[{{ $idx }}][achieved_value]" value="{{ $achieved }}">
+            <input type="hidden" name="goals[{{ $idx }}][weight]" value="{{ $weight }}">
+        @endforeach
 
         <!-- ═══════════════════════════════════════
              SEÇÃO 2: AVALIAÇÃO COMPORTAMENTAL BARS
@@ -240,61 +171,106 @@
                     <span class="material-symbols-outlined text-blue-600">checklist</span>
                     <span>2. Avaliação Comportamental (BARS)</span>
                 </h3>
-                <x-button variant="secondary" type="button" class="!py-2 !px-4 flex items-center gap-1.5 !text-xs font-bold rounded-lg transition" onclick="openDiaryDrawer()">
-                    <span class="material-symbols-outlined text-[16px] text-blue-600" style="font-variation-settings:'FILL' 1">book</span>
-                    <span>Ver Diário Completo</span>
-                </x-button>
+                <button type="button" id="btn-toggle-all" onclick="toggleAllAccordions()" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-500 hover:text-white hover:bg-blue-600 hover:border-blue-600 transition bg-white border border-slate-200 px-3 py-1.5 rounded-lg">
+                    <span class="material-symbols-outlined text-[14px]">unfold_more</span>
+                    <span>Expandir Todos</span>
+                </button>
             </div>
-
             @if(count($questions) > 0)
+
                 @foreach ($questions as $category => $categoryQuestions)
-                    <!-- Seção da Categoria -->
-                    <x-card class="md:p-8 space-y-6">
-                        <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
-                            @php
-                                $icon = 'star';
-                                $bg = 'bg-slate-100 text-slate-600';
-                                if($category === 'assiduidade') { $icon = 'schedule'; $bg = 'bg-blue-50 text-blue-500'; }
-                                elseif($category === 'disciplina') { $icon = 'gavel'; $bg = 'bg-rose-50 text-rose-500'; }
-                                elseif($category === 'iniciativa') { $icon = 'lightbulb'; $bg = 'bg-amber-50 text-amber-500'; }
-                                elseif($category === 'responsabilidade') { $icon = 'verified_user'; $bg = 'bg-emerald-50 text-emerald-500'; }
-                                elseif($category === 'cooperacao') { $icon = 'groups'; $bg = 'bg-indigo-50 text-indigo-500'; }
-                                elseif($category === 'qualidade') { $icon = 'workspace_premium'; $bg = 'bg-violet-50 text-violet-500'; }
-                                elseif($category === 'desenvolvimento_rh') { $icon = 'school'; $bg = 'bg-purple-50 text-purple-500'; }
-                                elseif($category === 'avaliacao_usuario') { $icon = 'sentiment_satisfied'; $bg = 'bg-teal-50 text-teal-500'; }
-                            @endphp
-                            <div class="w-10 h-10 rounded-xl {{ $bg }} flex items-center justify-center shadow-sm">
-                                <span class="material-symbols-outlined text-[20px]">{{ $icon }}</span>
+                    @php
+                        $answeredCount = 0;
+                        $categoryHasError = false;
+                        foreach ($categoryQuestions as $q) {
+                            $scoreValue = old("answers.{$q->id}") ?? (isset($evaluation) ? $evaluation->answers->where('question_id', $q->id)->first()?->score : null);
+                            if ($scoreValue !== null) {
+                                $answeredCount++;
+                            }
+                            if ($errors->has("answers.{$q->id}") || $errors->has("justifications.{$q->id}") || $errors->has("evidences.{$q->id}")) {
+                                $categoryHasError = true;
+                            }
+                        }
+                        $totalCount = count($categoryQuestions);
+                        $categoryIsOpen = ($answeredCount > 0) || $categoryHasError;
+                        
+                        if ($categoryHasError) {
+                            $badgeClass = 'bg-rose-50 text-rose-700 border-rose-200';
+                        } elseif ($answeredCount === $totalCount) {
+                            $badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                        } elseif ($answeredCount > 0) {
+                            $badgeClass = 'bg-blue-50 text-blue-700 border-blue-200';
+                        } else {
+                            $badgeClass = 'bg-slate-100 text-slate-500 border-slate-200';
+                        }
+                    @endphp
+
+                    <!-- Card da Categoria como Accordion -->
+                    <x-card class="p-0 overflow-hidden border border-slate-200 shadow-sm category-card" data-category="{{ $category }}">
+                        <!-- Accordion Header -->
+                        <div class="category-accordion-header flex items-center justify-between p-6 cursor-pointer select-none bg-slate-50/50 hover:bg-slate-50 transition-colors {{ !$categoryIsOpen ? 'rounded-b-xl' : 'border-b border-slate-100' }}" data-category="{{ $category }}">
+                            <div class="flex items-center gap-3">
+                                @php
+                                    $icon = 'star';
+                                    $bg = 'bg-slate-100 text-slate-600';
+                                    if($category === 'assiduidade') { $icon = 'schedule'; $bg = 'bg-blue-50 text-blue-500'; }
+                                    elseif($category === 'disciplina') { $icon = 'gavel'; $bg = 'bg-rose-50 text-rose-500'; }
+                                    elseif($category === 'iniciativa') { $icon = 'lightbulb'; $bg = 'bg-amber-50 text-amber-500'; }
+                                    elseif($category === 'responsabilidade') { $icon = 'verified_user'; $bg = 'bg-emerald-50 text-emerald-500'; }
+                                    elseif($category === 'cooperacao') { $icon = 'groups'; $bg = 'bg-indigo-50 text-indigo-500'; }
+                                    elseif($category === 'qualidade') { $icon = 'workspace_premium'; $bg = 'bg-violet-50 text-violet-500'; }
+                                    elseif($category === 'desenvolvimento_rh') { $icon = 'school'; $bg = 'bg-purple-50 text-purple-500'; }
+                                    elseif($category === 'avaliacao_usuario') { $icon = 'sentiment_satisfied'; $bg = 'bg-teal-50 text-teal-500'; }
+                                @endphp
+                                <div class="w-10 h-10 rounded-xl {{ $bg }} flex items-center justify-center shadow-sm">
+                                    <span class="material-symbols-outlined text-[20px]">{{ $icon }}</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-black text-slate-800 uppercase tracking-wider">{{ str_replace('_', ' ', $category) }}</h3>
+                                    <p class="text-xs text-slate-400">Peso do grupo indicador: <strong class="text-slate-600 font-bold">{{ $cycle->weights[$category] ?? 1 }}</strong></p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="text-base font-black text-slate-800 uppercase tracking-wider">{{ str_replace('_', ' ', $category) }}</h3>
-                                <p class="text-xs text-slate-400">Peso do grupo indicador: <strong class="text-slate-600 font-bold">{{ $cycle->weights[$category] ?? 1 }}</strong></p>
+                            
+                            <div class="flex items-center gap-3 shrink-0">
+                                <span class="category-progress-badge px-2.5 py-1 text-[10px] font-bold uppercase rounded-md border {{ $badgeClass }}">
+                                    {{ $answeredCount }} de {{ $totalCount }} respondidas
+                                </span>
+                                <span class="material-symbols-outlined text-[20px] text-slate-400 transition-transform duration-200 category-accordion-chevron {{ $categoryIsOpen ? 'rotate-180' : '' }}">
+                                    expand_more
+                                </span>
                             </div>
                         </div>
 
-                        <div class="divide-y divide-slate-100">
+                        <!-- Accordion Content -->
+                        <div class="category-accordion-content p-6 space-y-6 {{ !$categoryIsOpen ? 'hidden' : '' }}" {!! !$categoryIsOpen ? 'style="display: none;"' : '' !!}>
                             @foreach ($categoryQuestions as $index => $question)
                                 @php
                                     $answer = isset($evaluation) ? $evaluation->answers->where('question_id', $question->id)->first() : null;
                                     $scoreValue = old("answers.{$question->id}") ?? ($answer ? $answer->score : null);
                                     $justificationValue = old("justifications.{$question->id}") ?? ($answer && $answer->criticalIncident ? $answer->criticalIncident->justification : '');
                                     $evidencePath = $answer && $answer->criticalIncident ? $answer->criticalIncident->evidence_path : '';
+                                    $hasError = $errors->has("answers.{$question->id}") || $errors->has("justifications.{$question->id}") || $errors->has("evidences.{$question->id}");
                                 @endphp
-                                <!-- Container da Pergunta -->
-                                <div class="py-6 first:pt-0 last:pb-0 question-container" 
+                                
+                                <!-- Container da Pergunta (Sem Accordion) -->
+                                <div class="question-row border-b border-slate-100 last:border-b-0 pb-6 mb-6 last:pb-0 last:mb-0 transition-all duration-200 question-container {{ $hasError ? 'bg-rose-50/30 p-4 rounded-xl border border-rose-300/80' : '' }}" 
                                      data-question-id="{{ $question->id }}" 
                                      data-category="{{ $category }}"
                                      @foreach($question->barsAnchors as $anchor)
                                          data-anchor-{{ $anchor->score }}="{{ $anchor->behavioral_description }}"
                                      @endforeach
                                 >
+                                    <!-- Cabeçalho da Pergunta Linear -->
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <span class="material-symbols-outlined text-[20px] text-slate-400 shrink-0 select-none">help_outline</span>
+                                        <p class="text-sm font-bold text-slate-700 leading-relaxed text-left">
+                                            {{ $index + 1 }}. {{ $question->text }}
+                                        </p>
+                                    </div>
+
                                     <div class="flex flex-col xl:flex-row xl:items-start justify-between gap-6">
                                         <!-- Texto da Pergunta e Badges -->
                                         <div class="flex-1 space-y-2">
-                                            <p class="text-sm font-bold text-slate-700 leading-relaxed">
-                                                {{ $index + 1 }}. {{ $question->text }}
-                                            </p>
-                                            
                                             <!-- Elemento de Incidente Vinculado (Badge) -->
                                             <div class="linked-incidents-container space-y-1.5">
                                                 @if(isset($answer) && $answer->employeeDiaryIncidents->count() > 0)
@@ -317,35 +293,61 @@
                                             </div>
                                             
                                             <!-- Feedback Visual de Evidência Preenchida -->
-                                            <div class="evidence-badge hidden">
+                                            <div class="evidence-badge {{ ($scoreValue !== null && in_array((int)$scoreValue, [1, 2, 5])) ? '' : 'hidden' }}">
                                                 <x-badge variant="success" class="gap-1.5 px-3 py-1 font-bold shadow-sm rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-250/50">
                                                     <span class="material-symbols-outlined text-[14px]">task_alt</span>
-                                                    <span class="evidence-status-text">Evidência registrada com sucesso</span>
+                                                    <span class="evidence-status-text">
+                                                        @if($scoreValue !== null && in_array((int)$scoreValue, [1, 2, 5]))
+                                                            @if(isset($answer) && $answer->employeeDiaryIncidents->count() > 0)
+                                                                Evidência do Diário de Bordo vinculada
+                                                            @else
+                                                                Justificativa e documento anexados
+                                                            @endif
+                                                        @else
+                                                            Evidência registrada com sucesso
+                                                        @endif
+                                                    </span>
                                                 </x-badge>
                                             </div>
                                         </div>
 
                                         <!-- Escala Segmentada BARS Horizontal (1 a 5) -->
-                                        <div class="shrink-0 flex flex-col items-end gap-2 w-full sm:w-auto">
+                                        <div class="shrink-0 flex flex-col items-end gap-2 w-full sm:w-auto font-mono">
                                             <div class="flex items-center w-full sm:w-auto bg-slate-100 p-1 rounded-xl border border-slate-200/50 select-none">
                                                 @php
                                                     $barsLabels = [
-                                                        1 => 'Insatisfatório',
-                                                        2 => 'Regular',
-                                                        3 => 'Bom',
-                                                        4 => 'Ótimo',
+                                                        1 => 'Insuficiente',
+                                                        2 => 'Abaixo do esperado',
+                                                        3 => 'Dentro do esperado',
+                                                        4 => 'Acima do esperado',
                                                         5 => 'Excelente',
                                                     ];
                                                 @endphp
                                                 @for ($score = 1; $score <= 5; $score++)
-                                                    <label class="flex-1 sm:flex-none relative flex flex-col items-center justify-center px-4 py-2 border border-transparent rounded-lg cursor-pointer text-xs font-bold text-slate-500 hover:text-slate-800 transition-all select-none segment-label font-mono" data-score="{{ $score }}">
-                                                        <input type="radio" 
-                                                               name="answers[{{ $question->id }}]" 
-                                                               value="{{ $score }}" 
-                                                               class="sr-only score-radio"
-                                                               {{ $scoreValue == $score ? 'checked' : '' }}>
-                                                        <span class="text-sm font-bold font-mono">{{ $score }}</span>
-                                                        <span class="text-[9px] uppercase tracking-wider text-slate-400 mt-0.5 hidden md:inline">{{ $barsLabels[$score] }}</span>
+                                                @php
+                                                    $isActive = ($scoreValue == $score);
+                                                    $btnActiveClasses = '';
+                                                    if ($isActive) {
+                                                    $activeStyles = [
+                                                        1 => 'bg-rose-600 text-white border-rose-700 shadow-sm scale-105 font-bold',
+                                                        2 => 'bg-amber-500 text-gray-900 border-amber-600 shadow-sm scale-105 font-bold',
+                                                        3 => 'bg-blue-600 text-white border-blue-700 shadow-sm scale-105 font-bold',
+                                                        4 => 'bg-emerald-500 text-gray-900 border-emerald-600 shadow-sm scale-105 font-bold',
+                                                        5 => 'bg-emerald-700 text-white border-emerald-800 shadow-sm scale-105 font-bold'
+                                                    ];
+                                                        $btnActiveClasses = $activeStyles[$score];
+                                                    } else {
+                                                        $btnActiveClasses = 'text-slate-500 hover:text-slate-800 bg-transparent border-transparent';
+                                                    }
+                                                @endphp
+                                                    <label class="flex-1 sm:flex-none relative flex flex-col items-center justify-center px-4 py-2 border rounded-lg cursor-pointer text-xs transition-all select-none segment-label font-mono {{ $btnActiveClasses }}" data-score="{{ $score }}">
+                                                         <input type="radio" 
+                                                                name="answers[{{ $question->id }}]" 
+                                                                value="{{ $score }}" 
+                                                                class="sr-only score-radio"
+                                                                {{ $isActive ? 'checked' : '' }}>
+                                                         <span class="text-sm font-bold font-mono">{{ $score }}</span>
+                                                         <span class="text-[9px] uppercase tracking-wider mt-0.5 hidden md:inline opacity-60">{{ $barsLabels[$score] }}</span>
                                                     </label>
                                                 @endfor
                                             </div>
@@ -364,7 +366,7 @@
                                             <span class="text-[10px] font-bold uppercase text-slate-400 tracking-widest font-mono">Comportamento Ancorado de Referência (BARS)</span>
                                             <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded text-white bg-slate-400 bars-level-badge font-mono" id="bars-level-badge-{{ $question->id }}">Nível X</span>
                                         </div>
-                                        <p class="text-xs text-slate-600 leading-relaxed font-semibold" id="bars-behavior-text-{{ $question->id }}">
+                                        <p class="text-xs text-slate-650 leading-relaxed font-semibold" id="bars-behavior-text-{{ $question->id }}">
                                             (Carregando descrição...)
                                         </p>
                                     </div>
@@ -415,6 +417,8 @@
                 </div>
             @endif
 
+
+
             <!-- Rodapé de Ações do Formulário -->
             <x-card class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm border border-slate-200">
                 <div class="flex items-center gap-2 text-sm text-slate-500 font-semibold">
@@ -424,6 +428,13 @@
                 <div class="flex items-center gap-3">
                     <x-button variant="secondary" href="{{ route('dashboard') }}" class="font-bold">
                         Cancelar
+                    </x-button>
+                    <x-button type="submit" 
+                              id="btn-draft-evaluation"
+                              variant="secondary"
+                              class="font-bold border border-slate-300 hover:bg-slate-200">
+                        <span class="material-symbols-outlined text-[18px]">draft</span>
+                        <span>Salvar como Rascunho</span>
                     </x-button>
                     <x-button type="submit" 
                               id="btn-submit-evaluation"
@@ -575,7 +586,89 @@
     </div>
 </div>
 
+<!-- ═══════════════════════════════════════
+     MODAL DE ALERTA GENÉRICO
+     ═══════════════════════════════════════ -->
+<div id="modal-alert" class="fixed inset-0 z-[110] flex items-center justify-center hidden">
+    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeAlertModal()"></div>
+    <div class="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-md mx-4 z-10 overflow-hidden modal-alert-inner opacity-0 transition-all duration-300">
+        <div class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between select-none">
+            <div class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-amber-500" style="font-variation-settings:'FILL' 1">info</span>
+                <span class="text-sm font-bold text-slate-900">Atenção</span>
+            </div>
+            <button type="button" class="text-slate-400 hover:text-slate-600 transition" onclick="closeAlertModal()">
+                <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+        </div>
+        <div class="p-6">
+            <div class="text-sm text-slate-700 leading-relaxed" id="modal-alert-message"></div>
+        </div>
+        <div class="bg-slate-50 px-6 py-4 border-t border-slate-150 flex items-center justify-end shrink-0">
+            <button type="button" onclick="closeAlertModal()" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs px-4 py-2 rounded-lg transition">
+                OK
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     BOTÃO VOLTAR AO TOPO
+     ═══════════════════════════════════════ -->
+<button id="scroll-to-top" type="button" class="fixed bottom-6 right-6 z-50 w-10 h-10 bg-white border border-slate-200 rounded-full shadow-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:border-slate-300 transition-all duration-300 opacity-0 invisible">
+    <span class="material-symbols-outlined text-[20px]">arrow_upward</span>
+</button>
+
 <script>
+function openAlertModal(message) {
+    $('#modal-alert-message').html(message);
+    let modal = $('#modal-alert');
+    modal.removeClass('hidden');
+    setTimeout(function() {
+        modal.find('.modal-alert-inner').removeClass('opacity-0').addClass('opacity-100');
+    }, 50);
+}
+
+function closeAlertModal() {
+    if (window.redirectTimeout) {
+        clearTimeout(window.redirectTimeout);
+        window.redirectTimeout = null;
+    }
+    let modal = $('#modal-alert');
+    modal.find('.modal-alert-inner').addClass('opacity-0').removeClass('opacity-100');
+    setTimeout(function() {
+        modal.addClass('hidden');
+    }, 250);
+}
+
+function toggleAllAccordions() {
+    let btn = $('#btn-toggle-all');
+    let expand = btn.text().includes('Expandir');
+
+    $('.category-card').each(function() {
+        let card = $(this);
+        let header = card.find('.category-accordion-header');
+        let content = card.find('.category-accordion-content');
+        let chevron = card.find('.category-accordion-chevron');
+        let isHidden = content.hasClass('hidden') || content.css('display') === 'none';
+
+        if (expand && isHidden) {
+            content.removeClass('hidden').hide().slideDown(250, function() {
+                header.addClass('border-b border-slate-100').removeClass('rounded-b-xl');
+                chevron.addClass('rotate-180');
+            });
+        } else if (!expand && !isHidden) {
+            content.slideUp(250, function() {
+                header.removeClass('border-b border-slate-100').addClass('rounded-b-xl');
+                chevron.removeClass('rotate-180');
+            });
+        }
+    });
+
+    btn.find('span:last').text(expand ? 'Recolher Todos' : 'Expandir Todos');
+    btn.find('.material-symbols-outlined').text(expand ? 'unfold_less' : 'unfold_more');
+}
+
 $(document).ready(function() {
     let currentQuestionId = null;
     let currentOriginalScore = null;
@@ -593,7 +686,112 @@ $(document).ready(function() {
     $('#weight_goals').on('change', adjustWeights);
     adjustWeights(); // Inicializar
 
+    // ─── ACCORDIONS: SINCRO DO BADGE DE PROGRESSE DE CATEGORIA ───
+    function updateCategoryProgress(category) {
+        let card = $(`.category-card[data-category="${category}"]`);
+        let questions = card.find('.question-container');
+        let total = questions.length;
+        let answered = 0;
 
+        questions.each(function() {
+            let q = $(this);
+            let score = q.find('.score-radio:checked').val();
+            if (score !== undefined && score !== null && score !== '') {
+                answered++;
+            }
+        });
+
+        let errorsInCat = card.find('.question-row.border-rose-300').length > 0 || 
+                          card.find('.justification-textarea.border-rose-500').length > 0 || 
+                          card.find('.file-upload-box.border-rose-500').length > 0;
+
+        let badge = card.find('.category-progress-badge');
+        badge.text(`${answered} de ${total} respondidas`);
+
+        // Atualiza a classe de cor do badge
+        badge.removeClass('bg-rose-50 text-rose-700 border-rose-200 bg-emerald-50 text-emerald-700 border-emerald-200 bg-blue-50 text-blue-700 border-blue-200 bg-slate-100 text-slate-500 border-slate-200');
+
+        if (errorsInCat) {
+            badge.addClass('bg-rose-50 text-rose-700 border-rose-200');
+        } else if (answered === total) {
+            badge.addClass('bg-emerald-50 text-emerald-700 border-emerald-200');
+        } else if (answered > 0) {
+            badge.addClass('bg-blue-50 text-blue-700 border-blue-200');
+        } else {
+            badge.addClass('bg-slate-100 text-slate-500 border-slate-200');
+        }
+    }
+
+    function handleQuestionScoreChange(questionContainer, score) {
+        // Remove estilo de erro caso o usuário preencha a nota
+        if (score !== null && score !== undefined && !isNaN(score)) {
+            questionContainer.removeClass('bg-rose-50/30 p-4 rounded-xl border border-rose-300/80');
+        }
+        
+        // Marcação lateral esquerda com a cor da nota
+        questionContainer.removeClass('border-l-4 border-l-rose-500 border-l-amber-500 border-l-blue-500 border-l-emerald-500 border-l-emerald-700');
+        if (score !== null && score !== undefined && !isNaN(score) && score >= 1 && score <= 5) {
+            const borderColors = {
+                1: 'border-l-rose-500',
+                2: 'border-l-amber-500',
+                3: 'border-l-blue-500',
+                4: 'border-l-emerald-500',
+                5: 'border-l-emerald-700'
+            };
+            questionContainer.addClass('border-l-4 ' + borderColors[score]);
+        }
+        
+        let category = questionContainer.data('category');
+        updateCategoryProgress(category);
+    }
+
+    // ─── ACCORDIONS: EVENTO DE CLIQUE NO HEADER DA CATEGORIA ───
+    $(document).on('click', '.category-accordion-header', function(e) {
+        // Só bloqueia se o clique foi diretamente num input ou button
+        let tag = $(e.target).prop('tagName').toLowerCase();
+        if (tag === 'input' || tag === 'button' || tag === 'a') {
+            return;
+        }
+
+        let header = $(this);
+        let categoryName = header.data('category');
+
+        // Localiza o card pelo data-category (mais robusto que closest)
+        let card = $('.category-card[data-category="' + categoryName + '"]');
+        let content = card.find('.category-accordion-content').first();
+        let chevron = header.find('.category-accordion-chevron').first();
+
+        // Detecta se está fechado (hidden do Tailwind OU display:none do inline style)
+        let isHidden = content.hasClass('hidden') || content.css('display') === 'none';
+
+        if (isHidden) {
+            content.removeClass('hidden').hide().slideDown(250, function() {
+                header.addClass('border-b border-slate-100').removeClass('rounded-b-xl');
+                chevron.addClass('rotate-180');
+            });
+        } else {
+            content.slideUp(250, function() {
+                header.removeClass('border-b border-slate-100').addClass('rounded-b-xl');
+                chevron.removeClass('rotate-180');
+            });
+        }
+    });
+
+    // ─── BOTÃO VOLTAR AO TOPO ───
+    $(window).on('scroll', function() {
+        if ($(window).scrollTop() > 400) {
+            $('#scroll-to-top').removeClass('opacity-0 invisible').addClass('opacity-100 visible');
+        } else {
+            $('#scroll-to-top').addClass('opacity-0 invisible').removeClass('opacity-100 visible');
+        }
+    });
+
+    $('#scroll-to-top').on('click', function() {
+        $('html, body').animate({ scrollTop: 0 }, 400);
+    });
+
+    // ─── EXPANDIR/RECOLHER TODOS OS ACCORDIONS ───
+    // (handler via onclick + função global abaixo)
 
     // ─── INICIALIZAÇÃO DE ESTADOS VISUAIS BARS ───
     $('.score-radio:checked').each(function() {
@@ -601,7 +799,6 @@ $(document).ready(function() {
         let score = parseInt(radio.val());
         let label = radio.closest('.segment-label');
         let questionContainer = radio.closest('.question-container');
-        let questionId = questionContainer.data('question-id');
 
         // Destaca a nota ativa
         highlightSegmentLabel(label, score);
@@ -612,16 +809,30 @@ $(document).ready(function() {
         
         // Verifica a validação de nota crítica
         checkCriticalValidation(questionContainer, score);
+
+        // Sincroniza o progresso
+        handleQuestionScoreChange(questionContainer, score);
     });
 
     function highlightSegmentLabel(activeLabel, score) {
-        let container = activeLabel.closest('.select-none');
-        container.find('.segment-label').removeClass('bg-blue-50 text-blue-700 border-blue-200 font-bold shadow-sm scale-105');
+        let container = activeLabel.parent();
         
-        // Destaca o novo botão clicado
+        container.find('.segment-label').each(function() {
+            $(this).removeClass('bg-rose-600 bg-amber-500 bg-blue-600 bg-emerald-500 bg-emerald-700 text-white text-gray-900 border-rose-700 border-amber-600 border-blue-700 border-emerald-600 border-emerald-800 shadow-sm scale-105 font-bold')
+                   .addClass('text-slate-500 hover:text-slate-800 border-transparent bg-transparent');
+        });
+        
         let targetLabel = container.find(`.segment-label[data-score="${score}"]`);
-        targetLabel.addClass('bg-blue-50 text-blue-700 border-blue-200 font-bold shadow-sm scale-105')
-                   .removeClass('text-slate-500 bg-transparent');
+        const activeClasses = {
+            1: 'bg-rose-600 text-white border-rose-700 shadow-sm scale-105 font-bold',
+            2: 'bg-amber-500 text-gray-900 border-amber-600 shadow-sm scale-105 font-bold',
+            3: 'bg-blue-600 text-white border-blue-700 shadow-sm scale-105 font-bold',
+            4: 'bg-emerald-500 text-gray-900 border-emerald-600 shadow-sm scale-105 font-bold',
+            5: 'bg-emerald-700 text-white border-emerald-800 shadow-sm scale-105 font-bold'
+        };
+        
+        targetLabel.addClass(activeClasses[score])
+                   .removeClass('text-slate-500 hover:text-slate-800 border-transparent bg-transparent');
     }
 
     function showBarsDescription(container, score) {
@@ -644,7 +855,7 @@ $(document).ready(function() {
         let levelBadge = $(`#bars-level-badge-${questionId}`);
         let behaviorText = $(`#bars-behavior-text-${questionId}`);
 
-        let labels = { 1: 'Insatisfatório', 2: 'Regular', 3: 'Bom', 4: 'Ótimo', 5: 'Excelente' };
+        let labels = { 1: 'Insuficiente', 2: 'Abaixo do esperado', 3: 'Dentro do esperado', 4: 'Acima do esperado', 5: 'Excelente' };
         let badgeColors = {
             1: 'bg-rose-500',
             2: 'bg-amber-500',
@@ -697,6 +908,7 @@ $(document).ready(function() {
         
         highlightSegmentLabel(radio.closest('.segment-label'), score);
         showBarsDescription(questionContainer, score);
+        handleQuestionScoreChange(questionContainer, score);
 
         let hasDiaryIncident = questionContainer.find('.linked-incident-input').length > 0;
 
@@ -758,6 +970,7 @@ $(document).ready(function() {
             if (save) {
                 questionContainer.data('prev-checked', score);
                 checkCriticalValidation(questionContainer, score);
+                handleQuestionScoreChange(questionContainer, score);
             } else {
                 // Cancelou: Reverte a nota para a anterior
                 questionContainer.find('.score-radio').prop('checked', false);
@@ -768,11 +981,13 @@ $(document).ready(function() {
                     highlightSegmentLabel(originalRadio.closest('.segment-label'), currentOriginalScore);
                     showBarsDescription(questionContainer, currentOriginalScore);
                     questionContainer.data('prev-checked', currentOriginalScore);
+                    handleQuestionScoreChange(questionContainer, currentOriginalScore);
                 } else {
                     questionContainer.data('prev-checked', null);
-                    questionContainer.find('.segment-label').removeClass('bg-blue-50 text-blue-700 border-blue-200 font-bold shadow-sm scale-105')
-                                                            .addClass('text-slate-500 bg-transparent');
+                    questionContainer.find('.segment-label').removeClass('bg-rose-600 bg-amber-500 bg-blue-600 bg-emerald-500 bg-emerald-700 text-white text-gray-900 border-rose-700 border-amber-600 border-blue-700 border-emerald-600 border-emerald-800 shadow-sm scale-105 font-bold')
+                                                            .addClass('text-slate-500 hover:text-slate-800 border-transparent bg-transparent');
                     $(`#bars-description-box-${currentQuestionId}`).slideUp(200);
+                    handleQuestionScoreChange(questionContainer, null);
                 }
                 
                 checkCriticalValidation(questionContainer, currentOriginalScore);
@@ -807,7 +1022,7 @@ $(document).ready(function() {
         }
 
         if (errors) {
-            alert('Atenção: Para prosseguir com esta nota, preencha a justificativa (min. 15 caracteres) e anexe um arquivo comprobatório.');
+            openAlertModal('Para prosseguir com esta nota, preencha a justificativa (mínimo 15 caracteres) e anexe um arquivo comprobatório.');
             return;
         }
 
@@ -877,7 +1092,7 @@ $(document).ready(function() {
 
         if (!targetQuestionIdForDiary) {
             // Se abriu o diário genérico, pergunta a qual indicador vincular
-            alert('Por favor, clique no botão "Buscar no Diário de Bordo" no card da competência que você deseja justificar.');
+            openAlertModal('Clique no botão "Buscar no Diário de Bordo" no card da competência que você deseja justificar.');
             closeDiaryDrawer();
             return;
         }
@@ -886,7 +1101,7 @@ $(document).ready(function() {
         
         // Evita duplicidade
         if (questionContainer.find(`.linked-incident-input[value="${incidentId}"]`).length > 0) {
-            alert('Este incidente já está vinculado a este indicador.');
+            openAlertModal('Este incidente já está vinculado a este indicador.');
             return;
         }
 
@@ -915,6 +1130,8 @@ $(document).ready(function() {
             checkCriticalValidation(questionContainer, parseInt(currentScore));
         }
 
+        let category = questionContainer.data('category');
+        updateCategoryProgress(category);
         closeDiaryDrawer();
     });
 
@@ -932,6 +1149,9 @@ $(document).ready(function() {
         if (currentScore) {
             checkCriticalValidation(container, parseInt(currentScore));
         }
+        
+        let category = container.data('category');
+        updateCategoryProgress(category);
         updateProgress();
     });
 
@@ -941,14 +1161,146 @@ $(document).ready(function() {
         let answeredQuestions = $('.score-radio:checked').length;
         
         $('#form-progress-text').text(`${answeredQuestions} de ${totalQuestions} competências respondidas`);
-        
-        if (answeredQuestions === totalQuestions) {
-            $('#btn-submit-evaluation').prop('disabled', false);
-        } else {
-            $('#btn-submit-evaluation').prop('disabled', true);
-        }
     }
     updateProgress();
+
+    // Identificar qual botão disparou o submit
+    $('#btn-draft-evaluation').on('click', function() {
+        $('#submit_type').val('draft');
+    });
+    
+    $('#btn-submit-evaluation').on('click', function() {
+        $('#submit_type').val('submit');
+    });
+
+    // ─── VALIDATION ON FORM SUBMIT ───
+    $('#evaluation-form').on('submit', function(e) {
+        let isDraft = $('#submit_type').val() === 'draft';
+        let unanswered = [];
+        
+        if (!isDraft) {
+            $('.question-container').each(function() {
+                let container = $(this);
+                let questionId = container.data('question-id');
+                let score = container.find('.score-radio:checked').val();
+                
+                if (score === undefined || score === null || score === '') {
+                    unanswered.push(container);
+                } else {
+                    // If it is a critical score (1, 2, 5), check if it has a diary incident or ad-hoc justification + evidence file
+                    let scoreInt = parseInt(score);
+                    if ([1, 2, 5].includes(scoreInt)) {
+                        let hasDiary = container.find('.linked-incident-input').length > 0;
+                        let hasText = container.find('.justification-textarea').val().trim().length >= 15;
+                        let hasFile = container.find('.evidence-file-input').val() !== '' || 
+                                      (container.find('.file-name-label').text() !== 'Nenhum arquivo selecionado' && 
+                                       container.find('.file-name-label').text().trim() !== '');
+                        if (!hasDiary && (!hasText || !hasFile)) {
+                            unanswered.push(container);
+                        }
+                    }
+                }
+            });
+            
+            if (unanswered.length > 0) {
+                e.preventDefault();
+                
+                // Destacar as perguntas sem resposta/com erro e abrir seus respectivos accordions de categoria
+                unanswered.forEach(function(container) {
+                    // Destacar a subpergunta com estilo de erro
+                    container.addClass('bg-rose-50/30 p-4 rounded-xl border border-rose-300/80');
+                    
+                    // Obter a categoria e o card
+                    let categoryCard = container.closest('.category-card');
+                    let header = categoryCard.find('.category-accordion-header');
+                    let content = categoryCard.find('.category-accordion-content');
+                    let chevron = categoryCard.find('.category-accordion-chevron');
+                    
+                    if (!content.is(':visible')) {
+                        header.removeClass('rounded-b-xl border-b-0').addClass('border-b border-slate-100');
+                        chevron.addClass('rotate-180');
+                        content.slideDown(200, function() {
+                            let category = categoryCard.data('category');
+                            updateCategoryProgress(category);
+                        });
+                    } else {
+                        let category = categoryCard.data('category');
+                        updateCategoryProgress(category);
+                    }
+                });
+                
+                // Scroll até a primeira pergunta com erro
+                $('html, body').animate({
+                    scrollTop: unanswered[0].offset().top - 100
+                }, 500);
+                
+                openAlertModal('Responda a todas as competências e preencha as justificativas e evidências obrigatórias para as notas críticas (1, 2 ou 5).');
+                return false;
+            }
+        }
+        
+        // ─── ENVIO VIA AJAX PARA CAPTURAR ERROS DO SERVIDOR ───
+        e.preventDefault();
+        
+        let form = this;
+        let submitBtn = isDraft ? $('#btn-draft-evaluation') : $('#btn-submit-evaluation');
+        let originalHtml = submitBtn.html();
+        
+        // Desabilitar botões
+        $('#btn-draft-evaluation, #btn-submit-evaluation').prop('disabled', true);
+        
+        if (isDraft) {
+            submitBtn.html('<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> <span>Salvando rascunho...</span>');
+        } else {
+            submitBtn.html('<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> <span>Enviando...</span>');
+        }
+        
+        $.ajax({
+            url: form.action,
+            method: form.method,
+            data: new FormData(form),
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'Accept': 'application/json'
+            },
+            success: function() {
+                $('#btn-draft-evaluation, #btn-submit-evaluation').prop('disabled', false);
+                submitBtn.html(originalHtml);
+                
+                let successTitle = isDraft ? 'Rascunho salvo com sucesso!' : 'Avaliação submetida com sucesso!';
+                openAlertModal('<div class="flex flex-col items-center text-center py-2"><span class="material-symbols-outlined text-emerald-500 text-4xl mb-2" style="font-variation-settings:\'FILL\' 1">check_circle</span><div class="font-bold text-slate-800 text-sm">' + successTitle + '</div><div class="text-xs text-slate-500 mt-1">Redirecionando para a listagem...</div></div>');
+                
+                window.redirectTimeout = setTimeout(function() {
+                    window.location.href = '{{ route("evaluations.index") }}';
+                }, 2500);
+            },
+            error: function(xhr) {
+                $('#btn-draft-evaluation, #btn-submit-evaluation').prop('disabled', false);
+                submitBtn.html(originalHtml);
+                
+                if (xhr.status === 419) {
+                    openAlertModal('Sua sessão expirou. <a href="' + window.location.href + '" class="text-blue-600 underline font-bold">Recarregue a página</a> e tente novamente.');
+                } else if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+                    let errors = xhr.responseJSON.errors;
+                    let items = [];
+                    $.each(errors, function(field, msgs) {
+                        $.each(msgs, function(i, msg) {
+                            items.push('<li class="ml-4 list-disc text-rose-600 font-medium">' + $('<span>').text(msg).html() + '</li>');
+                        });
+                    });
+                    openAlertModal('<div class="font-bold text-slate-800 mb-2">Erros de validação:</div><ul class="space-y-1">' + items.join('') + '</ul>');
+                } else if (xhr.status === 422 && xhr.responseJSON) {
+                    openAlertModal('Erro de validação: ' + $('<span>').text(xhr.responseJSON.message || 'Dados inválidos.').html());
+                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                    openAlertModal($('<span>').text(xhr.responseJSON.message).html());
+                } else {
+                    openAlertModal('Ocorreu um erro inesperado (código ' + xhr.status + '). O formulário foi preservado — tente novamente.');
+                }
+            }
+        });
+    });
 
     // ─── NOME DE ARQUIVOS NOS UPLOADS AD-HOC ───
     $(document).on('change', '.evidence-file-input', function(e) {
@@ -961,6 +1313,8 @@ $(document).ready(function() {
         if (score) {
             checkCriticalValidation(container, parseInt(score));
         }
+        let category = container.data('category');
+        updateCategoryProgress(category);
         updateProgress();
     });
 
@@ -970,6 +1324,8 @@ $(document).ready(function() {
         if (score) {
             checkCriticalValidation(container, parseInt(score));
         }
+        let category = container.data('category');
+        updateCategoryProgress(category);
         updateProgress();
     });
 });

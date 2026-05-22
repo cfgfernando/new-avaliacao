@@ -16,6 +16,8 @@ class StoreEvaluationRequest extends FormRequest
 
     public function rules(): array
     {
+        $isDraft = $this->input('submit_type') === 'draft';
+
         return [
             'evaluated_id' => [
                 'required',
@@ -37,7 +39,7 @@ class StoreEvaluationRequest extends FormRequest
                     }
                 }
             ],
-            'answers' => 'required|array',
+            'answers' => $isDraft ? 'nullable|array' : 'required|array',
             'answers.*' => 'required|integer|between:1,5',
             'justifications' => 'array',
             'evidences' => 'array',
@@ -59,6 +61,11 @@ class StoreEvaluationRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
+            $isDraft = $this->input('submit_type') === 'draft';
+            if ($isDraft) {
+                return;
+            }
+
             $answers = $this->input('answers', []);
             $justifications = $this->input('justifications', []);
             $linkedIncidents = $this->input('linked_incidents', []);

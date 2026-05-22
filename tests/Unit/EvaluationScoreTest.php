@@ -286,8 +286,8 @@ class EvaluationScoreTest extends TestCase
         // Fazer a requisição POST simulando o gestor enviando o formulário
         $response = $this->actingAs($this->evaluator)->post(route('evaluation.store'), $data);
 
-        // Deve redirecionar para o dashboard com sucesso
-        $response->assertRedirect(route('dashboard'));
+        // Deve redirecionar para as avaliações com sucesso
+        $response->assertRedirect(route('evaluations.index'));
         $response->assertSessionHasNoErrors();
 
         // Verificar se a avaliação foi criada
@@ -347,7 +347,7 @@ class EvaluationScoreTest extends TestCase
         // Fazer requisição
         $response = $this->actingAs($this->evaluator)->post(route('evaluation.store'), $data);
 
-        $response->assertRedirect(route('dashboard'));
+        $response->assertRedirect(route('evaluations.index'));
         $response->assertSessionHasNoErrors();
 
         // Verificar avaliação e metas

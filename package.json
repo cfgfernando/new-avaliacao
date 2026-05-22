@@ -17,7 +17,19 @@
         "vite": "^8.0.0"
     },
     "dependencies": {
+        "@aexol/opencode-wizard": "^0.5.5",
+        "@braintrust/trace-opencode": "^0.0.8",
+        "@devtheops/opencode-plugin-otel": "^1.0.0",
+        "@opencode-ai/sdk": "^1.15.7",
+        "ai-sdk-provider-opencode-sdk": "^3.0.2",
         "axios": "^1.16.0",
-        "chart.js": "^4.5.1"
+        "chart.js": "^4.5.1",
+        "oh-my-opencode-slim": "^1.1.1",
+        "opencode-copilot-auth": "^0.0.12",
+        "opencode-gemini-auth": "^1.4.15",
+        "opencode-gitlab-auth": "^2.0.2",
+        "opencode-plugin-langfuse": "^0.1.8",
+        "opencode-poe-auth": "^0.0.4",
+        "opencode-subagent-statusline": "^0.7.1"
     }
 }

@@ -25,6 +25,7 @@ class User extends Authenticatable
         'registration_number',
         'cargo',
         'lotacao',
+        'office_id',
         'evaluation_group',
         'has_active_pad',
         'evaluator_id',
@@ -41,9 +42,31 @@ class User extends Authenticatable
         'has_active_pad'    => 'boolean',
     ];
 
+    protected static function booted()
+    {
+        static::saving(function ($user) {
+            if ($user->office_id) {
+                $office = Office::find($user->office_id);
+                if ($office) {
+                    $user->lotacao = $office->name;
+                }
+            }
+        });
+    }
+
     // =========================================================================
     // RELACIONAMENTOS
     // =========================================================================
+
+    public function office(): BelongsTo
+    {
+        return $this->belongsTo(Office::class, 'office_id');
+    }
+
+    public function employeePoints(): HasMany
+    {
+        return $this->hasMany(EmployeePoint::class, 'employee_id');
+    }
 
     public function evaluations(): HasMany
     {
@@ -168,6 +191,7 @@ class User extends Authenticatable
             'Treasurer'  => 'Tesoureiro',
             'Supervisor' => 'Supervisor',
             'Leader'     => 'Líder de Célula',
+            'Servidor'   => 'Servidor Avaliado',
             default      => $this->role,
         };
     }

@@ -14,6 +14,8 @@ class Evaluation extends Model
         'evaluated_id',
         'categoria',
         'status',
+        'archived_by',
+        'archived_at',
         'final_score',
         'weight_goals',
         'weight_competencies',
@@ -29,11 +31,17 @@ class Evaluation extends Model
         'score_goals' => 'decimal:2',
         'score_competencies' => 'decimal:2',
         'submitted_at' => 'datetime',
+        'archived_at' => 'datetime',
     ];
 
     public function cycle(): BelongsTo
     {
         return $this->belongsTo(EvaluationCycle::class, 'cycle_id');
+    }
+
+    public function archivedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'archived_by');
     }
 
     public function evaluator(): BelongsTo

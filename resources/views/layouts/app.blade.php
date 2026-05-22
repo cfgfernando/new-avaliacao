@@ -88,7 +88,7 @@
             position: fixed;
             top: 0; left: 0; bottom: 0;
             width: 280px;
-            background: #0f172b;
+            background: #0f172a;
             color: #8a99af;
             display: flex;
             flex-direction: column;
@@ -248,21 +248,23 @@
             padding: 14px 16px; /* py-3.5 px-4 */
             font-size: 14px;
             font-weight: 500;
-            color: #020617; /* primary-dark */
+            color: #111827; /* primary-dark */
             transition: all 0.3s ease;
             outline: none;
         }
 
-        /* Foco com Laranja Vibrante - Elite V8 */
+        /* Foco com Azul Semântico conforme item 6 do Design System */
         input:focus, select:focus, textarea:focus {
-            border-color: #2563eb !important; /* focus:border-accent */
-            background-color: #ffffff !important; /* focus:bg-white */
+            border-color: #3b82f6 !important;
+            background-color: #ffffff !important;
             outline: none !important;
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15) !important; /* focus:ring-4 focus:ring-accent/15 */
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
         }
 
-        /* Valores financeiros na cor laranja vibrante ao focar */
-        .mask-money:focus {
+        /* Campos com máscara (jquery.mask.js) e valores em Azul Royal ao focar */
+        .mask-money:focus, .mask-phone:focus, .mask-cpf:focus, .mask-cpfcnpj:focus {
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) !important;
             color: #2563eb !important;
         }
 
@@ -282,7 +284,7 @@
         .print-header, .print-footer { display: none; }
     </style>
 </head>
-<body class="bg-[#f8fafc] text-slate-800 font-sans">
+<body class="bg-background text-primary-dark font-sans">
 
     <!-- SPA Progress Bar -->
     <div id="spa-progress"></div>
@@ -302,7 +304,7 @@
 
         <!-- Logo -->
         <div class="px-6 py-6 flex items-center gap-3 shrink-0">
-            <div class="w-10 h-10 bg-[#2563eb] rounded-lg flex items-center justify-center shadow-md shadow-[#2563eb]/20">
+            <div class="w-10 h-10 bg-accent rounded-lg flex items-center justify-center shadow-md shadow-accent/20">
                 <span class="text-white text-md font-black tracking-tighter">SAD</span>
             </div>
             <div class="flex flex-col">
@@ -356,6 +358,24 @@
                     <span class="material-symbols-outlined text-[20px]">dashboard</span>
                     <span>Dashboard</span>
                 </a>
+                <a href="{{ route('evaluations.index') }}"
+                   class="nav-item {{ request()->routeIs('evaluations.index') || request()->is('evaluations*') ? 'active' : '' }}">
+                    <span class="material-symbols-outlined text-[20px]">description</span>
+                    <span>Minhas Avaliações</span>
+                </a>
+                @if(Auth::user() && Auth::user()->isAdmin())
+                    <a href="{{ route('admin.evaluations.archived') }}" class="nav-item {{ request()->routeIs('admin.evaluations.archived') ? 'active' : '' }}">
+                        <i class="fas fa-archive w-5 text-[15px]"></i>
+                        <span>Avaliações Arquivadas</span>
+                    </a>
+                @endif
+            @endif
+
+            @if(Auth::user() && Auth::user()->isAdmin())
+                <a href="{{ route('admin.evaluations.archived') }}" class="nav-item {{ request()->routeIs('admin.evaluations.archived') ? 'active' : '' }}">
+                    <i class="fas fa-archive w-5 text-[15px]"></i>
+                    <span>Avaliações Arquivadas</span>
+                </a>
             @endif
 
             {{-- Menus estáticos removidos para evitar duplicação com os dinâmicos --}}
@@ -375,8 +395,8 @@
 
         <!-- Footer -->
         <div class="px-4 pb-4 shrink-0 mt-auto">
-            <div class="p-3 bg-[#0a0f1d] rounded-xl border border-white/5 flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-[#2563eb] flex items-center justify-center text-white font-bold text-xs font-mono">
+            <div class="p-3 bg-[#111827] rounded-xl border border-white/5 flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white font-bold text-xs font-mono">
                     {{ strtoupper(substr(Auth::user()->name ?? 'HS', 0, 2)) }}
                 </div>
                 <div class="min-w-0">
@@ -438,14 +458,14 @@
             </div>
             
             <!-- Rodapé Escuro da Imagem -->
-            <footer class="mt-10 bg-[#0f172a] text-slate-400 text-[10px] px-6 py-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 font-mono">
+            <footer class="mt-10 bg-primary text-slate-400 text-[10px] px-6 py-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 font-mono">
                 <div class="flex items-center gap-2">
-                    <span class="text-[#2563eb] font-bold">SAD-BARS</span>
+                    <span class="text-accent font-bold">SAD-BARS</span>
                     <span>•</span>
                     <span>Desenvolvido conforme Diretrizes de Gestão de Desempenho Funcional e Desburocratização no Serviço Público.</span>
                 </div>
-                <div class="flex items-center gap-1.5 text-[#2563eb] font-bold">
-                    <span class="material-symbols-outlined text-[16px] text-[#2563eb]">verified_user</span>
+                <div class="flex items-center gap-1.5 text-accent font-bold">
+                    <span class="material-symbols-outlined text-[16px] text-accent">verified_user</span>
                     <span>Conformidade Jurídico-Administrativa</span>
                 </div>
             </footer>
@@ -453,7 +473,6 @@
     </div>
 
     @stack('modals')
-    @stack('scripts')
 
     <script>
     $(document).ready(function () {

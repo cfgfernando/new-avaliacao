@@ -65,6 +65,89 @@ class EvaluationSetupController extends Controller
     }
 
     /**
+     * Verificação rápida via AJAX para checar duplicidade de avaliação
+     * e bloqueio por PAD no ciclo selecionado.
+     */
+    public function checkDuplicate(Request $request): JsonResponse
+    {
+        $cycleId = $request->query('cycle_id');
+        $evaluatedId = $request->query('evaluated_id');
+
+        $exists = false;
+        $padBlocked = false;
+
+        if ($cycleId && $evaluatedId) {
+            $exists = Evaluation::where('cycle_id', $cycleId)
+                ->where('evaluated_id', $evaluatedId)
+                ->exists();
+
+            $evaluated = User::find($evaluatedId);
+            $cycle = EvaluationCycle::find($cycleId);
+            if ($evaluated && $cycle) {
+                $padBlocked = (bool) $cycle->block_on_pad && (bool) ($evaluated->has_active_pad ?? false);
+            }
+        }
+
+        $fillUrl = null;
+        $evaluation = null;
+        if ($exists) {
+            $evaluation = Evaluation::where('cycle_id', $cycleId)->where('evaluated_id', $evaluatedId)->first();
+            if ($evaluation) {
+                $fillUrl = route('evaluations.fill', $evaluation->id);
+            }
+        }
+
+        return response()->json([
+            'exists' => $exists,
+            'pad_blocked' => $padBlocked,
+            'existing_evaluation_id' => $evaluation->id ?? null,
+            'fill_url' => $fillUrl,
+        ]);
+    }
+
+    /**
+     * Força a criação de uma nova avaliação substituindo a existente.
+     * Usado via AJAX quando o usuário confirma substituir o rascunho.
+     */
+    public function forceCreate(Request $request): JsonResponse
+    {
+        $data = $request->only(['cycle_id', 'evaluated_id', 'categoria', 'lotacao']);
+
+        $request->validate([
+            'cycle_id' => 'required|exists:evaluation_cycles,id',
+            'evaluated_id' => 'required|exists:users,id',
+            'categoria' => 'required|in:saude,guarda,educacao,geral',
+        ]);
+
+        // Arquivar avaliação existente (se houver) em vez de deletar
+        $existing = Evaluation::where('cycle_id', $data['cycle_id'])->where('evaluated_id', $data['evaluated_id'])->first();
+        if ($existing) {
+            $existing->update([
+                'status' => 'archived',
+                'archived_by' => auth()->id() ?? null,
+                'archived_at' => now(),
+            ]);
+        }
+
+        // Criar nova avaliação (pendente)
+        $evaluation = Evaluation::create([
+            'cycle_id' => $data['cycle_id'],
+            'evaluator_id' => auth()->id() ?? 1,
+            'evaluated_id' => $data['evaluated_id'],
+            'categoria' => $data['categoria'] ?? 'geral',
+            'status' => 'draft',
+        ]);
+
+        $fillUrl = $evaluation ? route('evaluations.fill', $evaluation->id) : null;
+
+        return response()->json([
+            'success' => (bool) $evaluation,
+            'evaluation_id' => $evaluation->id ?? null,
+            'fill_url' => $fillUrl,
+        ]);
+    }
+
+    /**
      * Retorna os servidores ativos filtrados por lotação para o dropdown dinâmico.
      */
     public function getServidoresByLotacao(Request $request): JsonResponse

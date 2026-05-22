@@ -67,8 +67,8 @@
                         <p class="text-[10px] font-bold text-slate-600">Status: 
                             <span class="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full 
                                 {{ $evaluation->cycle->status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' 
-                                : $evaluation->cycle->status === 'inactive' ? 'bg-slate-50 text-slate-400 border-slate-200' 
-                                : 'bg-rose-50 text-rose-600 border-rose-200' }}">
+                                : ($evaluation->cycle->status === 'inactive' ? 'bg-slate-50 text-slate-400 border-slate-200' 
+                                : 'bg-rose-50 text-rose-600 border-rose-200') }}">
                                 {{ ucfirst($evaluation->cycle->status) }}
                             </span>
                         </p>
@@ -224,7 +224,7 @@
                                     {{ $incident->question->text }}
                                 </h4>
                                 <span class="text-[10px] font-bold text-rose-600">
-                                    Nota {{ $incident->answer->score }}
+                                    Nota {{ $incident->score }}
                                 </span>
                             </div>
                             <p class="text-[11px] text-slate-700 leading-relaxed">

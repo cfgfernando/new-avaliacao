@@ -30,8 +30,8 @@
                     <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-1">Grupo Funcional</label>
                     <select name="group" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-semibold text-slate-800 focus:border-accent focus:ring-0 outline-none">
                         <option value="">Todos os Grupos</option>
-                        @foreach($groups as $group)
-                            <option value="{{ $group }}" {{ $group == $group ? 'selected' : '' }}>
+                        @foreach($groups as $g)
+                            <option value="{{ $g }}" {{ $g == $group ? 'selected' : '' }}>
                                 @php
                                     $groupLabels = [
                                         'geral' => 'Quadro Geral',
@@ -39,7 +39,7 @@
                                         'guarda' => 'Guarda Municipal',
                                         'educacao' => 'Educação',
                                     ];
-                                    echo $groupLabels[$group] ?? $group;
+                                    echo $groupLabels[$g] ?? $g;
                                 @endphp
                             </option>
                         @endforeach
@@ -192,6 +192,7 @@
                                 <td class="p-4 text-right">
                                     <div class="flex items-center justify-end gap-1">
                                         <a href="{{ route('admin.evaluation-results.show', $evaluation) }}" 
+                                           hx-boost="false"
                                            class="p-2 hover:bg-slate-50 rounded-lg text-slate-400 hover:text-blue-500 transition-colors">
                                             <i class="fas fa-eye"></i>
                                         </a>

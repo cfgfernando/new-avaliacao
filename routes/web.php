@@ -13,6 +13,14 @@ Route::get('/', function () {
 });
 
 // ============================================================
+// ENDPOINTS DE INTEGRAÇÃO (RH & Ponto)
+// ============================================================
+Route::prefix('api/v1/integration')->middleware('integration_token')->group(function () {
+    Route::post('rh/servidores', [\App\Http\Controllers\Api\IntegrationController::class, 'importServidores']);
+    Route::post('ponto/registros', [\App\Http\Controllers\Api\IntegrationController::class, 'importPonto']);
+});
+
+// ============================================================
 // ÁREA AUTENTICADA (Breeze + Admin Core)
 // ============================================================
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -29,12 +37,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ----------------------------------------------------------
     // MÓDULO DE AVALIAÇÃO DE DESEMPENHO (APD)
     // ----------------------------------------------------------
+    Route::get('evaluations', [\App\Http\Controllers\EvaluationController::class, 'index'])->name('evaluations.index');
     Route::get('evaluation/{evaluated}', [\App\Http\Controllers\EvaluationController::class, 'create'])->name('evaluation.create');
     Route::post('evaluation', [\App\Http\Controllers\EvaluationController::class, 'store'])->name('evaluation.store');
 
     // Setup de Nova Avaliação
     Route::get('evaluations/setup', [\App\Http\Controllers\EvaluationSetupController::class, 'create'])->name('evaluations.setup.create');
     Route::post('evaluations/setup', [\App\Http\Controllers\EvaluationSetupController::class, 'store'])->name('evaluations.setup.store');
+    Route::post('evaluations/setup/force', [\App\Http\Controllers\EvaluationSetupController::class, 'forceCreate'])->name('evaluations.setup.force');
+    // Verificação AJAX de duplicidade / PAD antes da criação
+    Route::get('evaluations/check-duplicate', [\App\Http\Controllers\EvaluationSetupController::class, 'checkDuplicate'])->name('evaluations.check_duplicate');
     
     // API Dropdown Dinâmico de Lotação
     Route::get('api/servidores', [\App\Http\Controllers\EvaluationSetupController::class, 'getServidoresByLotacao'])->name('api.lotacao.servidores');
@@ -67,6 +79,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Gestão de Usuários
         Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->names('admin.users');
 
+        // Gestão de Secretarias/Lotações
+        Route::resource('offices', \App\Http\Controllers\Admin\OfficeController::class)->names('admin.offices');
+
+        // Gestão de Servidores Avaliados
+        Route::resource('evaluated-users', \App\Http\Controllers\Admin\EvaluatedUserController::class)->names('admin.evaluated-users');
+
         // Gestão de Perfis (Roles)
         Route::post('roles/order', [\App\Http\Controllers\Admin\RoleController::class, 'order'])->name('admin.roles.order');
         Route::resource('roles', \App\Http\Controllers\Admin\RoleController::class)->names('admin.roles');
@@ -98,6 +116,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('evaluation-results', [\App\Http\Controllers\Admin\EvaluationResultsController::class, 'index'])->name('admin.evaluation-results.index');
         Route::get('evaluation-results/{evaluation}', [\App\Http\Controllers\Admin\EvaluationResultsController::class, 'show'])->name('admin.evaluation-results.show');
         Route::post('evaluation-results/{evaluation}/goals', [\App\Http\Controllers\Admin\EvaluationResultsController::class, 'updateGoals'])->name('admin.evaluation-results.update-goals');
+
+        // Avaliações Arquivadas (Rascunhos antigos)
+        Route::get('evaluations/archived', [\App\Http\Controllers\Admin\ArchivedEvaluationController::class, 'index'])->name('admin.evaluations.archived');
+        Route::post('evaluations/{evaluation}/restore', [\App\Http\Controllers\Admin\ArchivedEvaluationController::class, 'restore'])->name('admin.evaluations.restore');
+        // Listagem avançada de Avaliações concluídas
+        Route::get('evaluations/all', [\App\Http\Controllers\Admin\EvaluationResultsController::class, 'all'])->name('admin.evaluations.all');
+        // Export da listagem avançada
+        Route::get('evaluations/all/export', [\App\Http\Controllers\Admin\EvaluationResultsController::class, 'export'])->name('admin.evaluations.all.export');
 
         // Auditoria Forense Geral (Spatie Audits se configurado)
         Route::get('audits', [AuditController::class, 'index'])->name('admin.audits.index');

@@ -11,10 +11,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->validateCsrfTokens(except: [
+            'api/v1/integration/*',
+        ]);
+
         // Alias do Middleware RBAC: uso nas rotas via ->middleware('role:Admin,Supervisor')
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureRole::class,
             'accounting_closure' => \App\Http\Middleware\CheckAccountingClosure::class,
+            'integration_token' => \App\Http\Middleware\IntegrationTokenMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

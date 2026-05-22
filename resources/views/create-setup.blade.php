@@ -50,9 +50,23 @@
         <div class="lg:col-span-7">
             <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm h-full flex flex-col justify-between space-y-6">
                 
-                <form action="{{ route('evaluations.setup.store') }}" method="POST" id="evaluation-setup-form" class="space-y-5 flex-1 flex flex-col justify-between">
+                <form action="{{ route('evaluations.setup.store') }}" method="POST" id="evaluation-setup-form" hx-boost="false" class="space-y-5 flex-1 flex flex-col justify-between">
                     @csrf
-                    <input type="hidden" name="categoria" id="categoria" value="">
+                    <input type="hidden" name="categoria" id="categoria" value="{{ old('categoria') }}">
+                    <input type="hidden" name="evaluated_id" id="evaluated_id_hidden" value="{{ old('evaluated_id') }}">
+
+                    @if ($errors->any())
+                        <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-xs font-semibold space-y-1">
+                            <div class="flex items-center gap-2 text-rose-700 font-bold uppercase tracking-wider text-[10px] font-mono mb-1">
+                                <i class="fas fa-exclamation-circle text-sm"></i> Erros de validação
+                            </div>
+                            <ul class="list-disc pl-4 space-y-0.5 font-sans">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     
                     <div class="space-y-6 flex-1">
                         
@@ -71,14 +85,14 @@
                                 @if(auth()->user()->isAdmin())
                                     <select name="cycle_id" id="cycle_id" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-800 focus:border-blue-500 focus:ring-0 focus:bg-white outline-none">
                                         @foreach($cycles as $cycle)
-                                            <option value="{{ $cycle->id }}" data-block-on-pad="{{ $cycle->block_on_pad ? '1' : '0' }}" {{ $cycle->status === 'active' ? 'selected' : '' }}>
+                                            <option value="{{ $cycle->id }}" data-block-on-pad="{{ $cycle->block_on_pad ? '1' : '0' }}" {{ old('cycle_id', $cycles->firstWhere('status', 'active')?->id) == $cycle->id ? 'selected' : '' }}>
                                                 {{ $cycle->name }} {{ $cycle->status === 'active' ? '(Ciclo Vigente)' : '' }}
                                             </option>
                                         @endforeach
                                     </select>
                                 @else
                                     @php $activeCycle = $cycles->first(); @endphp
-                                    <input type="hidden" name="cycle_id" id="cycle_id" value="{{ $activeCycle?->id }}" data-block-on-pad="{{ $activeCycle?->block_on_pad ? '1' : '0' }}">
+                                    <input type="hidden" name="cycle_id" id="cycle_id" value="{{ old('cycle_id', $activeCycle?->id) }}" data-block-on-pad="{{ $activeCycle?->block_on_pad ? '1' : '0' }}">
                                     <input type="text" value="{{ $activeCycle?->name ?? 'Nenhum ciclo ativo' }}" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-500 cursor-not-allowed" readonly>
                                     <p class="mt-1 text-[10px] text-slate-400 font-sans">Restrito ao ciclo avaliativo vigente para a sua Chefia Imediata.</p>
                                 @endif
@@ -94,12 +108,12 @@
                                     <select name="lotacao" id="lotacao" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-800 focus:border-blue-500 focus:ring-0 focus:bg-white outline-none">
                                         <option value="">Selecione uma secretaria/lotação...</option>
                                         @foreach($lotacoes as $lot)
-                                            <option value="{{ $lot }}">{{ $lot }}</option>
+                                            <option value="{{ $lot }}" {{ old('lotacao') == $lot ? 'selected' : '' }}>{{ $lot }}</option>
                                         @endforeach
                                     </select>
                                 @else
                                     @php $chefiaLotacao = $lotacoes->first(); @endphp
-                                    <input type="hidden" name="lotacao" id="lotacao" value="{{ $chefiaLotacao }}">
+                                    <input type="hidden" name="lotacao" id="lotacao" value="{{ old('lotacao', $chefiaLotacao) }}">
                                     <input type="text" value="{{ $chefiaLotacao }}" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-500 cursor-not-allowed" readonly>
                                     <p class="mt-1 text-[10px] text-slate-400 font-sans">Limitado à sua secretaria/lotação funcional.</p>
                                 @endif
@@ -121,7 +135,7 @@
                             <!-- 3. Servidor Avaliado -->
                             <div>
                                 <label for="evaluated_id" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono block mb-2">Servidor Avaliado <span class="text-rose-500">*</span></label>
-                                <select name="evaluated_id" id="evaluated_id" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-800 focus:border-blue-500 focus:ring-0 focus:bg-white outline-none" disabled>
+                                <select id="evaluated_id" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-800 focus:border-blue-500 focus:ring-0 focus:bg-white outline-none" disabled>
                                     <option value="">Selecione primeiro uma lotação...</option>
                                 </select>
                                 <p id="loading-servidores" class="mt-1.5 text-xs text-blue-600 font-medium hidden items-center gap-1.5 animate-pulse font-sans">
@@ -370,6 +384,7 @@
                                 <span id="incidente-positivo-count" class="w-10 h-10 rounded-full bg-emerald-500 text-white font-bold text-sm flex items-center justify-center shadow-sm font-mono">
                                     0
                                 </span>
+                                        
                             </div>
 
                             <!-- Incidentes Negativos -->
@@ -388,6 +403,54 @@
                         </p>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação de Avaliação Existente -->
+<div id="duplicate-evaluation-modal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <!-- Backdrop com blur escuro -->
+        <div class="fixed inset-0 bg-[#1c2434]/40 backdrop-blur-sm transition-opacity" aria-hidden="true" id="duplicate-modal-backdrop"></div>
+
+        <!-- Centralizador -->
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <!-- Painel do Modal -->
+        <div class="relative inline-block align-middle bg-white rounded-xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-200">
+            <!-- Cabeçalho -->
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-100 flex items-center gap-3">
+                <div id="duplicate-modal-icon-container" class="w-10 h-10 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center border border-amber-200 shrink-0">
+                    <i class="fas fa-exclamation-triangle text-sm"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide font-sans" id="duplicate-modal-title">
+                        Avaliação Existente
+                    </h3>
+                    <p class="text-[10px] text-slate-500 font-medium font-sans" id="duplicate-modal-subtitle">
+                        Já existe um registro para este servidor neste ciclo.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Corpo -->
+            <div class="px-6 py-6">
+                <p class="text-xs text-slate-650 font-medium leading-relaxed font-sans" id="duplicate-modal-text">
+                    Já existe uma avaliação para este servidor neste ciclo. Deseja abrir o rascunho existente? (OK = Abrir; Cancel = Opções)
+                </p>
+            </div>
+
+            <!-- Rodapé / Ações -->
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex flex-row-reverse justify-start gap-3">
+                <!-- Botão OK / Confirmar -->
+                <button type="button" id="btn-duplicate-ok" class="px-5 py-2.5 rounded-full text-xs font-bold text-white bg-[#f59e0b] hover:bg-[#d97706] transition-all flex items-center gap-2 shadow-md shadow-amber-500/10 font-sans">
+                    <i class="fas fa-folder-open"></i> Abrir Rascunho
+                </button>
+                <!-- Botão Cancel / Opções -->
+                <button type="button" id="btn-duplicate-cancel" class="px-5 py-2.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-500 bg-white hover:bg-slate-50 transition-all font-sans">
+                    Outras Opções
+                </button>
             </div>
         </div>
     </div>
@@ -452,7 +515,7 @@ $(document).ready(function() {
     });
 
     // 3. Dropdown Dinâmico de Servidores por Lotação
-    function loadServidores(lotacaoVal) {
+    function loadServidores(lotacaoVal, selectedId = null) {
         if (!lotacaoVal) {
             $('#evaluated_id').html('<option value="">Selecione primeiro uma lotação...</option>').prop('disabled', true);
             resetApoio();
@@ -473,8 +536,8 @@ $(document).ready(function() {
             } else {
                 $.each(data, function(index, servidor) {
                     var padBadge = servidor.has_active_pad ? ' [PAD ATIVO]' : '';
-                    
-                    options += '<option value="' + servidor.id + '" data-group="' + servidor.evaluation_group + '" data-pad="' + servidor.has_active_pad + '">';
+                    var isSelected = (selectedId && selectedId == servidor.id) ? 'selected' : '';
+                    options += '<option value="' + servidor.id + '" data-group="' + servidor.evaluation_group + '" data-pad="' + servidor.has_active_pad + '" ' + isSelected + '>';
                     options += servidor.name + ' (' + servidor.cargo + ')' + padBadge;
                     options += '</option>';
                 });
@@ -482,6 +545,11 @@ $(document).ready(function() {
             
             $('#evaluated_id').html(options).prop('disabled', data.length === 0);
             $('#loading-servidores').addClass('hidden');
+            
+            if (selectedId) {
+                $('#evaluated_id').val(selectedId).trigger('change');
+            }
+            
             validateStep2();
         }).fail(function() {
             $('#evaluated_id').html('<option value="">Erro ao buscar servidores ativos</option>').prop('disabled', true);
@@ -510,6 +578,8 @@ $(document).ready(function() {
         // Servidor desmarcado → reseta tudo
         if (!val) {
             resetApoio();
+            // Sincronizar hidden quando não há seleção
+            $('#evaluated_id_hidden').val('');
             validateStep2();
             return;
         }
@@ -548,9 +618,15 @@ $(document).ready(function() {
 
             // Refina a categoria com o dado confiável da API
             applyCategoria(data.user.evaluation_group);
+            // Reavaliar validação do passo 3 após receber dados da API
+            validateStep3();
+            // Sincronizar hidden com o select para garantir envio mesmo que o select esteja disabled
+            $('#evaluated_id_hidden').val(val);
 
             // Metas
             var metasHtml = '';
+
+                
             if (data.goals.length === 0) {
                 metasHtml = '<div class="text-xs text-slate-400 font-semibold p-3 bg-slate-50 rounded-lg border border-slate-100 text-center"><i class="fas fa-info-circle mr-1"></i> Nenhuma meta pactuada para este ciclo.</div>';
             } else {
@@ -643,8 +719,8 @@ $(document).ready(function() {
         // Adicionar badge de confirmação se ainda não existir
         if (targetCard.find('.badge-confirmado').length === 0) {
             targetCard.append(
-                '<span class="badge-confirmado absolute top-3 right-3 inline-flex items-center gap-1 text-[9px] font-bold text-blue-600 bg-white border border-blue-200 rounded-full px-2 py-0.5 font-mono shadow-sm">' +
-                '<i class="fas fa-check-circle"></i> Confirmado</span>'
+                '<span class="badge-confirmado absolute top-3 right-3 inline-flex items-center gap-1 text-[9px] font-bold text-blue-600 bg-white border border-blue-200 rounded-full px-2 py-0.5 font-mono shadow-sm">'
+                + '<i class="fas fa-check-circle"></i> Confirmado</span>'
             );
         }
 
@@ -666,6 +742,8 @@ $(document).ready(function() {
             $('#categoria').val(targetValue);
         }
         $('#resumo-categoria').text(categoryTexts[targetValue] || targetValue);
+        // Reavaliar validação do passo 3 após aplicar categoria
+        validateStep3();
     }
 
     // Reseta os cards de categoria (ao trocar de servidor)
@@ -807,14 +885,238 @@ $(document).ready(function() {
         }
     }
 
-    // Carga inicial se a lotação já estiver definida (Ex: chefia imediata logada)
+    // Carga inicial se a lotação já estiver definida (Ex: chefia imediata logada ou erro de validação)
     var initialLotacao = $('#lotacao').val();
+    var oldEvaluatedId = "{{ old('evaluated_id') }}";
     if (initialLotacao) {
-        loadServidores(initialLotacao);
+        loadServidores(initialLotacao, oldEvaluatedId || null);
         validateStep1();
     } else {
         validateStep1();
     }
+
+    function resetSubmitButton() {
+        $('#btn-submit').prop('disabled', false).removeClass('opacity-50 cursor-not-allowed');
+    }
+
+    function voltarAoPasso2() {
+        if (currentStep !== 2) {
+            $('#step-3-content').addClass('hidden');
+            $('#step-2-content').removeClass('hidden');
+            $('#btn-submit').addClass('hidden');
+            $('#btn-next').removeClass('hidden');
+            currentStep = 2;
+            validateStep2();
+        }
+        $('#evaluated_id').focus();
+    }
+
+    function showInformativoModal(mensagem, titulo = 'Avaliação Existente', subtitulo = 'Não é possível prosseguir.') {
+        $('#duplicate-modal-title').text(titulo);
+        $('#duplicate-modal-subtitle').text(subtitulo);
+        $('#duplicate-modal-text').text(mensagem);
+        
+        $('#duplicate-modal-icon-container')
+            .removeClass('bg-amber-50 text-amber-500 border-amber-200 bg-rose-50 text-rose-500 border-rose-200')
+            .addClass('bg-blue-50 text-blue-500 border-blue-200');
+        $('#duplicate-modal-icon-container i')
+            .removeClass('fa-exclamation-triangle fa-exclamation-circle')
+            .addClass('fa-info-circle');
+
+        $('#btn-duplicate-ok').hide();
+        $('#btn-duplicate-cancel')
+            .text('Fechar')
+            .off('click')
+            .on('click', function() {
+                $('#duplicate-evaluation-modal').addClass('hidden');
+                resetSubmitButton();
+                voltarAoPasso2();
+            });
+
+        $('#duplicate-modal-backdrop').off('click').on('click', function() {
+            $('#duplicate-evaluation-modal').addClass('hidden');
+            resetSubmitButton();
+            voltarAoPasso2();
+        });
+
+        $('#duplicate-evaluation-modal').removeClass('hidden');
+    }
+
+    // Checagem AJAX antes do submit: evita envio quando já existe avaliação ou PAD bloqueia
+    $('#evaluation-setup-form').on('submit', function(e) {
+        e.preventDefault();
+        var form = this;
+        var cycle = $('#cycle_id').val();
+        var evaluated = $('#evaluated_id_hidden').val() || $('#evaluated_id').val();
+
+        if (!cycle || !evaluated) {
+            // Delega validação ao servidor
+            form.submit();
+            return;
+        }
+
+        var checkUrl = "{{ parse_url(route('evaluations.check_duplicate'), PHP_URL_PATH) }}?cycle_id=" + encodeURIComponent(cycle) + "&evaluated_id=" + encodeURIComponent(evaluated);
+
+        // Bloquear botão enquanto checa
+        $('#btn-submit').prop('disabled', true).addClass('opacity-50 cursor-not-allowed');
+
+        $.getJSON(checkUrl, function(data) {
+            if (data.pad_blocked) {
+                showInformativoModal(
+                    'Avaliação bloqueada: este servidor possui PAD ativo para o ciclo selecionado.',
+                    'Aviso de Impedimento',
+                    'Bloqueio ativo do PAD'
+                );
+                $('#pad-warning-container').removeClass('hidden');
+                $('#pad-block-alert').removeClass('hidden');
+                return;
+            }
+
+            if (data.exists) {
+                if (data.fill_url) {
+                    var modalState = 1;
+                    
+                    // Configurar Estado 1 (Abrir rascunho existente)
+                    $('#duplicate-modal-title').text('Avaliação Existente');
+                    $('#duplicate-modal-subtitle').text('Já existe um registro para este servidor neste ciclo.');
+                    $('#duplicate-modal-text').text('Já existe uma avaliação para este servidor neste ciclo. Deseja abrir o rascunho existente? (OK = Abrir; Cancel = Opções)');
+                    
+                    $('#duplicate-modal-icon-container')
+                        .removeClass('bg-rose-50 text-rose-500 border-rose-200 bg-blue-50 text-blue-500 border-blue-200')
+                        .addClass('bg-amber-50 text-amber-500 border-amber-200');
+                    $('#duplicate-modal-icon-container i')
+                        .removeClass('fa-exclamation-circle fa-trash-alt fa-info-circle')
+                        .addClass('fa-exclamation-triangle');
+
+                    $('#btn-duplicate-ok')
+                        .html('<i class="fas fa-folder-open"></i> Abrir Rascunho')
+                        .removeClass('bg-rose-600 hover:bg-rose-700 bg-blue-600 hover:bg-blue-700')
+                        .addClass('bg-[#f59e0b] hover:bg-[#d97706]')
+                        .show();
+                        
+                    $('#btn-duplicate-cancel')
+                        .text('Outras Opções')
+                        .show();
+
+                    $('#duplicate-evaluation-modal').removeClass('hidden');
+
+                    // Bind dos cliques
+                    $('#btn-duplicate-ok').off('click').on('click', function() {
+                        if (modalState === 1) {
+                            window.location.href = data.fill_url;
+                        } else if (modalState === 2) {
+                            // Substituir rascunho
+                            $('#btn-duplicate-ok').prop('disabled', true).addClass('opacity-50 cursor-not-allowed').html('<i class="fas fa-spinner fa-spin"></i> Processando...');
+                            var forceUrl = "{{ route('evaluations.setup.force') }}";
+                            var token = $('meta[name="csrf-token"]').attr('content');
+                            $.ajax({
+                                url: forceUrl,
+                                method: 'POST',
+                                data: {
+                                    cycle_id: cycle,
+                                    evaluated_id: evaluated,
+                                    categoria: $('#categoria').val(),
+                                    lotacao: $('#lotacao').val()
+                                },
+                                headers: { 'X-CSRF-TOKEN': token },
+                                success: function(resp) {
+                                    if (resp.fill_url) {
+                                        window.location.href = resp.fill_url;
+                                    } else {
+                                        location.reload();
+                                    }
+                                },
+                                error: function() {
+                                    $('#btn-duplicate-ok').prop('disabled', false).removeClass('opacity-50 cursor-not-allowed').html('<i class="fas fa-trash-alt"></i> Substituir e Criar');
+                                    $('#duplicate-modal-text').html('<span class="text-rose-600 font-bold">Erro ao substituir o rascunho. Tente novamente ou contate o administrador.</span>');
+                                }
+                            });
+                        }
+                    });
+
+                    $('#btn-duplicate-cancel').off('click').on('click', function() {
+                        if (modalState === 1) {
+                            // Transicionar para Estado 2 (Opções/Substituir)
+                            modalState = 2;
+                            $('#duplicate-modal-title').text('Substituir Avaliação');
+                            $('#duplicate-modal-subtitle').text('Criar um novo rascunho do zero.');
+                            $('#duplicate-modal-text').text('Deseja substituir o rascunho existente e criar uma nova avaliação? Essa ação arquivará o rascunho anterior.');
+                            
+                            $('#duplicate-modal-icon-container')
+                                .removeClass('bg-amber-50 text-amber-500 border-amber-200 bg-blue-50 text-blue-500 border-blue-200')
+                                .addClass('bg-rose-50 text-rose-500 border-rose-200');
+                            $('#duplicate-modal-icon-container i')
+                                .removeClass('fa-exclamation-triangle fa-info-circle')
+                                .addClass('fa-exclamation-circle');
+
+                            $('#btn-duplicate-ok')
+                                .html('<i class="fas fa-trash-alt"></i> Substituir e Criar')
+                                .removeClass('bg-[#f59e0b] hover:bg-[#d97706]')
+                                .addClass('bg-rose-600 hover:bg-rose-700');
+
+                            $('#btn-duplicate-cancel')
+                                .text('Voltar / Cancelar');
+                        } else {
+                            // Cancelado no estado 2: Fechar modal e voltar
+                            $('#duplicate-evaluation-modal').addClass('hidden');
+                            resetSubmitButton();
+                            voltarAoPasso2();
+                        }
+                    });
+
+                    $('#duplicate-modal-backdrop').off('click').on('click', function() {
+                        $('#duplicate-evaluation-modal').addClass('hidden');
+                        resetSubmitButton();
+                        voltarAoPasso2();
+                    });
+
+                } else {
+                    showInformativoModal('Este servidor já possui uma avaliação neste ciclo.');
+                }
+                return;
+            }
+
+            // OK — enviar o formulário (removendo o handler para evitar loop)
+            $(form).off('submit');
+            form.submit();
+        }).fail(function() {
+            // Em caso de falha na checagem, submeter e deixar o backend validar
+            $(form).off('submit');
+            form.submit();
+        });
+    });
+
+    // Se a página foi recarregada com erros de validação, abrir o passo apropriado
+    @if($errors->any())
+        @if(old('evaluated_id'))
+            // Forçar exibir Passo 3 quando o servidor já estava selecionado
+            $('#step-1-content').addClass('hidden');
+            $('#step-2-content').addClass('hidden');
+            $('#step-3-content').removeClass('hidden');
+            $('#btn-next').addClass('hidden');
+            $('#btn-submit').removeClass('hidden');
+            $('#btn-back').removeClass('hidden');
+            $('.step-indicator[data-step="2"]').addClass('active').find('span').removeClass('bg-slate-100 text-slate-400').addClass('bg-blue-600 text-white border-blue-50');
+            $('.step-indicator[data-step="3"]').addClass('active').find('span').removeClass('bg-slate-100 text-slate-400').addClass('bg-blue-600 text-white border-blue-50');
+            $('#stepper-progress-line').css('width', '100%');
+            
+            // Preencher dados do resumo
+            $('#resumo-ciclo').text(authAdminOrReadOnlyCycleName());
+            $('#resumo-lotacao').text($('#lotacao').val());
+            
+            currentStep = 3;
+            validateStep3();
+        @elseif(old('lotacao') || old('cycle_id'))
+            // Forçar exibir Passo 2 quando já existia ciclo/lotação preenchidos
+            $('#step-1-content').addClass('hidden');
+            $('#step-2-content').removeClass('hidden');
+            $('#btn-back').removeClass('hidden');
+            $('.step-indicator[data-step="2"]').addClass('active').find('span').removeClass('bg-slate-100 text-slate-400').addClass('bg-blue-600 text-white border-blue-50');
+            $('#stepper-progress-line').css('width', '50%');
+            currentStep = 2;
+            validateStep2();
+        @endif
+    @endif
 });
 </script>
 @endpush

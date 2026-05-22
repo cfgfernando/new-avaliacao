@@ -352,10 +352,54 @@
         </form>
     </div>
 </div>
+
+<!-- ═══════════════════════════════════════
+     MODAL DE ALERTA GENÉRICO
+     ═══════════════════════════════════════ -->
+<div id="modal-alert" class="fixed inset-0 z-[110] flex items-center justify-center hidden">
+    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeAlertModal()"></div>
+    <div class="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-md mx-4 z-10 overflow-hidden modal-alert-inner opacity-0 transition-all duration-300">
+        <div class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between select-none">
+            <div class="flex items-center gap-2.5">
+                <i class="fas fa-exclamation-circle text-amber-500 text-lg"></i>
+                <span class="text-sm font-bold text-slate-900">Atenção</span>
+            </div>
+            <button type="button" class="text-slate-400 hover:text-slate-600 transition" onclick="closeAlertModal()">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+        </div>
+        <div class="p-6">
+            <p class="text-sm text-slate-700 leading-relaxed" id="modal-alert-message"></p>
+        </div>
+        <div class="bg-slate-50 px-6 py-4 border-t border-slate-150 flex items-center justify-end shrink-0">
+            <button type="button" onclick="closeAlertModal()" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs px-4 py-2 rounded-lg transition">
+                OK
+            </button>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
 <script>
+function openAlertModal(message) {
+    $('#modal-alert-message').text(message);
+    let modal = $('#modal-alert');
+    modal.removeClass('hidden');
+    setTimeout(function() {
+        modal.find('.modal-alert-inner').removeClass('opacity-0').addClass('opacity-100');
+    }, 50);
+}
+
+function closeAlertModal() {
+    let modal = $('#modal-alert');
+    modal.find('.modal-alert-inner').addClass('opacity-0').removeClass('opacity-100');
+    setTimeout(function() {
+        modal.addClass('hidden');
+    }, 250);
+}
+
 $(document).ready(function() {
     // 1. Slider de Pesos Dinâmico
     $('#weight-range-slider').on('input', function() {
@@ -380,7 +424,7 @@ $(document).ready(function() {
         var title = $('#ia-question-text').val().trim();
         
         if (!title) {
-            alert('Por favor, preencha o título da competência para que a IA possa gerar as âncoras comportamentais.');
+            openAlertModal('Por favor, preencha o título da competência para que a IA possa gerar as âncoras comportamentais.');
             $('#ia-question-text').focus();
             return;
         }
@@ -428,12 +472,12 @@ $(document).ready(function() {
                         delay += 350; // Atraso de preenchimento entre inputs
                     });
                 } else {
-                    alert('Erro ao tentar simular geração de âncoras.');
+                    openAlertModal('Erro ao tentar simular geração de âncoras.');
                     resetAnchorInputs();
                 }
             },
             error: function() {
-                alert('Ocorreu um erro ao tentar se conectar com a simulação de inteligência artificial.');
+                openAlertModal('Ocorreu um erro ao tentar se conectar com a simulação de inteligência artificial.');
                 resetAnchorInputs();
             },
             complete: function() {
