@@ -3,6 +3,109 @@
 @section('title', 'Inicializar Avaliação - SAD-BARS')
 
 @section('content')
+<!-- Select2 Assets (Local) -->
+<link rel="stylesheet" href="{{ asset('vendor/select2/select2.min.css') }}">
+<script src="{{ asset('vendor/select2/select2.min.js') }}"></script>
+
+<style>
+    /* Customização do Select2 para alinhar com o Design System */
+    .select2-container--default .select2-selection--single {
+        background-color: #f8fafc !important; /* bg-slate-50/50 */
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 8px !important; /* rounded-lg (8px) */
+        height: 42px !important; /* Altura do input padrão */
+        display: flex !important;
+        align-items: center !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: #1e293b !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        padding-left: 12px !important;
+        padding-right: 30px !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__placeholder {
+        color: #94a3b8 !important;
+        font-weight: 500 !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 40px !important;
+        right: 8px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    /* Foco e Active do Select2 */
+    .select2-container--default.select2-container--focus .select2-selection--single,
+    .select2-container--default.select2-container--open .select2-selection--single {
+        border-color: #3b82f6 !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
+    }
+
+    /* Dropdown do Select2 */
+    .select2-container--default .select2-dropdown {
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 8px !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+        overflow: hidden !important;
+        z-index: 9999 !important;
+    }
+
+    /* Campo de busca dentro do Select2 */
+    .select2-container--default .select2-search--dropdown {
+        padding: 8px !important;
+    }
+
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 6px !important;
+        padding: 6px 10px !important;
+        outline: none !important;
+        font-size: 13px !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .select2-container--default .select2-search--dropdown .select2-search__field:focus {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
+    }
+
+    /* Resultados das opções */
+    .select2-container--default .select2-results__option {
+        font-size: 13px !important;
+        padding: 8px 12px !important;
+        font-weight: 500 !important;
+        color: #334155 !important;
+    }
+
+    /* Opção selecionada */
+    .select2-container--default .select2-results__option[aria-selected=true] {
+        background-color: #f1f5f9 !important;
+        color: #1e293b !important;
+    }
+
+    /* Opção hover / focada */
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+        background-color: #2563eb !important; /* Azul Royal */
+        color: #ffffff !important;
+    }
+
+    /* Estado desabilitado */
+    .select2-container--default.select2-container--disabled .select2-selection--single {
+        background-color: #f1f5f9 !important;
+        border-color: #e2e8f0 !important;
+        cursor: not-allowed !important;
+    }
+    .select2-container--default.select2-container--disabled .select2-selection--single .select2-selection__rendered {
+        color: #94a3b8 !important;
+    }
+</style>
+
 <div class="max-w-7xl mx-auto space-y-6">
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-200 pb-5">
@@ -129,7 +232,7 @@
                         <div id="step-2-content" class="step-content space-y-5 hidden">
                             <div class="border-b border-slate-100 pb-3 mb-4">
                                 <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider font-sans">Passo 2: Servidor Avaliado</h2>
-                                <p class="text-xs text-slate-500 font-medium font-sans">Selecione o servidor ativo para avaliar. O painel à direita carregará as metas e incidentes funcionais do mesmo.</p>
+                                <p class="text-xs text-slate-500 font-medium font-sans">Selecione o servidor ativo para avaliar. O painel à direita carregará as metas e o diário de bordo funcional do mesmo.</p>
                             </div>
 
                             <!-- 3. Servidor Avaliado -->
@@ -338,7 +441,7 @@
                     </div>
                     <div>
                         <h3 class="text-sm font-bold text-slate-800 font-sans">Apoio à Decisão (Histórico)</h3>
-                        <p class="text-xs text-slate-400 mt-1 max-w-[280px] mx-auto leading-relaxed font-sans font-medium">Selecione uma secretaria e avance para selecionar um servidor. Aqui será carregado o histórico de metas e incidentes funcionais.</p>
+                        <p class="text-xs text-slate-400 mt-1 max-w-[280px] mx-auto leading-relaxed font-sans font-medium">Selecione uma secretaria e avance para selecionar um servidor. Aqui será carregado o histórico de metas e do diário de bordo funcional.</p>
                     </div>
                 </div>
 
@@ -368,10 +471,10 @@
                         </div>
                     </div>
 
-                    <!-- Seção de Incidentes Críticos (Diário Funcional) -->
+                    <!-- Seção do Diário de Bordo Funcional -->
                     <div class="space-y-3 pt-2">
                         <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono flex items-center gap-2">
-                            <i class="fas fa-book-open text-blue-500"></i> Incidentes Críticos (Diário Funcional)
+                            <i class="fas fa-book-open text-blue-500"></i> Diário de Bordo Funcional (Evidências)
                         </h4>
                         
                         <div class="grid grid-cols-2 gap-4">
@@ -399,7 +502,7 @@
                             </div>
                         </div>
                         <p class="text-[10px] text-slate-400 mt-2 leading-relaxed font-sans font-medium">
-                            <i class="fas fa-info-circle mr-1"></i> Os incidentes críticos registrados servem como subsídio legal direto para justificar a pontuação nas âncoras BARS de comportamento.
+                            <i class="fas fa-info-circle mr-1"></i> Os registros no diário de bordo servem como subsídio legal direto para justificar a pontuação nas âncoras BARS de comportamento.
                         </p>
                     </div>
                 </div>
@@ -455,9 +558,7 @@
         </div>
     </div>
 </div>
-@endsection
 
-@push('scripts')
 <script>
 $(document).ready(function() {
     var currentStep = 1;
@@ -514,8 +615,13 @@ $(document).ready(function() {
         validateStep3();
     });
 
-    // 3. Dropdown Dinâmico de Servidores por Lotação
+    // 3. Dropdown Dinâmico de Servidores por Lotação com Busca via Select2
     function loadServidores(lotacaoVal, selectedId = null) {
+        // Destruir Select2 anterior se ele já estiver inicializado
+        if ($('#evaluated_id').hasClass('select2-hidden-accessible')) {
+            $('#evaluated_id').select2('destroy');
+        }
+
         if (!lotacaoVal) {
             $('#evaluated_id').html('<option value="">Selecione primeiro uma lotação...</option>').prop('disabled', true);
             resetApoio();
@@ -537,8 +643,9 @@ $(document).ready(function() {
                 $.each(data, function(index, servidor) {
                     var padBadge = servidor.has_active_pad ? ' [PAD ATIVO]' : '';
                     var isSelected = (selectedId && selectedId == servidor.id) ? 'selected' : '';
+                    var matriculaText = servidor.registration_number ? ' - Matrícula: ' + servidor.registration_number : '';
                     options += '<option value="' + servidor.id + '" data-group="' + servidor.evaluation_group + '" data-pad="' + servidor.has_active_pad + '" ' + isSelected + '>';
-                    options += servidor.name + ' (' + servidor.cargo + ')' + padBadge;
+                    options += servidor.name + ' (' + servidor.cargo + ')' + matriculaText + padBadge;
                     options += '</option>';
                 });
             }
@@ -546,6 +653,27 @@ $(document).ready(function() {
             $('#evaluated_id').html(options).prop('disabled', data.length === 0);
             $('#loading-servidores').addClass('hidden');
             
+            // Inicializar o Select2 se existirem servidores na lotação
+            if (data.length > 0) {
+                $('#evaluated_id').select2({
+                    placeholder: 'Pesquise por nome ou matrícula...',
+                    allowClear: true,
+                    minimumInputLength: 3,
+                    language: {
+                        noResults: function() {
+                            return "Nenhum servidor encontrado";
+                        },
+                        searching: function() {
+                            return "Buscando...";
+                        },
+                        inputTooShort: function(args) {
+                            var remaining = args.minimum - args.input.length;
+                            return "Digite " + remaining + " ou mais caracteres para pesquisar...";
+                        }
+                    }
+                });
+            }
+
             if (selectedId) {
                 $('#evaluated_id').val(selectedId).trigger('change');
             }
@@ -557,6 +685,14 @@ $(document).ready(function() {
             validateStep2();
         });
     }
+
+    // Autofocus da barra de pesquisa do Select2 quando aberto
+    $(document).on('select2:open', function() {
+        var searchField = document.querySelector('.select2-container--open .select2-search__field');
+        if (searchField) {
+            searchField.focus();
+        }
+    });
 
     $('#lotacao').on('change', function() {
         loadServidores($(this).val());
@@ -1119,4 +1255,4 @@ $(document).ready(function() {
     @endif
 });
 </script>
-@endpush
+@endsection

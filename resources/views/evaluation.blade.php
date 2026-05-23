@@ -203,6 +203,37 @@
                         } else {
                             $badgeClass = 'bg-slate-100 text-slate-500 border-slate-200';
                         }
+
+                        // Filtragem e mapeamento de incidentes do Diário de Bordo para esta categoria
+                        $normalizeCategoryPhp = function($str) {
+                            if (!$str) return "";
+                            $str = mb_strtolower($str, 'UTF-8');
+                            $str = preg_replace('/[áàâãä]/u', 'a', $str);
+                            $str = preg_replace('/[éèêë]/u', 'e', $str);
+                            $str = preg_replace('/[íìîï]/u', 'i', $str);
+                            $str = preg_replace('/[óòôõö]/u', 'o', $str);
+                            $str = preg_replace('/[úùûü]/u', 'u', $str);
+                            $str = preg_replace('/[ç]/u', 'c', $str);
+                            $normalized = preg_replace('/[^a-z0-9]/', '', $str);
+                            
+                            $aliases = [
+                                'pontualidade' => 'assiduidade',
+                                'trabalhoemequipe' => 'cooperacao',
+                                'etica' => 'disciplina'
+                            ];
+                            return $aliases[$normalized] ?? $normalized;
+                        };
+
+                        $normalizedCategory = $normalizeCategoryPhp($category);
+                        $categoryIncidents = $diaryIncidents->filter(function($incident) use ($normalizeCategoryPhp, $normalizedCategory) {
+                            return $normalizeCategoryPhp($incident->category) === $normalizedCategory;
+                        });
+
+                        $hasNegative = $categoryIncidents->contains('type', 'negative');
+                        $hasPositive = $categoryIncidents->contains('type', 'positive');
+                        $incidentCount = $categoryIncidents->count();
+                        $negativesCount = $categoryIncidents->where('type', 'negative')->count();
+                        $positivesCount = $categoryIncidents->where('type', 'positive')->count();
                     @endphp
 
                     <!-- Card da Categoria como Accordion -->
@@ -231,7 +262,20 @@
                                 </div>
                             </div>
                             
-                            <div class="flex items-center gap-3 shrink-0">
+                            <div class="flex items-center gap-2 shrink-0">
+                                @if($incidentCount > 0)
+                                    @if($hasNegative)
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 text-[9.5px] font-extrabold uppercase rounded-md border bg-rose-50 text-rose-700 border-rose-200">
+                                            <span class="material-symbols-outlined text-[12px] font-bold" style="font-variation-settings: 'FILL' 1">warning</span>
+                                            Diário: {{ $negativesCount }} Alerta(s)
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 text-[9.5px] font-extrabold uppercase rounded-md border bg-emerald-50 text-emerald-700 border-emerald-250/60">
+                                            <span class="material-symbols-outlined text-[12px] font-bold" style="font-variation-settings: 'FILL' 1">thumb_up</span>
+                                            Diário: {{ $positivesCount }} Elogio(s)
+                                        </span>
+                                    @endif
+                                @endif
                                 <span class="category-progress-badge px-2.5 py-1 text-[10px] font-bold uppercase rounded-md border {{ $badgeClass }}">
                                     {{ $answeredCount }} de {{ $totalCount }} respondidas
                                 </span>
@@ -353,8 +397,21 @@
                                             </div>
 
                                             <!-- Botão de vincular do diário de bordo -->
-                                            <button type="button" class="btn-open-diary inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-500 hover:text-white hover:bg-blue-600 hover:border-blue-600 transition bg-white border border-slate-200 px-3 py-1.5 rounded-lg mt-1" data-question-id="{{ $question->id }}" data-category="{{ $category }}">
-                                                <span class="material-symbols-outlined text-[14px]">bookmark</span>
+                                            @php
+                                                $btnClass = 'text-slate-500 hover:text-white hover:bg-blue-600 hover:border-blue-600 bg-white border-slate-200';
+                                                $btnIcon = 'bookmark';
+                                                if ($incidentCount > 0) {
+                                                    if ($hasNegative) {
+                                                        $btnClass = 'bg-rose-50 border-rose-250 text-rose-700 hover:bg-rose-100 hover:border-rose-350 hover:text-rose-800';
+                                                        $btnIcon = 'warning';
+                                                    } else {
+                                                        $btnClass = 'bg-emerald-50 border-emerald-250 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-350 hover:text-emerald-800';
+                                                        $btnIcon = 'thumb_up';
+                                                    }
+                                                }
+                                            @endphp
+                                            <button type="button" class="btn-open-diary inline-flex items-center gap-1.5 text-[11px] font-bold transition border px-3 py-1.5 rounded-lg mt-1 {{ $btnClass }}" data-question-id="{{ $question->id }}" data-category="{{ $category }}">
+                                                <span class="material-symbols-outlined text-[14px]">{{ $btnIcon }}</span>
                                                 <span>Buscar no Diário de Bordo</span>
                                             </button>
                                         </div>
@@ -1053,14 +1110,44 @@ $(document).ready(function() {
         }, 300);
     };
 
+    // Helper para normalizar strings de categoria no frontend (case-insensitive, sem acentos, sem espaços)
+    function normalizeStr(str) {
+        if (!str) return "";
+        let val = str.toString()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, "")
+            .trim();
+        
+        let aliases = {
+            'pontualidade': 'assiduidade',
+            'trabalhoemequipe': 'cooperacao',
+            'etica': 'disciplina'
+        };
+        return aliases[val] || val;
+    }
+
     // Abre o diário focado em uma pergunta específica
     $(document).on('click', '.btn-open-diary', function() {
         let button = $(this);
         targetQuestionIdForDiary = button.data('question-id');
         let category = button.data('category');
 
-        // Filtra no select
-        $('#diary-category-filter').val(category).trigger('change');
+        // Seleciona a opção no select de forma case-insensitive e normalizada
+        let normalizedCat = normalizeStr(category);
+        let found = false;
+        $('#diary-category-filter option').each(function() {
+            if (normalizeStr($(this).val()) === normalizedCat) {
+                $('#diary-category-filter').val($(this).val());
+                found = true;
+                return false; // quebra o loop
+            }
+        });
+        if (!found) {
+            $('#diary-category-filter').val('all');
+        }
+        $('#diary-category-filter').trigger('change');
         
         openDiaryDrawer();
     });
@@ -1071,9 +1158,10 @@ $(document).ready(function() {
         if (val === 'all') {
             $('.incident-item-card').slideDown(200);
         } else {
+            let normalizedVal = normalizeStr(val);
             $('.incident-item-card').each(function() {
                 let card = $(this);
-                if (card.data('category') === val) {
+                if (normalizeStr(card.data('category')) === normalizedVal) {
                     card.slideDown(200);
                 } else {
                     card.slideUp(200);

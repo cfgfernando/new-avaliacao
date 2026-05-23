@@ -35,7 +35,7 @@ class MenuSeeder extends Seeder
         Menu::create([
             'category_id' => $catPrincipal->id,
             'title'       => 'Avaliações (APD)',
-            'url'         => '/dashboard',
+            'url'         => '/evaluations',
             'icon'        => 'fas fa-file-signature',
             'order'       => 2
         ]);

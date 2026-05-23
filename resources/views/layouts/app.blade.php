@@ -7,26 +7,24 @@
 
     <title>{{ config('app.name', 'Sistema Padrão') }} — @yield('title', 'Dashboard')</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Fonts (Local) -->
+    <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
 
-    <!-- Material Symbols (Stitch pattern) -->
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <!-- Material Symbols (Local) -->
+    <link rel="stylesheet" href="{{ asset('css/material-symbols.css') }}">
 
-    <!-- Font Awesome (legacy icons) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome (Local) -->
+    <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/all.min.css') }}">
 
-    <!-- Scripts CDN (ordem importa: jQuery primeiro) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Scripts (Local - jQuery First) -->
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendor/jquery-mask/jquery.mask.min.js') }}"></script>
+    <script src="{{ asset('vendor/htmx/htmx.min.js') }}"></script>
+    <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('vendor/chartjs/chart.umd.js') }}"></script>
 
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+    <!-- DataTables CSS (Local) -->
+    <link rel="stylesheet" href="{{ asset('vendor/datatables/jquery.dataTables.min.css') }}">
 
     <!-- Vite (depois do jQuery para Alpine não conflitar) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])

@@ -15,6 +15,7 @@ class EmployeeDiaryIncident extends Model
         'description',
         'type',
         'incident_date',
+        'evidence_file',
     ];
 
     protected $casts = [

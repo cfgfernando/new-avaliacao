@@ -48,8 +48,19 @@ class EvaluationQuestionController extends Controller
                 ?? EvaluationCycle::orderBy('start_date', 'desc')->first();
         }
         
+        $cats = [
+            'assiduidade' => 'Assiduidade',
+            'disciplina' => 'Disciplina',
+            'iniciativa' => 'Iniciativa',
+            'responsabilidade' => 'Responsabilidade',
+            'cooperacao' => 'Cooperação',
+            'qualidade' => 'Qualidade',
+            'desenvolvimento_rh' => 'Desenvolvimento de RH',
+            'avaliacao_usuario' => 'Avaliação do Usuário'
+        ];
+        
         return view('admin.evaluation-questions.index', compact(
-            'questions', 'group', 'category', 'search', 'categories', 'cycles', 'activeCycle'
+            'questions', 'group', 'category', 'search', 'categories', 'cycles', 'activeCycle', 'cats'
         ));
     }
 
@@ -99,6 +110,17 @@ class EvaluationQuestionController extends Controller
     {
         $data = $request->validated();
         $evaluationQuestion->update($data);
+
+        // Salvar ou atualizar as âncoras de 1 a 5 se enviadas no request
+        for ($i = 1; $i <= 5; $i++) {
+            $anchorText = $request->input("anchor_{$i}");
+            if ($anchorText !== null) {
+                $evaluationQuestion->barsAnchors()->updateOrCreate(
+                    ['score' => $i],
+                    ['behavioral_description' => $anchorText]
+                );
+            }
+        }
 
         AuditService::log('UPDATE_EVALUATION_QUESTION', [
             'question_id' => $evaluationQuestion->id,

@@ -18,6 +18,11 @@ class UpdateEvaluationQuestionRequest extends FormRequest
             'category' => 'required|in:assiduidade,disciplina,iniciativa,responsabilidade,cooperacao,qualidade,desenvolvimento_rh,avaliacao_usuario',
             'text' => 'required|string|max:500',
             'is_active' => 'boolean',
+            'anchor_1' => 'nullable|string|max:1000',
+            'anchor_2' => 'nullable|string|max:1000',
+            'anchor_3' => 'nullable|string|max:1000',
+            'anchor_4' => 'nullable|string|max:1000',
+            'anchor_5' => 'nullable|string|max:1000',
         ];
     }
 

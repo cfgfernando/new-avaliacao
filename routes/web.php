@@ -57,6 +57,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('evaluations/{evaluation}/submit', [\App\Http\Controllers\EvaluationController::class, 'submit'])->name('evaluations.submit');
     Route::post('evaluation/incident', [\App\Http\Controllers\EvaluationController::class, 'storeIncident'])->name('evaluation.incident.store');
 
+    // Diário de Incidentes Críticos (Acessível a Avaliadores e Admins)
+    Route::resource('employee-diary-incidents', \App\Http\Controllers\Admin\EmployeeDiaryIncidentController::class)->names('admin.employee-diary-incidents');
+
     // ----------------------------------------------------------
     // MÓDULO DE ADMINISTRAÇÃO CORE (Apenas Administradores)
     // ----------------------------------------------------------

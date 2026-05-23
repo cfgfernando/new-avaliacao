@@ -157,7 +157,7 @@ class EvaluationSetupController extends Controller
         // Busca servidores que pertencem à lotação escolhida, exceto o próprio avaliador
         $servidores = User::where('lotacao', $lotacao)
             ->where('id', '!=', auth()->id())
-            ->get(['id', 'name', 'cargo', 'evaluation_group', 'has_active_pad']);
+            ->get(['id', 'name', 'cargo', 'registration_number', 'evaluation_group', 'has_active_pad']);
 
         return response()->json($servidores);
     }
