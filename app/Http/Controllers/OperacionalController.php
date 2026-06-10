@@ -162,24 +162,27 @@ class OperacionalController extends Controller
 
             $cargos = $servidores->pluck('cargo')->unique()->filter()->values();
 
-            $evaluationActivities = Evaluation::with(['evaluator', 'evaluated', 'cycle'])
-                ->orderByDesc('updated_at')
-                ->take(10)
-                ->get();
+
 
             return compact(
                 'totalServidores', 'incidentesPositivos', 'incidentesNegativos', 'totalIncidentes',
                 'totalMetas', 'avaliados', 'engajamentoPercent', 'cycleName', 'startDate', 'endDate',
                 'cutoff', 'avgBars', 'avgBarsFormatted', 'avgBarsDiff', 'avgDays', 'avgOkrPercent',
                 'levels', 'compIniciativa', 'compDisciplina', 'compResponsabilidade', 'performersList',
-                'cargos', 'evaluationActivities', 'servidores'
+                'cargos', 'servidores'
             );
         });
+
+        $evaluationActivities = Evaluation::with(['evaluator', 'evaluated', 'cycle'])
+            ->orderByDesc('updated_at')
+            ->take(10)
+            ->get();
 
         $data = array_merge($kpis, [
             'recentLogs' => $recentLogs,
             'userGrowth' => $userGrowth,
-            'logGrowth'  => $logGrowth
+            'logGrowth'  => $logGrowth,
+            'evaluationActivities' => $evaluationActivities
         ], $evalMetrics);
 
         return view('dashboard', $data);
