@@ -66,12 +66,13 @@ class OperacionalController extends Controller
         $userGrowth = $growthData['userGrowth'];
         $logGrowth = $growthData['logGrowth'];
 
+        $servidores = User::whereNotNull('registration_number')
+            ->with(['evaluations'])
+            ->get();
+        $totalServidores = $servidores->count();
+
         // Métricas de Avaliação - Cacheadas por 5 min para aliviar N+1 nas views
-        $evalMetrics = Cache::remember('dashboard_eval_metrics', 300, function () {
-            $servidores = User::whereNotNull('registration_number')
-                ->with(['evaluations'])
-                ->get();
-            $totalServidores = $servidores->count();
+        $evalMetrics = Cache::remember('dashboard_eval_metrics', 300, function () use ($totalServidores, $servidores) {
 
             $incidentesPositivos = EmployeeDiaryIncident::where('type', 'positive')->count();
             $incidentesNegativos = EmployeeDiaryIncident::where('type', 'negative')->count();
@@ -169,7 +170,7 @@ class OperacionalController extends Controller
                 'totalMetas', 'avaliados', 'engajamentoPercent', 'cycleName', 'startDate', 'endDate',
                 'cutoff', 'avgBars', 'avgBarsFormatted', 'avgBarsDiff', 'avgDays', 'avgOkrPercent',
                 'levels', 'compIniciativa', 'compDisciplina', 'compResponsabilidade', 'performersList',
-                'cargos', 'servidores'
+                'cargos'
             );
         });
 
@@ -182,7 +183,9 @@ class OperacionalController extends Controller
             'recentLogs' => $recentLogs,
             'userGrowth' => $userGrowth,
             'logGrowth'  => $logGrowth,
-            'evaluationActivities' => $evaluationActivities
+            'evaluationActivities' => $evaluationActivities,
+            'servidores' => $servidores,
+            'totalServidores' => $totalServidores
         ], $evalMetrics);
 
         return view('dashboard', $data);
