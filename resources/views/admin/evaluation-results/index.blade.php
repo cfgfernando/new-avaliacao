@@ -141,11 +141,11 @@
                                 <td class="p-4">
                                     <div class="flex items-center gap-3">
                                         <div class="w-9 h-9 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs">
-                                            {{ strtoupper(substr($evaluation->evaluated->name, 0, 2)) }}
+                                            {{ strtoupper(substr($evaluation->evaluated?->name ?? 'XX', 0, 2)) }}
                                         </div>
                                         <div>
-                                            <p class="text-sm font-bold text-slate-800">{{ $evaluation->evaluated->name }}</p>
-                                            <p class="text-[10px] font-semibold text-slate-400">{{ $evaluation->evaluated->registration_number }}</p>
+                                            <p class="text-sm font-bold text-slate-800">{{ $evaluation->evaluated?->name ?? 'Servidor Excluído' }}</p>
+                                            <p class="text-[10px] font-semibold text-slate-400">{{ $evaluation->evaluated?->registration_number ?? '000000' }}</p>
                                         </div>
                                     </div>
                                 </td>
