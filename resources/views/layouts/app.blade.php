@@ -396,8 +396,11 @@
                     @foreach($category->items as $item)
                         @if($item->is_active && (!$item->is_admin_only || (Auth::user() && Auth::user()->role === 'Admin')))
                             @php
-                                $itemUrlClean = trim($item->url, '/');
-                                $isActive = request()->is($itemUrlClean) || request()->is($itemUrlClean . '/*');
+                                $parsedUrl = parse_url($item->url, PHP_URL_PATH);
+                                $itemUrlClean = trim($parsedUrl ?? '', '/');
+                                $isActive = $itemUrlClean === '' 
+                                            ? request()->is('/') 
+                                            : (request()->is($itemUrlClean) || request()->is($itemUrlClean . '/*'));
                                 $isDanger = $category->name === 'CONTROLE DE CRISE';
                             @endphp
                             <a href="{{ str_starts_with($item->url, 'http') ? $item->url : url($item->url) }}"
@@ -534,8 +537,8 @@
 
         // Links da sidebar
         $('#sidebar-nav a').on('click', function () {
-            $('#sidebar-nav a').removeClass('active');
-            $(this).addClass('active');
+            // Removemos a atribuição forçada de active aqui, pois a página vai recarregar 
+            // e o setActiveMenu() rodará do jeito certo garantindo que a URL bate
             if (sidebarNav) localStorage.setItem('sidebarScrollPos', sidebarNav.scrollTop);
             if (window.innerWidth < 1024) closeSidebar();
         });
@@ -556,6 +559,27 @@
         $('.mask-cpf').mask('000.000.000-00');
         $('.mask-cpfcnpj').mask(cpfCnpjMascara, cpfCnpjOptions);
 
+        function setActiveMenu() {
+            var currentPath = window.location.pathname.replace(/\/$/, "");
+            if (currentPath === '') currentPath = '/';
+
+            $('#sidebar-nav a').removeClass('active');
+            $('#sidebar-nav a').each(function () {
+                var href = $(this).attr('href');
+                if (href && href !== '#' && href.indexOf('javascript') === -1) {
+                    var hrefPath = new URL(href, window.location.origin).pathname.replace(/\/$/, "");
+                    if (hrefPath === '') hrefPath = '/';
+
+                    if (currentPath === hrefPath || (hrefPath !== '/' && currentPath.startsWith(hrefPath + '/'))) {
+                        $(this).addClass('active');
+                    }
+                }
+            });
+        }
+
+        // Executa no load inicial da página
+        setActiveMenu();
+
         // HTMX after swap
         document.addEventListener('htmx:afterSwap', function (evt) {
             htmx.process(evt.detail.elt);
@@ -572,17 +596,7 @@
             if (window.innerWidth < 1024) closeSidebar();
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            var currentPath = window.location.pathname.replace(/\/$/, "");
-            $('#sidebar-nav a').removeClass('active');
-            $('#sidebar-nav a').each(function () {
-                var href = $(this).attr('href');
-                if (href) {
-                    var hrefPath = new URL(href, window.location.origin).pathname.replace(/\/$/, "");
-                    if (hrefPath && (currentPath === hrefPath || currentPath.startsWith(hrefPath + '/'))) {
-                        $(this).addClass('active');
-                    }
-                }
-            });
+            setActiveMenu();
         });
     });
     </script>
