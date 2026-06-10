@@ -156,19 +156,21 @@
                                 </div>
                                 <div class="text-right shrink-0">
                                     <p class="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-semibold">Registrado Por</p>
-                                    <p class="text-xs font-bold text-slate-900">{{ $incident->reporter->name ?? 'Sistema' }}</p>
+                                    <p class="text-xs font-bold text-slate-900">{{ $incident->reporter?->name ?? 'Sistema' }}</p>
                                 </div>
                             </div>
 
                             <!-- Subject/Servidor -->
                             <div class="mb-3 p-3 bg-slate-50 rounded-xl border border-slate-200/60 flex items-center justify-between">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-black text-xs font-mono select-none">
-                                        {{ strtoupper(substr($incident->employee->name ?? 'S', 0, 2)) }}
-                                    </div>
-                                    <div>
-                                        <p class="text-xs font-bold text-slate-800 leading-none">{{ $incident->employee->name ?? 'Servidor Excluído' }}</p>
-                                        <p class="text-[9px] font-mono text-slate-400 font-bold uppercase mt-1">Matrícula: {{ $incident->employee->registration_number ?? 'N/A' }}</p>
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-7 h-7 rounded bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-[10px]">
+                                            {{ strtoupper(substr($incident->employee?->name ?? 'S', 0, 2)) }}
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-bold text-slate-800 leading-none">{{ $incident->employee?->name ?? 'Servidor Excluído' }}</p>
+                                            <p class="text-[9px] font-mono text-slate-400 font-bold uppercase mt-1">Matrícula: {{ $incident->employee?->registration_number ?? 'N/A' }}</p>
+                                        </div>
                                     </div>
                                 </div>
                                 @if($incident->employee && $incident->employee->lotacao)

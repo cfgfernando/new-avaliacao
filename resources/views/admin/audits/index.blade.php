@@ -46,7 +46,7 @@
                                     {{ substr($audit->event, 0, 3) }}
                                 </div>
                                 <div>
-                                    <div class="text-xs font-black text-title uppercase tracking-widest">{{ $audit->user->name ?? 'SYSTEM' }}</div>
+                                    <div class="text-xs font-black text-title uppercase tracking-widest">{{ $audit->user?->name ?? 'SYSTEM' }}</div>
                                     <div class="text-[9px] font-bold text-neutral-600 uppercase tracking-widest">{{ $audit->event }}</div>
                                 </div>
                             </div>

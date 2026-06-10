@@ -369,7 +369,7 @@
                             @php
                                 $score = $evaluation->final_score;
                                 $isCritical = $evaluation->status === 'submitted' && $score < ($evaluation->cycle->cutoff_score ?? 3.00);
-                                $initials = strtoupper(substr($evaluation->evaluated->name ?? 'S', 0, 2));
+                                $initials = strtoupper(substr($evaluation->evaluated?->name ?? 'S', 0, 2));
                                 
                                 // Tendência baseada na nota
                                 $trend = 'stable';
@@ -390,8 +390,8 @@
                                             {{ $initials }}
                                         </div>
                                         <div>
-                                            <p class="font-bold text-slate-800 text-sm leading-tight group-hover:text-blue-600 transition-colors">{{ $evaluation->evaluated->name ?? 'Servidor Não Cadastrado' }}</p>
-                                            <p class="font-mono text-[10px] text-slate-450 uppercase tracking-wider mt-0.5">Matrícula: {{ $evaluation->evaluated->registration_number ?? '—' }}</p>
+                                            <p class="font-bold text-slate-800 text-sm leading-tight group-hover:text-blue-600 transition-colors">{{ $evaluation->evaluated?->name ?? 'Servidor Não Cadastrado' }}</p>
+                                            <p class="font-mono text-[10px] text-slate-450 uppercase tracking-wider mt-0.5">Matrícula: {{ $evaluation->evaluated?->registration_number ?? '—' }}</p>
                                         </div>
                                     </div>
                                 </td>

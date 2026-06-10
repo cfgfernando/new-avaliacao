@@ -29,10 +29,10 @@
                     <tr class="hover:bg-slate-50/50 transition-colors group">
                         <td class="px-8 py-5">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-800 font-black text-xs">
-                                    {{ substr($log->user->name ?? '?', 0, 1) }}
+                                <div class="w-8 h-8 rounded-lg bg-blue-100/50 text-blue-600 flex items-center justify-center font-bold text-xs uppercase font-mono shadow-sm border border-blue-200/50">
+                                    {{ substr($log->user?->name ?? '?', 0, 1) }}
                                 </div>
-                                <span class="text-sm font-bold text-slate-800">{{ $log->user->name ?? 'Sistema' }}</span>
+                                <span class="text-sm font-bold text-slate-800">{{ $log->user?->name ?? 'Sistema' }}</span>
                             </div>
                         </td>
                         <td class="px-8 py-5">

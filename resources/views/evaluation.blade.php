@@ -567,7 +567,10 @@
                                         {{ str_replace('_', ' ', $incident->category) }}
                                     </span>
                                 </div>
-                                <span class="text-[10px] text-slate-400 font-bold font-mono">{{ \Carbon\Carbon::parse($incident->incident_date)->format('d/m/Y') }}</span>
+                            </div>
+                            <div class="flex items-center justify-between text-[11px] mb-2">
+                                <span class="text-slate-450">Registrado por: <strong class="text-slate-600">{{ $incident->reporter?->name ?? 'Chefia' }}</strong></span>
+                                <span class="text-slate-400"><i class="fas fa-calendar-alt mr-1"></i> {{ \Carbon\Carbon::parse($incident->incident_date)->format('d/m/Y') }}</span>
                             </div>
                             
                             <p class="text-xs text-slate-700 leading-relaxed font-semibold mb-3">
@@ -575,7 +578,7 @@
                             </p>
                             
                             <div class="flex items-center justify-between pt-2.5 border-t border-slate-100 text-[10px]">
-                                <span class="text-slate-450">Registrado por: <strong class="text-slate-600">{{ $incident->reporter->name ?? 'Chefia' }}</strong></span>
+                                <span class="text-slate-450">Registrado por: <strong class="text-slate-600">{{ $incident->reporter?->name ?? 'Chefia' }}</strong></span>
                                 <x-button type="button" variant="primary" class="btn-link-incident-action !py-1.5 !px-3 !text-[10px] rounded-lg" data-id="{{ $incident->id }}">
                                     <span class="material-symbols-outlined text-[12px] font-bold">link</span>
                                     <span>Vincular</span>
