@@ -1,19 +1,15 @@
-@props([
-    'variant' => 'info', // success, info, warning, danger, neutral
-])
+@props(['color' => 'blue'])
 
 @php
-    $variants = [
-        'success' => 'bg-green-50 text-green-600 border-green-200',
-        'info' => 'bg-blue-50 text-blue-600 border-blue-200',
-        'warning' => 'bg-amber-50 text-amber-600 border-amber-200',
-        'danger' => 'bg-red-50 text-red-600 border-red-200',
-        'neutral' => 'bg-slate-50 text-slate-500 border-slate-200',
-    ];
-    
-    $class = $variants[$variant] ?? $variants['neutral'];
+    $classes = [
+        'blue' => 'bg-semantic-blue/10 text-semantic-blue',
+        'green' => 'bg-semantic-green/10 text-semantic-green',
+        'purple' => 'bg-semantic-purple/10 text-semantic-purple',
+        'red' => 'bg-semantic-red/10 text-semantic-red',
+        'amber' => 'bg-amber-500/10 text-amber-600',
+    ][$color] ?? 'bg-slate-100 text-slate-600';
 @endphp
 
-<span {{ $attributes->merge(['class' => "inline-flex items-center gap-1 font-medium text-xs px-2.5 py-0.5 rounded-full border $class"]) }}>
+<span {{ $attributes->merge(['class' => "inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border border-transparent uppercase tracking-wider $classes"]) }}>
     {{ $slot }}
 </span>

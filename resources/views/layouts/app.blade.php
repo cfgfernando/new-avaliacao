@@ -35,6 +35,59 @@
          ║ que qualquer bundle Vite/Alpine processe a página
          ╚══════════════════════════════════════════════════ -->
     <script>
+        // Restaura estado no carregamento
+        document.addEventListener('DOMContentLoaded', function() {
+            var state = localStorage.getItem('desktop-sidebar-state');
+            var body = document.body;
+            
+            if (state === 'collapsed') {
+                body.classList.add('sidebar-force-collapsed');
+            } else if (state === 'expanded') {
+                body.classList.add('sidebar-force-expanded');
+            }
+            
+            updateToggleIcon();
+        });
+
+        window.addEventListener('resize', updateToggleIcon);
+
+        function updateToggleIcon() {
+            var icon = document.getElementById('desktop-toggle-icon');
+            if (!icon) return;
+            
+            var body = document.body;
+            var isLarge = window.innerWidth >= 1280;
+            
+            var isCollapsed = false;
+            if (isLarge) {
+                isCollapsed = body.classList.contains('sidebar-force-collapsed');
+            } else {
+                isCollapsed = !body.classList.contains('sidebar-force-expanded');
+            }
+            
+            icon.textContent = isCollapsed ? 'chevron_right' : 'chevron_left';
+        }
+
+        function toggleDesktopSidebar() {
+            var body = document.body;
+            var isLarge = window.innerWidth >= 1280;
+            
+            if (isLarge) {
+                body.classList.toggle('sidebar-force-collapsed');
+                body.classList.remove('sidebar-force-expanded');
+            } else {
+                body.classList.toggle('sidebar-force-expanded');
+                body.classList.remove('sidebar-force-collapsed');
+            }
+            
+            var state = body.classList.contains('sidebar-force-collapsed') ? 'collapsed' 
+                      : (body.classList.contains('sidebar-force-expanded') ? 'expanded' : 'default');
+            localStorage.setItem('desktop-sidebar-state', state);
+            
+            updateToggleIcon();
+        }
+
+        // ─── SIDEBAR TOGGLE (mobile) ───
         function openSidebar() {
             var sidebar = document.getElementById('sidebar');
             var overlay = document.getElementById('sidebar-overlay');
@@ -83,26 +136,40 @@
 
         /* ─── SIDEBAR ─── */
         #sidebar {
-            position: fixed;
-            top: 0; left: 0; bottom: 0;
-            width: 280px;
             background: #0f172a;
             color: #8a99af;
             display: flex;
             flex-direction: column;
-            z-index: 60;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            overflow-y: auto;
             border-right: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        @media (min-width: 1024px) {
-            #sidebar { transform: translateX(0); }
         }
 
         #sidebar-overlay {
             transition: opacity 0.3s ease;
+        }
+
+        /* ─── DESKTOP SIDEBAR TOGGLE OVERRIDES ─── */
+        @media (min-width: 1024px) {
+            /* Force Collapsed */
+            body.sidebar-force-collapsed #sidebar { width: 80px !important; }
+            body.sidebar-force-collapsed #main-wrapper { margin-left: 80px !important; }
+            body.sidebar-force-collapsed #topbar { left: 80px !important; }
+            
+            body.sidebar-force-collapsed .nav-text { display: none !important; }
+            body.sidebar-force-collapsed .nav-item { justify-content: center !important; padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+            body.sidebar-force-collapsed .hide-on-collapsed { display: none !important; }
+            body.sidebar-force-collapsed .category-title { display: none !important; }
+            body.sidebar-force-collapsed .logo-text { display: none !important; }
+
+            /* Force Expanded */
+            body.sidebar-force-expanded #sidebar { width: 280px !important; }
+            body.sidebar-force-expanded #main-wrapper { margin-left: 280px !important; }
+            body.sidebar-force-expanded #topbar { left: 280px !important; }
+            
+            body.sidebar-force-expanded .nav-text { display: inline !important; }
+            body.sidebar-force-expanded .nav-item { justify-content: flex-start !important; padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+            body.sidebar-force-expanded .hide-on-collapsed { display: block !important; }
+            body.sidebar-force-expanded .category-title { display: block !important; }
+            body.sidebar-force-expanded .logo-text { display: flex !important; }
         }
 
         /* ─── NAV LINKS ─── */
@@ -150,35 +217,21 @@
 
         /* ─── TOPBAR ─── */
         #topbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
             height: 64px;
             background: #ffffff;
             color: #1e293b;
-            z-index: 50;
             display: flex;
             align-items: center;
             padding: 0 20px;
             gap: 16px;
             border-bottom: 1px solid #e2e8f0;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            transition: left 0.3s ease;
-        }
-
-        @media (min-width: 1024px) {
-            #topbar { left: 280px; }
         }
 
         /* ─── MAIN CONTENT ─── */
         #main-wrapper {
             padding-top: 64px;
             min-height: 100vh;
-        }
-
-        @media (min-width: 1024px) {
-            #main-wrapper { margin-left: 280px; }
         }
 
         /* ─── SPA PROGRESS ─── */
@@ -298,17 +351,26 @@
     <!-- ═══════════════════════════════════════
          SIDEBAR
     ═══════════════════════════════════════ -->
-    <aside id="sidebar">
+    <aside id="sidebar" class="fixed top-0 left-0 bottom-0 z-[60] w-[280px] lg:w-[80px] xl:w-[280px] -translate-x-full lg:translate-x-0 transition-all duration-300 ease-in-out">
 
         <!-- Logo -->
-        <div class="px-6 py-6 flex items-center gap-3 shrink-0">
-            <div class="w-10 h-10 bg-accent rounded-lg flex items-center justify-center shadow-md shadow-accent/20">
-                <span class="text-white text-md font-black tracking-tighter">SAD</span>
+        <div class="px-6 py-6 flex items-center justify-between shrink-0 lg:justify-center xl:justify-start transition-all relative group">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-accent rounded-lg flex items-center justify-center shadow-md shadow-accent/20 shrink-0">
+                    <span class="text-white text-md font-black tracking-tighter">SAD</span>
+                </div>
+                <div class="logo-text flex flex-col lg:hidden xl:flex transition-opacity">
+                    <span class="text-[13px] font-bold text-white tracking-tight leading-none uppercase">SAD-BARS</span>
+                    <span class="text-[8px] font-semibold text-slate-400 mt-1 uppercase tracking-wider">Metodologia Mista</span>
+                </div>
             </div>
-            <div class="flex flex-col">
-                <span class="text-[13px] font-bold text-white tracking-tight leading-none uppercase">SAD-BARS</span>
-                <span class="text-[8px] font-semibold text-slate-400 mt-1 uppercase tracking-wider">Metodologia Mista</span>
-            </div>
+
+            <!-- Toggle Button (Desktop) -->
+            <button onclick="toggleDesktopSidebar()" 
+                    class="hidden lg:flex absolute -right-3.5 top-1/2 -translate-y-1/2 w-7 h-7 bg-white hover:bg-[#2563eb] text-slate-700 hover:text-white rounded-full items-center justify-center shadow-md border border-slate-200 transition-colors z-[100]"
+                    title="Recolher/Expandir Menu">
+                <span class="material-symbols-outlined text-[18px] transition-transform duration-300" id="desktop-toggle-icon">chevron_left</span>
+            </button>
         </div>
 
         <!-- Nav -->
@@ -327,9 +389,9 @@
                         $isAlert = $category->name === 'CONTROLE DE CRISE';
                         $catColor = $isAlert ? 'text-rose-500' : 'text-slate-400';
                     @endphp
-                    <p class="px-4 pt-6 pb-3 text-[9px] font-bold {{ $catColor }} uppercase tracking-widest font-mono">
-                        {{ $category->name }}
-                    </p>
+                    <div class="category-title px-4 py-3 mt-4 first:mt-0 lg:hidden xl:block">
+                        <span class="text-[10px] font-extrabold {{ $catColor }} uppercase tracking-[0.15em]">{{ $category->name }}</span>
+                    </div>
 
                     @foreach($category->items as $item)
                         @if($item->is_active && (!$item->is_admin_only || (Auth::user() && Auth::user()->role === 'Admin')))
@@ -339,67 +401,62 @@
                                 $isDanger = $category->name === 'CONTROLE DE CRISE';
                             @endphp
                             <a href="{{ str_starts_with($item->url, 'http') ? $item->url : url($item->url) }}"
-                               class="nav-item {{ $isActive ? 'active' : '' }} {{ $isDanger && !$isActive ? 'nav-item-danger' : '' }}">
-                                <i class="{{ $item->icon ?: 'fas fa-link' }} w-5 text-[15px]"></i>
-                                <span>{{ $item->title }}</span>
+                               class="nav-item lg:justify-center xl:justify-start lg:py-3 xl:py-2 {{ $isActive ? 'active' : '' }} {{ $isDanger && !$isActive ? 'nav-item-danger' : '' }}" title="{{ $item->title }}">
+                                <i class="{{ $item->icon ?: 'fas fa-link' }} w-5 text-[15px] text-center"></i>
+                                <span class="nav-text lg:hidden xl:inline">{{ $item->title }}</span>
                                 @if($item->title === 'Zona de Risco')
-                                    <span class="ml-auto w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                                    <span class="hide-on-collapsed ml-auto w-2 h-2 rounded-full bg-rose-500 animate-ping lg:hidden xl:inline-block"></span>
                                 @endif
                             </a>
                         @endif
                     @endforeach
                 @endforeach
             @else
-                <p class="px-4 pt-6 pb-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.25em]">Navegação Principal</p>
-                <a href="{{ route('dashboard') }}"
-                   class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                <!-- Main Nav (Static) -->
+                <div class="category-title px-4 py-3 mt-4 first:mt-0 lg:hidden xl:block">
+                    <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.15em]">NAVEGAÇÃO PRINCIPAL</span>
+                </div>
+                
+                <a href="{{ route('dashboard') }}" title="Dashboard"
+                   class="nav-item lg:justify-center xl:justify-start lg:py-3 xl:py-2 {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">dashboard</span>
-                    <span>Dashboard</span>
+                    <span class="nav-text lg:hidden xl:inline">Dashboard</span>
                 </a>
-                <a href="{{ route('evaluations.index') }}"
-                   class="nav-item {{ request()->routeIs('evaluations.index') || request()->is('evaluations*') ? 'active' : '' }}">
+                <a href="{{ route('evaluations.index') }}" title="Minhas Avaliações"
+                   class="nav-item lg:justify-center xl:justify-start lg:py-3 xl:py-2 {{ request()->routeIs('evaluations.index') || request()->is('evaluations*') ? 'active' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">description</span>
-                    <span>Minhas Avaliações</span>
+                    <span class="nav-text lg:hidden xl:inline">Minhas Avaliações</span>
                 </a>
                 @if(Auth::user() && Auth::user()->isAdmin())
-                    <a href="{{ route('admin.evaluations.archived') }}" class="nav-item {{ request()->routeIs('admin.evaluations.archived') ? 'active' : '' }}">
-                        <i class="fas fa-archive w-5 text-[15px]"></i>
-                        <span>Avaliações Arquivadas</span>
+                    <a href="{{ route('admin.evaluations.archived') }}" title="Avaliações Arquivadas" class="nav-item {{ request()->routeIs('admin.evaluations.archived') ? 'active' : '' }}">
+                        <i class="fas fa-archive w-5 text-[15px] text-center"></i>
+                        <span class="nav-text">Avaliações Arquivadas</span>
                     </a>
                 @endif
             @endif
-
-            @if(Auth::user() && Auth::user()->isAdmin())
-                <a href="{{ route('admin.evaluations.archived') }}" class="nav-item {{ request()->routeIs('admin.evaluations.archived') ? 'active' : '' }}">
-                    <i class="fas fa-archive w-5 text-[15px]"></i>
-                    <span>Avaliações Arquivadas</span>
-                </a>
-            @endif
-
-            {{-- Menus estáticos removidos para evitar duplicação com os dinâmicos --}}
 
             <!-- Logout -->
             <div class="pt-4 px-2">
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit"
-                            class="nav-item w-full nav-item-danger">
-                        <i class="fas fa-power-off w-5 text-[14px]"></i>
-                        <span>Encerrar Sessão</span>
+                    <button type="submit" title="Encerrar Sessão"
+                            class="nav-item w-full lg:justify-center xl:justify-start lg:py-3 xl:py-2 nav-item-danger">
+                        <i class="fas fa-power-off w-5 text-[14px] text-center"></i>
+                        <span class="nav-text lg:hidden xl:inline">Encerrar Sessão</span>
                     </button>
                 </form>
             </div>
         </nav>
 
         <!-- Footer -->
-        <div class="px-4 pb-4 shrink-0 mt-auto">
+        <div class="hide-on-collapsed px-4 pb-4 shrink-0 mt-auto lg:hidden xl:block transition-opacity">
             <div class="p-3 bg-[#111827] rounded-xl border border-white/5 flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white font-bold text-xs font-mono">
-                    {{ strtoupper(substr(Auth::user()->name ?? 'HS', 0, 2)) }}
+                <div class="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white font-bold text-xs font-mono shrink-0">
+                    {{ auth()->check() ? strtoupper(substr(auth()->user()->name, 0, 2)) : 'US' }}
                 </div>
                 <div class="min-w-0">
-                    <p class="text-[11px] font-bold text-white truncate leading-none">{{ Auth::user()->name ?? 'Dra. Helena Souza' }}</p>
-                    <p class="text-[9px] text-slate-400 truncate mt-1">Gestora Subprefeitura</p>
+                    <p class="text-[11px] font-bold text-white truncate leading-none">{{ auth()->check() ? auth()->user()->name : 'Visitante' }}</p>
+                    <p class="text-[9px] text-slate-400 truncate mt-1">{{ auth()->check() ? auth()->user()->role_label : 'Sem cargo' }}</p>
                 </div>
             </div>
         </div>
@@ -408,7 +465,7 @@
     <!-- ═══════════════════════════════════════
          TOPBAR
     ═══════════════════════════════════════ -->
-    <header id="topbar">
+    <header id="topbar" class="fixed top-0 right-0 z-50 left-0 lg:left-[80px] xl:left-[280px] transition-all duration-300 ease-in-out">
         <!-- Mobile menu button -->
         <button class="lg:hidden p-2 rounded-xl hover:bg-slate-100 transition-colors flex items-center justify-center"
                 onclick="toggleSidebar()" id="toggle-sidebar">
@@ -424,18 +481,14 @@
             </div>
         </div>
 
-        <!-- Direita: Informações do Avaliador e Servidor em Foco -->
+        <!-- Direita: Informações do Avaliador -->
         <div class="ml-auto flex items-center gap-4 shrink-0">
-            <div class="text-right hidden md:block">
-                <p class="text-[9px] font-bold text-slate-450 uppercase tracking-wider font-mono leading-none">Avaliador de Carreira</p>
+            <div class="text-right flex flex-col justify-center">
+                <p class="text-[9px] font-bold text-slate-450 uppercase tracking-wider font-mono leading-none">{{ auth()->check() ? auth()->user()->role_label : 'Avaliador' }}</p>
                 <div class="flex items-center gap-1.5 mt-1 justify-end">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                    <p class="text-[10px] font-bold text-emerald-600 font-mono">Subprefeitura Ativa</p>
+                    <p class="text-[11px] font-bold text-slate-800 font-sans tracking-tight">{{ auth()->check() ? auth()->user()->name : 'Usuário Não Logado' }}</p>
                 </div>
-            </div>
-
-            <div class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 hidden sm:block">
-                <p class="text-[10px] text-slate-500 font-semibold leading-none font-sans">Servidor em Foco: <strong class="text-slate-800 font-bold">João Carlos da Silva</strong></p>
             </div>
         </div>
     </header>
@@ -443,7 +496,7 @@
     <!-- ═══════════════════════════════════════
          MAIN CONTENT
     ═══════════════════════════════════════ -->
-    <div id="main-wrapper">
+    <div id="main-wrapper" class="transition-all duration-300 ease-in-out ml-0 lg:ml-[80px] xl:ml-[280px]">
         <div id="main-content"
              class="p-6 md:p-10 max-w-[1600px] mx-auto w-full transition-opacity duration-300 flex flex-col min-h-[calc(100vh-64px)]"
              hx-target="#main-content"

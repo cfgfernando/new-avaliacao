@@ -79,12 +79,12 @@
             foreach ($topPerformers as $performer) {
                 $pScore = (float) $performer->final_score;
                 $performersList[] = [
-                    'name' => $performer->evaluated->name,
-                    'id' => 'GP-' . $performer->evaluated->registration_number,
-                    'lotacao' => $performer->evaluated->lotacao ?? 'Administração',
+                    'name' => $performer->evaluated?->name ?? 'Servidor Excluído',
+                    'id' => 'GP-' . ($performer->evaluated?->registration_number ?? '0000'),
+                    'lotacao' => $performer->evaluated?->lotacao ?? 'Não Identificado',
                     'score' => number_format($pScore, 2),
                     'status' => $pScore >= 4.5 ? 'Superando' : ($pScore >= 3.0 ? 'Consistente' : 'Requer Foco'),
-                    'avatar' => strtoupper(substr($performer->evaluated->name, 0, 2))
+                    'avatar' => strtoupper(substr($performer->evaluated?->name ?? 'XX', 0, 2))
                 ];
             }
         }
@@ -118,37 +118,31 @@
                 <p class="text-slate-500 mt-1">Consolidado institucional do {{ $cycleName }} ({{ $startDate }} - {{ $endDate }})</p>
             </div>
             <div class="flex gap-3">
-                <a href="{{ route('admin.employee-diary-incidents.index') }}" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-650 hover:bg-slate-50 hover:text-slate-900 transition-all flex items-center gap-2 shadow-xs uppercase tracking-wider select-none cursor-pointer">
+                <a href="{{ route('admin.employee-diary-incidents.index') }}" class="btn-neo bg-white text-slate-600 hover:bg-slate-50">
                     <span class="material-symbols-outlined text-[18px]">history_edu</span>
                     Diário de Bordo Funcional
                 </a>
-                <a href="{{ route('admin.evaluations.all.export') }}" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-650 hover:bg-slate-50 hover:text-slate-900 transition-all flex items-center gap-2 shadow-xs uppercase tracking-wider">
+                <a href="{{ route('admin.evaluations.all.export') }}" class="btn-neo bg-white text-slate-600 hover:bg-slate-50">
                     <span class="material-symbols-outlined text-[18px]">file_download</span>
                     Exportar Dados
                 </a>
-                <button onclick="window.location.reload()" class="px-4 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-500/20 hover:opacity-90 active:scale-95 transition-all flex items-center gap-2 uppercase tracking-wider select-none">
+                <x-button onclick="window.location.reload()" variant="primary">
                     <span class="material-symbols-outlined text-[18px]">refresh</span>
                     Sincronizar
-                </button>
+                </x-button>
             </div>
         </div>
 
         <!-- KPI Row -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- KPI 1: Média Global BARS -->
-            <div class="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm transition-all hover:shadow-md hover:-translate-y-1 duration-300">
-                <div class="flex justify-between items-start">
-                    <p class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">Média Global BARS</p>
-                    <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
-                        <span class="material-symbols-outlined text-[18px]">trending_up</span>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-baseline gap-2">
-                    <span class="text-3xl font-bold font-mono text-slate-900 tracking-tight">{{ $avgBarsFormatted }}</span>
-                    <div class="flex items-center text-emerald-600">
-                        <span class="text-[10px] font-mono font-bold">{{ $avgBarsDiff }}</span>
-                    </div>
-                </div>
+            <x-stat-card 
+                title="Média Global BARS" 
+                icon="trending_up" 
+                color="green" 
+                value="{{ $avgBarsFormatted }}" 
+                trend="{{ $avgBarsDiff }}" 
+                :trendUp="$avgBars >= 4.0">
                 <div class="mt-4 h-8 w-full flex items-end gap-0.5">
                     <div class="flex-1 bg-slate-100 rounded-sm h-1/2"></div>
                     <div class="flex-1 bg-slate-100 rounded-sm h-2/3"></div>
@@ -157,44 +151,33 @@
                     <div class="flex-1 bg-emerald-500 rounded-sm h-full shadow-[0_0_8px_rgba(16,185,129,0.3)]"></div>
                     <span class="text-[9px] font-mono text-slate-400 ml-2">Tendência</span>
                 </div>
-            </div>
+            </x-stat-card>
 
             <!-- KPI 2: Servidores Ativos -->
-            <div class="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm transition-all hover:shadow-md hover:-translate-y-1 duration-300">
-                <div class="flex justify-between items-start">
-                    <p class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">Servidores Ativos</p>
-                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
-                        <span class="material-symbols-outlined text-[18px]">groups</span>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <span class="text-3xl font-bold font-mono text-slate-900 tracking-tight">{{ number_format($totalServidores) }}</span>
-                    <p class="text-[11px] text-slate-500 mt-1 font-medium">{{ number_format($engajamentoPercent, 1) }}% de engajamento no ciclo</p>
-                </div>
+            <x-stat-card 
+                title="Servidores Ativos" 
+                icon="groups" 
+                color="blue" 
+                value="{{ number_format($totalServidores) }}" 
+                subtitle="{{ number_format($engajamentoPercent, 1) }}% de engajamento no ciclo">
                 <div class="mt-4 w-full bg-slate-100 rounded-full h-1.5 overflow-hidden border border-slate-200/50">
                     <div class="bg-blue-600 h-full rounded-full" style="width: {{ $engajamentoPercent }}%"></div>
                 </div>
-            </div>
+            </x-stat-card>
 
             <!-- KPI 3: Tempo de Resposta -->
-            <div class="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm transition-all hover:shadow-md hover:-translate-y-1 duration-300">
-                <div class="flex justify-between items-start">
-                    <p class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">Tempo de Resposta</p>
-                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100">
-                        <span class="material-symbols-outlined text-[18px]">avg_time</span>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-baseline gap-2">
-                    <span class="text-3xl font-bold font-mono text-slate-900 tracking-tight">{{ $avgDays }}</span>
-                    <div class="flex items-center text-rose-600">
-                        <span class="text-[10px] font-mono font-bold">+0.3d</span>
-                    </div>
-                </div>
-                <p class="text-[11px] text-slate-500 mt-1.5 font-medium">Média de conclusão de avaliações</p>
-            </div>
+            <x-stat-card 
+                title="Tempo de Resposta" 
+                icon="avg_time" 
+                color="amber" 
+                value="{{ $avgDays }}" 
+                trend="+0.3d" 
+                :trendUp="false"
+                subtitle="Média de conclusão de avaliações">
+            </x-stat-card>
 
             <!-- KPI 4: Progresso OKR Global -->
-            <div class="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm transition-all hover:shadow-md hover:-translate-y-1 duration-300">
+            <x-card>
                 <div class="flex justify-between items-start">
                     <p class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">Progresso OKR Global</p>
                     <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
@@ -214,7 +197,7 @@
                         <p class="text-[10px] text-slate-400 mt-1 font-mono uppercase tracking-tighter">Projetado: 72%</p>
                     </div>
                 </div>
-            </div>
+            </x-card>
         </div>
 
         <!-- Main Bento Section -->
@@ -222,7 +205,7 @@
             <!-- Left Column: Distribution & Top Performers -->
             <div class="lg:col-span-8 space-y-6">
                 <!-- Distribution Chart -->
-                <div class="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm transition-all hover:shadow-md duration-300">
+                <x-card>
                     <div class="flex justify-between items-start mb-8">
                         <div>
                             <h3 class="text-lg font-extrabold text-slate-900 tracking-tight">Distribuição de Performance BARS</h3>
@@ -292,10 +275,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </x-card>
 
                 <!-- Top Performers Table -->
-                <div class="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden transition-all hover:shadow-md duration-300">
+                <div class="bg-white rounded-lg border border-slate-200/60 shadow-sm overflow-hidden transition-all hover:shadow-md duration-300">
                     <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                         <h3 class="text-base font-extrabold text-slate-900 tracking-tight">Servidores em Destaque</h3>
                         <a href="{{ route('admin.evaluation-results.index') }}" class="text-xs font-bold text-blue-600 hover:text-blue-700 transition-all flex items-center gap-1 uppercase tracking-wider">
@@ -336,13 +319,12 @@
                                         </td>
                                         <td class="px-6 py-3.5 text-right">
                                             @php
-                                                $statusColor = $performer['status'] === 'Superando' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-blue-50 text-blue-600 border border-blue-200';
-                                                $statusDot = $performer['status'] === 'Superando' ? 'bg-emerald-500' : 'bg-blue-500';
+                                                $statusColor = $performer['status'] === 'Superando' ? 'green' : 'blue';
                                             @endphp
-                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 {{ $statusColor }} text-[9px] font-bold uppercase rounded-full font-mono">
-                                                <span class="w-1 h-1 rounded-full {{ $statusDot }}"></span>
+                                            <x-badge color="{{ $statusColor }}">
+                                                <span class="w-1 h-1 rounded-full bg-current mr-1.5"></span>
                                                 {{ $performer['status'] }}
-                                            </span>
+                                            </x-badge>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -373,13 +355,13 @@
                                     $badgeStyle = 'text-emerald-700 bg-emerald-50 border border-emerald-200';
                                     $stripeStyle = 'bg-emerald-500';
                                     $actTitle = 'Avaliação Finalizada';
-                                    $actDesc = 'O avaliador ' . ($activity->evaluator->name ?? 'Sistema') . ' concluiu a avaliação do servidor ' . $activity->evaluated->name . ' com nota consolidada ' . number_format($activity->final_score, 2) . '.';
+                                    $actDesc = 'O avaliador ' . ($activity->evaluator?->name ?? 'Sistema') . ' concluiu a avaliação do servidor ' . ($activity->evaluated?->name ?? 'Excluído') . ' com nota consolidada ' . number_format($activity->final_score ?? 0, 2) . '.';
                                 } else {
                                     $badge = 'Rascunho';
                                     $badgeStyle = 'text-amber-700 bg-amber-50 border border-amber-200';
                                     $stripeStyle = 'bg-amber-500';
                                     $actTitle = 'Rascunho Salvo';
-                                    $actDesc = 'O avaliador ' . ($activity->evaluator->name ?? 'Sistema') . ' iniciou ou alterou o rascunho de avaliação do servidor ' . $activity->evaluated->name . '.';
+                                    $actDesc = 'O avaliador ' . ($activity->evaluator?->name ?? 'Sistema') . ' iniciou ou alterou o rascunho de avaliação do servidor ' . ($activity->evaluated?->name ?? 'Excluído') . '.';
                                 }
                                 $logTime = $activity->updated_at ? $activity->updated_at->diffForHumans() : 'Recente';
                             @endphp
@@ -449,7 +431,7 @@
                 </div>
 
                 <!-- Cycle Schedule -->
-                <div class="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm transition-all hover:shadow-md duration-300">
+                <x-card>
                     <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6 font-mono">Cronograma do Ciclo</h3>
                     <div class="space-y-6">
                         <div class="relative pl-8">
@@ -476,14 +458,14 @@
                             <p class="text-[9px] font-mono text-slate-300 font-bold uppercase mt-1">Previsão • 05 Out</p>
                         </div>
                     </div>
-                </div>
+                </x-card>
             </div>
         </div>
 
         <!-- ═══════════════════════════════════════
              QUADRO FUNCIONAL DE SERVIDORES (LISTAGEM AVANÇADA)
              ═══════════════════════════════════════ -->
-        <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <x-card>
             <div class="flex items-center justify-between border-b border-slate-150 pb-4 mb-6">
                 <div>
                     <h2 class="text-lg font-bold text-slate-900 tracking-tight">Quadro de Servidores e Status de Avaliação</h2>
@@ -634,7 +616,7 @@
                     <!-- Gerado dinamicamente via jQuery -->
                 </div>
             </div>
-        </div>
+        </x-card>
     </div>
 
     @push('scripts')
